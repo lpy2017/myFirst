@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="registry">
+	<select id="checkResource" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from sv_resource
+		where   USERID=#{userId} and RESOURCE_NAME=#{resourceName}
+	</select>
+	<!-- resourceName  userId -->
+	<insert id="addResource" parameterType="java.util.Map" >
+		insert into sv_resource (RESOURCE_NAME,USERID,USER_NAME,RESOURCE_TYPE,IS_DOCKER_RESOURCE,DESCRIPTION)
+		values (#{resourceName},#{userId},(select USERID from accounts_info where ID=#{userId}),"app",#{isDockerResource},#{description})
+		<selectKey resultType="int" keyProperty="id">
+			select LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	<update id="updateResourceInfo" parameterType="java.util.Map">
+		update sv_resource set DESCRIPTION = #{description} where ID=#{resourceId}
+	
+	</update>
+	<!-- 检查该用户是否已经注册过该镜像  and sv_resource.USERID =#{userId} -->
+	<select id="checkVersion" parameterType="java.util.Map" resultType="java.util.Map">
+		select sv_version.*, sv_resource.RESOURCE_NAME from sv_version ,sv_resource
+		where sv_version.RESOURCE_ID =sv_resource.ID 
+		
+		and sv_version.IMAGE_NAME =#{imageName}
+		and sv_version.IMAGE_TAG=#{imageTag}
+	</select>
+	<select id="checkFtpVersion" parameterType="java.util.Map" resultType="java.util.Map" >
+		select sv_version.* ,sv_resource.RESOURCE_NAME from sv_version ,sv_resource
+		where sv_version.RESOURCE_ID =sv_resource.ID
+		and REGISTRY_ID='3'
+		and ( sv_version.PACKAGE_PATH=#{packagePath} or  sv_version.VERSION_NAME = #{versionName} )
+		and RESOURCE_ID=#{resourceId}
+	</select>
+	<!-- resourceId  imageName imageTag  registryId-->
+	<insert id="addVersion" parameterType="java.util.Map"  >
+		insert into sv_version (RESOURCE_ID,CREATED_DATE,	`STATUS`,AUDIT_PASSED,IMAGE_NAME,IMAGE_TAG,REGISTRY_ID,ACCESS_PORT,START_SCRIPT_PATH,DEPLOY_TIMEOUT,START_TIMEOUT,STOP_TIMEOUT,DESTROY_TIMEOUT,DESCRIPTION) 
+		values (#{resourceId},now(),3,'Y',#{imageName},#{imageTag},#{registryId},#{startPort},#{startScript},#{deploy_timeout},#{start_timeout},#{stop_timeout},#{destroy_timeout},#{description})
+		<selectKey resultType="int" keyProperty="id">
+			select LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	<insert id="addFtpVersion" parameterType="java.util.Map"  >
+		insert into sv_version (RESOURCE_ID,VERSION_NAME,CREATED_DATE,	`STATUS`,AUDIT_PASSED,PACKAGE_PATH,REGISTRY_ID,ACCESS_PORT,START_SCRIPT_PATH,DEPLOY_TIMEOUT,START_TIMEOUT,STOP_TIMEOUT,DESTROY_TIMEOUT,DESCRIPTION) 
+		values (#{resourceId},#{versionName},now(),3,'Y',#{packagePath},#{registryId},#{startPort},
+		#{startScript},#{deploy_timeout},#{start_timeout},#{stop_timeout},#{destroy_timeout},#{description})
+		<selectKey resultType="int" keyProperty="id">
+			select LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	<!-- 注册应用时使用 -->
+	<select id="getImagesForUser" parameterType="java.util.Map" resultType="java.lang.String">
+		select sv_version.IMAGE_NAME as imageName from sv_version ,sv_resource
+		where sv_version.RESOURCE_ID =sv_resource.ID  
+		and sv_resource.USERID in
+		<foreach collection="userId" index="index" item="userId" open="("  separator="," close=")">
+			#{userId}
+		</foreach>
+		and sv_version.REGISTRY_ID=#{registryId}
+		group by imageName
+	</select>
+	<!-- 公有 -->
+	<select id="getImagesForUserPublic" parameterType="java.util.Map" resultType="java.lang.String">
+		select sv_version.IMAGE_NAME as imageName from sv_version ,sv_resource
+		where sv_version.RESOURCE_ID =sv_resource.ID  
+		and sv_version.REGISTRY_ID=2
+		group by imageName
+	</select>
+	<select id="getTagsForUser" parameterType="java.util.Map" resultType="java.util.Map">
+	select  v.ID as id, v.IMAGE_TAG as tag ,v.CREATED_DATE as createDate,v.ACCESS_PORT as startPort,v.START_SCRIPT_PATH as startScript,
+	v.DEPLOY_TIMEOUT as deploy_timeout,v.START_TIMEOUT as start_timeout,v.STOP_TIMEOUT as stop_timeout,v.DESTROY_TIMEOUT as destroy_timeout 
+	from sv_version v
+		where v.REGISTRY_ID=#{registryId}
+		and v.IMAGE_NAME=#{resourceName}
+	</select>
+	<!-- 公有 -->
+	<select id="getTagsForUserPublic" parameterType="java.util.Map" resultType="java.util.Map">
+	select  v.ID as id, v.IMAGE_TAG as tag ,v.CREATED_DATE as createDate,v.ACCESS_PORT as startPort,v.START_SCRIPT_PATH as startScript,
+	v.DEPLOY_TIMEOUT as deploy_timeout,v.START_TIMEOUT as start_timeout,v.STOP_TIMEOUT as stop_timeout,v.DESTROY_TIMEOUT as destroy_timeout 
+	from sv_version v,sv_resource r
+		where v.RESOURCE_ID=r.ID
+		and v.REGISTRY_ID=2
+		and v.IMAGE_NAME=#{resourceName}
+	</select>
+	<!-- 获取版本列表 -->
+	<select id="getTagsForUserByPage" parameterType="java.util.Map" resultType="java.util.Map">
+	select  v.ID as id, v.IMAGE_TAG as tag ,v.CREATED_DATE as createDate,v.ACCESS_PORT as startPort,v.START_SCRIPT_PATH as startScript,
+	v.DEPLOY_TIMEOUT as deploy_timeout,v.START_TIMEOUT as start_timeout,v.STOP_TIMEOUT as stop_timeout,v.DESTROY_TIMEOUT as destroy_timeout ,v.DESCRIPTION as description
+	from sv_version v 
+		where v.REGISTRY_ID=#{registryId}
+		and v.IMAGE_NAME=#{imageName}
+		<if test="keyword != null and keyword != ''">
+			and v.IMAGE_TAG like '%${keyword}%' 
+		</if>
+		order by v.CREATED_DATE desc
+		limit #{startNum},#{pageSize}
+	</select>
+	<!-- 获取公有镜像版本列表 -->
+	<select id="getTagsPublicByPage" parameterType="java.util.Map" resultType="java.util.Map">
+	select  v.ID as id, v.IMAGE_TAG as tag ,v.CREATED_DATE as createDate,v.ACCESS_PORT as startPort,v.START_SCRIPT_PATH as startScript,
+	v.DEPLOY_TIMEOUT as deploy_timeout,v.START_TIMEOUT as start_timeout,v.STOP_TIMEOUT as stop_timeout,v.DESTROY_TIMEOUT as destroy_timeout ,v.DESCRIPTION as description
+	from sv_version v,sv_resource r
+		where v.RESOURCE_ID=r.ID
+		and v.REGISTRY_ID=2
+		and v.IMAGE_NAME=#{imageName}
+		<if test="keyword != null and keyword != ''">
+			and v.IMAGE_TAG like '%${keyword}%' 
+		</if>
+		order by v.CREATED_DATE desc
+		limit #{startNum},#{pageSize}
+	</select>
+	<!-- 获取镜像版本数量 -->
+	<select id="getTagsForUserCount" parameterType="java.util.Map" resultType="int">
+	select count( v.ID) 
+	from sv_version v
+		where  v.REGISTRY_ID=#{registryId}
+		and v.IMAGE_NAME=#{imageName}
+		<if test="keyword != null and keyword != ''">
+			and v.IMAGE_TAG like '%${keyword}%' 
+		</if>
+	</select>
+	<!-- 获取公有镜像版本数量 -->
+	<select id="getTagsPublicCount" parameterType="java.util.Map" resultType="int">
+	select count( v.ID) 
+	from sv_version v 
+		where  v.REGISTRY_ID=2
+		and v.IMAGE_NAME=#{imageName}
+		<if test="keyword != null and keyword != ''">
+			and v.IMAGE_TAG like '%${keyword}%' 
+		</if>
+	</select>
+	<!-- 展示时使用 --><!--and r.USERID=#{userId}  -->
+	<select id="getImageListByPage" parameterType="java.util.Map" resultType="java.util.Map">
+		select v2.* , v1.IMAGE_TAG as last_tag  from sv_version v1,
+		(select   v.IMAGE_NAME as image_name ,max(v.CREATED_DATE) as last_time ,count(v.IMAGE_TAG) as version_num ,max(v.ID) as last_id
+		from sv_version v,sv_resource r 
+		where v.RESOURCE_ID =r.ID
+		and r.IS_DOCKER_RESOURCE='1'
+		and r.USERID in
+		<foreach collection="userId" index="index" item="userId" open="("  separator="," close=")">
+			#{userId}
+		</foreach>
+		and v.REGISTRY_ID=#{registryId} 
+		group by IMAGE_NAME)  v2
+		where v1.ID=v2.last_id
+		<if test="keyword != null and keyword != ''">
+			and v2.image_name like '%${keyword}%' 
+		</if>
+		limit #{startNum},#{pageSize}
+	</select>
+	<select id="getImageListNum" parameterType="java.util.Map" resultType="int">
+		select count(*)  from sv_version v1,
+		(select   v.IMAGE_NAME as image_name ,max(v.CREATED_DATE) as last_time ,count(v.IMAGE_TAG) as version_num ,max(v.ID) as last_id
+		from sv_version v,sv_resource r 
+		where v.RESOURCE_ID =r.ID
+		and r.IS_DOCKER_RESOURCE='1'
+		and r.USERID in
+		<foreach collection="userId" index="index" item="userId" open="("  separator="," close=")">
+			#{userId}
+		</foreach>
+		and v.REGISTRY_ID=#{registryId} 
+		group by IMAGE_NAME)  v2
+		where v1.ID=v2.last_id
+		<if test="keyword != null and keyword != ''">
+			and v2.image_name like '%${keyword}%' 
+		</if>
+ 
+
+
+		
+	</select>
+	<!-- 展示公有镜像 -->
+	<select id="getImageListByPagePublic" parameterType="java.util.Map" resultType="java.util.Map">
+		select v2.* , v1.IMAGE_TAG as last_tag  from sv_version v1,
+		(select   v.IMAGE_NAME as image_name ,max(v.CREATED_DATE) as last_time ,count(v.IMAGE_TAG) as version_num ,max(v.ID) as last_id
+		from sv_version v,sv_resource r 
+		where v.RESOURCE_ID =r.ID
+		and r.IS_DOCKER_RESOURCE='1'
+		and v.REGISTRY_ID=2
+		group by IMAGE_NAME)  v2
+		where v1.ID=v2.last_id
+		<if test="keyword != null and keyword != ''">
+			and v2.image_name like '%${keyword}%' 
+		</if>
+		limit #{startNum},#{pageSize}
+	</select>
+	<select id="getImageListPublicNum" parameterType="java.util.Map" resultType="int">
+		select count(*) from sv_version v1,
+		(select   v.IMAGE_NAME as image_name ,max(v.CREATED_DATE) as last_time ,count(v.IMAGE_TAG) as version_num ,max(v.ID) as last_id
+		from sv_version v,sv_resource r 
+		where v.RESOURCE_ID =r.ID 
+		and r.IS_DOCKER_RESOURCE='1'
+		and v.REGISTRY_ID =2 
+		group by IMAGE_NAME)  v2
+		where v1.ID=v2.last_id 
+		<if test="keyword != null and keyword != ''">
+			and v2.image_name like '%${keyword}%'
+		</if>
+		
+	</select>
+	<!-- 获取镜像基本信息 -->
+	<select id="getImageInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		select v2.* , v1.IMAGE_TAG as last_tag  from sv_version v1,
+		(select   v.IMAGE_NAME as image_name ,max(v.CREATED_DATE) as last_time ,count(v.IMAGE_TAG) as version_num ,max(v.ID) as last_id,r.DESCRIPTION as description
+		from sv_version v,sv_resource r 
+		where v.RESOURCE_ID =r.ID
+		and v.REGISTRY_ID=#{registryId}
+		and  v.IMAGE_NAME=#{resourceName}
+		group by IMAGE_NAME)  v2
+		where v1.ID=v2.last_id
+	</select>
+	<!-- 获取公有镜像基本信息 -->
+	<select id="getPublicImageInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		select v2.* , v1.IMAGE_TAG as last_tag  from sv_version v1,
+		(select   v.IMAGE_NAME as image_name ,max(v.CREATED_DATE) as last_time ,count(v.IMAGE_TAG) as version_num ,max(v.ID) as last_id,r.DESCRIPTION as description
+		from sv_version v,sv_resource r 
+		where v.RESOURCE_ID =r.ID
+		and v.REGISTRY_ID=2
+		and  v.IMAGE_NAME=#{resourceName}
+		group by IMAGE_NAME)  v2
+		where v1.ID=v2.last_id
+	</select>
+	<select id="checkVersionNum" parameterType="java.util.Map" resultType="java.util.Map">
+		select sv_version.RESOURCE_ID as resourceId ,count(*) as versionNum    from sv_version ,sv_resource 
+		where IMAGE_NAME=#{imageName}
+		and sv_resource.ID=sv_version.RESOURCE_ID
+		and sv_resource.USERID=#{userId}
+	</select>
+	<select id="getVersionById" parameterType="int" resultType="java.util.Map">
+		select v.RESOURCE_ID as resourceId ,v.IMAGE_NAME as imageName,c.num
+		,v.IMAGE_TAG as tag,v.REGISTRY_ID as registryId from sv_version
+		v,sv_resource r,(
+		select RESOURCE_ID as resourceId , count(*) as num
+		from sv_version
+		GROUP BY RESOURCE_ID
+		) c
+		where v.id=#{versionId}
+		and
+		v.RESOURCE_ID=r.ID
+		and v.RESOURCE_ID =c.resourceId
+
+	</select>
+	<delete id="delResource" parameterType="int">
+		delete from sv_resource where ID=#{resourceId}
+	</delete>
+	<delete id="delVersion" parameterType="int">
+		delete from sv_version where ID=#{versionId}
+	</delete>
+	<select id="checkResourcePermission" parameterType="java.util.Map" resultType="int">
+		select count(*) from sv_resource where USERID =#{userId} and ID=#{resourceId}
+	</select>
+	<select id="checkVersionPermission" parameterType="java.util.Map" resultType="int">
+	select count(v.ID) from sv_version v ,sv_resource r
+	where r.ID=v.RESOURCE_ID
+	and r.USERID=#{userId}
+	and v.ID=#{versionId}
+	</select>
+	<update id="updateVersionInfo" parameterType="java.util.Map">
+	update  sv_version 
+	set ACCESS_PORT=#{startPort} ,
+	START_SCRIPT_PATH=#{startScript},
+	DEPLOY_TIMEOUT=#{deploy_timeout},
+	START_TIMEOUT=#{start_timeout},
+	STOP_TIMEOUT=#{stop_timeout},
+	DESTROY_TIMEOUT=#{destroy_timeout},
+	DESCRIPTION=#{description}
+	where ID=#{versionId}
+	
+	</update>
+	<select id="getImageDescription" parameterType="java.lang.String" resultType="java.lang.String">
+		select DESCRIPTION    from sv_resource where RESOURCE_NAME=#{resourceName}
+	</select>
+	<!-- 展示时使用 --><!--and r.USERID=#{userId}  -->
+	<select id="getResourceListByPage" parameterType="java.util.Map" resultType="java.util.Map">
+		select v2.* , v1.VERSION_NAME as last_tag  from sv_version v1,
+		(select   r.RESOURCE_NAME as resource_name ,max(v.CREATED_DATE) as last_time ,count(v.VERSION_NAME) as version_num ,max(v.ID) as last_id
+		from sv_version v,sv_resource r 
+		where v.RESOURCE_ID =r.ID
+		and r.USERID in
+		<foreach collection="userId" index="index" item="userId" open="("  separator="," close=")">
+			#{userId}
+		</foreach>
+		and v.REGISTRY_ID=#{registryId} 
+		group by RESOURCE_NAME)  v2
+		where v1.ID=v2.last_id
+		<if test="keyword != null and keyword != ''">
+			and v2.resource_name like '%${keyword}%' 
+		</if>
+		limit #{startNum},#{pageSize}
+	</select>
+	
+	<select id="getResourceListNum" parameterType="java.util.Map" resultType="int">
+		select count(*) from sv_version v1,
+		(select   r.RESOURCE_NAME as resource_name ,max(v.CREATED_DATE) as last_time ,count(v.VERSION_NAME) as version_num ,max(v.ID) as last_id
+		from sv_version v,sv_resource r 
+		where v.RESOURCE_ID =r.ID 
+		and v.REGISTRY_ID =3 
+		group by RESOURCE_NAME)  v2
+		where v1.ID=v2.last_id 
+		<if test="keyword != null and keyword != ''">
+			and v2.resource_name like '%${keyword}%'
+		</if>
+		
+	</select>
+	<select id="getResourcesForUser" parameterType="java.util.Map" resultType="java.lang.String">
+		select sv_resource.RESOURCE_NAME as resourceName from sv_version ,sv_resource
+		where sv_version.RESOURCE_ID =sv_resource.ID  
+		and sv_resource.USERID in
+		<foreach collection="userId" index="index" item="userId" open="("  separator="," close=")">
+			#{userId}
+		</foreach>
+		and sv_version.REGISTRY_ID=#{registryId}
+		group by resourceName
+	</select>
+	<select id="getResourceTagsForUser" parameterType="java.util.Map" resultType="java.util.Map">
+	select  v.ID as id, v.VERSION_NAME as tag ,v.CREATED_DATE as createDate,v.ACCESS_PORT as startPort,v.START_SCRIPT_PATH as startScript,
+	v.DEPLOY_TIMEOUT as deploy_timeout,v.START_TIMEOUT as start_timeout,v.STOP_TIMEOUT as stop_timeout,v.DESTROY_TIMEOUT as destroy_timeout 
+	from sv_version v ,sv_resource sv
+		where v.RESOURCE_ID =sv.ID and 
+		v.REGISTRY_ID=#{registryId}
+		and sv.RESOURCE_NAME=#{resourceName}
+	</select>
+	<!-- 获取镜像基本信息 -->
+	<select id="getResourceInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		select v2.* , v1.VERSION_NAME as last_tag  from sv_version v1,
+		(select   r.RESOURCE_NAME as resourceName ,max(v.CREATED_DATE) as last_time ,count(v.VERSION_NAME) as version_num ,max(v.ID) as last_id,r.DESCRIPTION as description_resource
+		from sv_version v,sv_resource r 
+		where v.RESOURCE_ID =r.ID
+		and v.REGISTRY_ID=#{registryId}
+		and  r.RESOURCE_NAME=#{resourceName}
+		group by RESOURCE_NAME)  v2
+		where v1.ID=v2.last_id
+	</select>
+	<!-- 获取镜像基本信息 -->
+	<select id="getVersionInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		select v.*,sv.RESOURCE_NAME
+		from sv_version v,sv_resource sv 
+		where v.RESOURCE_ID =sv.ID
+		and v.ID=#{versionId}
+	</select>
+	
+	<select id="getResourceTagsCount" parameterType="java.util.Map" resultType="int">
+	select count( v.ID) 
+	from sv_version v,sv_resource sv 
+		where  v.REGISTRY_ID=#{registryId}
+		and sv.RESOURCE_NAME=#{resourceName}
+		and v.RESOURCE_ID =sv.ID
+	</select>
+	
+	<!-- 获取版本列表 -->
+	<select id="getResouceTagsByPage" parameterType="java.util.Map" resultType="java.util.Map">
+	select  v.ID as id, v.VERSION_NAME as tag ,v.CREATED_DATE as createDate,v.ACCESS_PORT as startPort,v.START_SCRIPT_PATH as startScript,
+	v.DEPLOY_TIMEOUT as deploy_timeout,v.START_TIMEOUT as start_timeout,v.STOP_TIMEOUT as stop_timeout,v.DESTROY_TIMEOUT as destroy_timeout ,v.DESCRIPTION as description
+	from sv_version v ,sv_resource sv
+		where v.RESOURCE_ID =sv.ID 
+		and v.REGISTRY_ID=#{registryId}
+		and sv.RESOURCE_NAME=#{resourceName}
+		<if test="keyword != null and keyword != ''">
+			and v.VERSION_NAME like '%${keyword}%' 
+		</if>
+		order by v.CREATED_DATE desc
+		limit #{startNum},#{pageSize}
+	</select>
+</mapper>
