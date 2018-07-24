@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cluster">
+
+    <insert id="insert" parameterType="java.util.Map">
+        insert into ad_cluster(id, name, user_id)
+        values (#{id},#{name},#{user_id})
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map">
+        delete from ad_cluster
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="name != null">
+                and name = #{name}
+            </if>
+            <if test="user_id != null">
+                and user_id = #{user_id}
+            </if>
+        </where>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map">
+        update ad_cluster
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="user_id != null">
+                user_id = #{user_id}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="select" parameterType="java.util.Map" resultType="java.util.HashMap">
+        select *
+        from ad_cluster
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="name != null">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="user_id != null">
+                and user_id = #{user_id}
+            </if>
+        </where>
+    </select>
+
+    <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*)
+        from ad_cluster
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="name != null">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="user_id != null">
+                and user_id = #{user_id}
+            </if>
+        </where>
+    </select>
+
+    <select id="count_admin" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*)
+        from ad_cluster
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="name != null">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="page" parameterType="java.util.Map" resultType="java.util.HashMap">
+        select *
+        from ad_cluster
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="name != null">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="user_id != null">
+                and user_id = #{user_id}
+            </if>
+        </where>
+        limit #{offset},#{rows}
+    </select>
+
+    <select id="ui" parameterType="java.util.Map" resultType="java.util.HashMap">
+        select cluster.id as id, cluster.name as name, count(node.id) as host_num
+        from ad_cluster cluster left join ad_node node
+        on cluster.id = node.cluster_id
+        where cluster.user_id = #{user_id}
+        group by cluster.id
+        order by cluster.name
+        limit #{offset},#{rows}
+    </select>
+
+    <select id="ui_admin" parameterType="java.util.Map" resultType="java.util.HashMap">
+        select cluster.id as id, cluster.name as name, count(node.id) as host_num
+        from ad_cluster cluster left join ad_node node
+        on cluster.id = node.cluster_id
+        group by cluster.id
+        order by cluster.name
+        limit #{offset},#{rows}
+    </select>
+    
+    <select id="clusters" parameterType="java.util.Map" resultType="java.util.HashMap">
+    	select id, name
+    	from ad_cluster
+    	where user_id = #{user_id}
+    </select>
+    
+    <select id="clusters_admin" parameterType="java.util.Map" resultType="java.util.HashMap">
+    	select id, name
+    	from ad_cluster
+    </select>
+
+    <select id="one" parameterType="java.lang.String" resultType="java.util.HashMap">
+        select cluster.id as id, cluster.name as name, cluster.user_id as user_id, count(node.id) as host_num
+        from ad_cluster cluster left join ad_node node
+        on cluster.id = node.cluster_id
+        where cluster.id = #{id}
+        group by cluster.id
+    </select>
+
+    <select id="otherCluster" parameterType="java.lang.String" resultType="java.util.HashMap">
+        select cluster.id, cluster.name, count(node.id) as host_num
+        from ad_cluster cluster left join ad_node node
+        on cluster.id = node.cluster_id
+        where cluster.user_id = #{user_id}
+        and cluster.id != #{id}
+        group by cluster.id
+    </select>
+
+    <select id="checkName" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*)
+        from ad_cluster
+        where name = #{name}
+        and user_id = #{user_id}
+        <if test="id != null">
+            and id != #{id}
+        </if>
+    </select>
+
+    <select id="getProfileName" parameterType="java.lang.String" resultType="java.util.HashMap">
+        select cluster.name as cluster_name, account.USERID as user_name
+        from ad_cluster cluster, accounts_info account
+        where cluster.id = #{cluster_id}
+        and cluster.user_id = account.ID
+    </select>
+
+    <insert id="setCIDR" parameterType="java.util.Map">
+        insert into ad_cluster_ip(cluster_id, cidr)
+        values (#{cluster_id},#{cidr})
+    </insert>
+
+    <delete id="removeCIDR" parameterType="java.lang.String">
+        delete from ad_cluster_ip
+        where cluster_id = #{cluster_id}
+    </delete>
+
+    <select id="getCIDR" parameterType="java.lang.String" resultType="java.util.HashMap">
+        select *
+        from ad_cluster_ip
+        where cluster_id = #{cluster_id}
+    </select>
+
+    <insert id="setNetwork" parameterType="java.util.Map">
+        insert into ad_cluster_network(cluster_id, network)
+        values (#{cluster_id},#{network})
+    </insert>
+
+    <select id="getNetwork" parameterType="java.lang.String" resultType="java.util.HashMap">
+        select *
+        from ad_cluster_network
+        where cluster_id = #{cluster_id}
+    </select>
+
+    <delete id="removeNetwork" parameterType="java.lang.String">
+        delete from ad_cluster_network
+        where cluster_id = #{cluster_id}
+    </delete>
+    
+    <select id="clusterUsersCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+    	select count(*)
+        from accounts_info ai
+        where ai.ID in (
+        select acu.user_id
+        from ad_cluster_user acu
+        where acu.cluster_id = #{cluster_id}
+        )
+    </select>
+
+    <select id="clusterUsers" parameterType="java.util.Map" resultType="java.util.HashMap">
+        select ai.ID, ai.USERID
+        from accounts_info ai
+        where ai.ID in (
+        select acu.user_id
+        from ad_cluster_user acu
+        where acu.cluster_id = #{cluster_id}
+        )
+        limit #{offset},#{rows}
+    </select>
+
+    <insert id="addUser" parameterType="java.util.Map">
+        insert into ad_cluster_user(cluster_id, user_id)
+        values (#{cluster_id},#{user_id})
+    </insert>
+
+    <insert id="addUserResource" parameterType="java.util.Map">
+        insert into user_resource(user_id, cpu, memory, disk)
+        values (#{user_id},#{cpu},#{memory},#{disk})
+    </insert>
+
+    <select id="getUserResource" parameterType="java.lang.Long" resultType="java.util.HashMap">
+        select *
+        from user_resource
+        where user_id = #{user_id}
+    </select>
+
+    <update id="updateUserResource" parameterType="java.util.Map">
+        update user_resource
+        <set>
+            <if test="cpu != null">
+                cpu = #{cpu},
+            </if>
+            <if test="memory != null">
+                memory = #{memory},
+            </if>
+            <if test="disk != null">
+                disk = #{disk}
+            </if>
+        </set>
+        where user_id = #{user_id}
+    </update>
+
+    <insert id="addNewUser" parameterType="java.util.Map">
+        insert into accounts_info(USERID, USERPASSWORD)
+        values (#{USERID},#{USERPASSWORD})
+    </insert>
+
+    <insert id="addUserRelationship" parameterType="java.util.Map">
+        insert into user_relationship(user_id, father_id)
+        values (#{user_id},#{father_id})
+    </insert>
+
+    <select id="checkUser" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*)
+        from accounts_info
+        where USERID = #{user_id}
+    </select>
+
+    <select id="getOldUser" parameterType="java.util.Map" resultType="java.util.HashMap">
+        select ai.ID, ai.USERID
+        from accounts_info ai
+        where ai.ID in (
+        select ur.user_id
+        from user_relationship ur
+        where ur.father_id = #{user_id}
+        )
+        and ai.ID not in (
+        select acu.user_id
+        from ad_cluster_user acu
+        where acu.cluster_id = #{cluster_id}
+        )
+    </select>
+
+    <insert id="addOldUser" parameterType="java.util.Map">
+        insert into ad_cluster_user(cluster_id, user_id)
+        values
+        <foreach collection="user_ids" index="index" item="item" open="" separator="," close="">
+            (#{cluster_id},#{item})
+        </foreach>
+    </insert>
+
+    <delete id="deleteUser" parameterType="java.util.Map">
+        delete from ad_cluster_user
+        where user_id in
+        <foreach collection="user_ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and cluster_id = #{cluster_id}
+    </delete>
+
+    <delete id="removeUserByCluster" parameterType="java.lang.String">
+        delete from ad_cluster_user
+        where cluster_id = #{cluster_id}
+    </delete>
+
+    <select id="getClusterByUser" parameterType="java.lang.String" resultType="java.util.HashMap">
+        select ac.*
+        from ad_cluster ac, ad_cluster_user acu
+        where ac.id = acu.cluster_id
+        and acu.user_id = #{user_id}
+    </select>
+
+    <select id="getUserRole" resultType="java.util.HashMap">
+        select r.*
+        from user_role ur, role r
+        where user_id = #{user_id}
+        and ur.role_id = r.id
+    </select>
+
+    <insert id="setUserRole" parameterType="java.util.Map">
+        insert into user_role(user_id, role_id)
+        values (#{user_id},#{role_id})
+    </insert>
+
+    <select id="getUserByName" parameterType="java.lang.String" resultType="java.util.HashMap">
+        select *
+        from accounts_info
+        where USERID = #{user_name}
+    </select>
+
+</mapper>

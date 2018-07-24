@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="label">
+
+    <insert id="insert" parameterType="java.util.Map">
+        insert into ad_label(node_id, `key`, value, `type`)
+        values (#{node_id},#{key},#{value},#{type})
+    </insert>
+
+    <insert id="multiInsert" parameterType="java.util.Map">
+        insert into ad_label(node_id, `key`, value, `type`)
+        values
+        <foreach collection="labels" index="index" item="item" open="" separator="," close="">
+            (#{node_id},#{item.key},#{item.value},#{item.type})
+        </foreach>
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map">
+        delete from ad_label
+        <where>
+            <if test="node_id != null">
+                node_id = #{node_id}
+            </if>
+            <if test="key != null">
+                and `key` = #{key}
+            </if>
+            <if test="value != null">
+                and `value` = #{value}
+            </if>
+            <if test="type != null">
+                and `type` = #{type}
+            </if>
+        </where>
+    </delete>
+
+    <select id="select" parameterType="java.util.Map" resultType="java.util.HashMap">
+        select *
+        from ad_label
+        <where>
+            <if test="node_id != null">
+                node_id = #{node_id}
+            </if>
+            <if test="key != null">
+                and `key` like concat('%',#{key},'%')
+            </if>
+            <if test="value != null">
+                and value like concat('%',#{value},'%')
+            </if>
+            <if test="type != null">
+                and `type` = #{type}
+            </if>
+        </where>
+        order by `key`
+    </select>
+    
+    <select id="findByUser" parameterType="java.util.Map" resultType="java.util.HashMap">
+    	select distinct label.`key` label_key, label.value label_value, label.`type` label_type, cluster.name cluster_name, cluster.id cluster_id
+		from ad_label label, ad_cluster cluster, ad_node node
+		where cluster.user_id = #{user_id}
+		and cluster.id = node.cluster_id
+		and node.id = label.node_id
+		order by label_type, label_key, label_value
+		limit #{offset},#{rows}
+    </select>
+    
+    <select id="findByUserCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+    	select count(distinct label.`key`, label.value, label.`type`)
+		from ad_label label, ad_cluster cluster, ad_node node
+		where cluster.user_id = #{user_id}
+		and cluster.id = node.cluster_id
+		and node.id = label.node_id
+    </select>
+    
+    <select id="findNodeByLabel" parameterType="java.util.Map" resultType="java.util.HashMap">
+	    select node.*, cluster.name cluster_name
+		from ad_cluster cluster, ad_node node, ad_label label
+		where cluster.user_id = #{user_id}
+		and cluster.id = node.cluster_id
+		and node.id = label.node_id
+		and label.`key` = #{key}
+		and label.value = #{value}
+		and label.`type` = #{type}
+		limit #{offset}, #{rows}
+    </select>
+    
+    <select id="findNodeByLabelCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+	    select count(*)
+		from ad_cluster cluster, ad_node node, ad_label label
+		where cluster.user_id = #{user_id}
+		and cluster.id = node.cluster_id
+		and node.id = label.node_id
+		and label.`key` = #{key}
+		and label.value = #{value}
+		and label.`type` = #{type}
+    </select>
+    
+    <select id="findNodeByCluster" parameterType="java.util.Map" resultType="java.util.HashMap">
+    	select n.*
+		from ad_node n, ad_cluster c
+		where c.id = #{cluster_id}
+		and c.id = n.cluster_id
+		and n.id not in
+		(
+			select node.id
+			from ad_node node, ad_label label
+			where node.id = label.node_id
+			and label.`key` = #{key}
+			and label.value = #{value}
+			and label.`type` = #{type}
+		)
+		limit #{offset}, #{rows}
+    </select>
+    
+    <select id="findNodeByClusterCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+    	select count(*)
+		from ad_node n, ad_cluster c
+		where c.id = #{cluster_id}
+		and c.id = n.cluster_id
+		and n.id not in
+		(
+			select node.id
+			from ad_node node, ad_label label
+			where node.id = label.node_id
+			and label.`key` = #{key}
+			and label.value = #{value}
+			and label.`type` = #{type}
+		)
+    </select>
+    
+    <insert id="multiAdd" parameterType="java.util.Map">
+        insert into ad_label(node_id, `key`, value, `type`)
+        values
+        <foreach collection="nodes" index="index" item="item" open="" separator="," close="">
+            (#{item.id},#{key},#{value},#{type})
+        </foreach>
+    </insert>
+    
+    <delete id="multiDelete" parameterType="java.util.Map">
+    	delete from ad_label
+    	where `key` = #{key}
+    	and `value` = #{value}
+    	and `type` = #{type}
+    	and node_id in
+    	<foreach collection="nodes" index="index" item="item" open="(" separator="," close=")">
+    		#{item.id}
+    	</foreach>
+    </delete>
+    
+    <select id="findNodeByClusterAndLabel" parameterType="java.util.Map" resultType="java.util.HashMap">
+    	select node.id
+		from ad_node node, ad_label label
+		where node.cluster_id = #{cluster_id}
+		and node.id = label.node_id
+		and label.`key` = #{key}
+		and label.value = #{value}
+		and label.`type` = #{type}
+    </select>
+
+</mapper>

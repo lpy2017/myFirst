@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="node">
+
+    <insert id="insert" parameterType="java.util.Map">
+        insert into ad_node(id, name, vm_id, iaas_id, cluster_id, ip, cpu, memory, disk, status, os_version,
+        docker_version, agent_version)
+        values
+        (#{id},#{name},#{vm_id},#{iaas_id},#{cluster_id},#{ip},#{cpu},#{memory},#{disk},#{status},#{os_version},#{docker_version},#{agent_version})
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map">
+        delete from ad_node
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="name != null">
+                and name = #{name}
+            </if>
+            <if test="vm_id != null">
+                and vm_id = #{vm_id}
+            </if>
+            <if test="iaas_id != null">
+                and iaas_id = #{iaas_id}
+            </if>
+            <if test="cluster_id != null">
+                and cluster_id = #{cluster_id}
+            </if>
+            <if test="ip != null">
+                and ip = #{ip}
+            </if>
+            <if test="cpu != null">
+                and cpu = #{cpu}
+            </if>
+            <if test="memory != null">
+                and memory = #{memory}
+            </if>
+            <if test="disk != null">
+                and disk = #{disk}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map">
+        update ad_node
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="vm_id != null">
+                vm_id = #{vm_id},
+            </if>
+            <if test="iaas_id != null">
+                iaas_id = #{iaas_id},
+            </if>
+            <if test="cluster_id != null">
+                cluster_id = #{cluster_id},
+            </if>
+            <if test="ip != null">
+                ip = #{ip},
+            </if>
+            <if test="cpu != null">
+                cpu = #{cpu},
+            </if>
+            <if test="memory != null">
+                memory = #{memory},
+            </if>
+            <if test="disk != null">
+                disk = #{disk},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="os_version != null">
+                os_version = #{os_version},
+            </if>
+            <if test="docker_version != null">
+                docker_version = #{docker_version},
+            </if>
+            <if test="agent_version != null">
+                agent_version = #{agent_version}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="select" parameterType="java.util.Map" resultType="java.util.HashMap">
+        select *
+        from ad_node
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="name != null">
+                and name = #{name}
+            </if>
+            <if test="vm_id != null">
+                and vm_id = #{vm_id}
+            </if>
+            <if test="iaas_id != null">
+                and iaas_id = #{iaas_id}
+            </if>
+            <if test="cluster_id != null">
+                and cluster_id = #{cluster_id}
+            </if>
+            <if test="ip != null">
+                and ip = #{ip}
+            </if>
+            <if test="cpu != null">
+                and cpu = #{cpu}
+            </if>
+            <if test="memory != null">
+                and memory = #{memory}
+            </if>
+            <if test="disk != null">
+                and disk = #{disk}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*)
+        from ad_node
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="name != null">
+                and name = #{name}
+            </if>
+            <if test="vm_id != null">
+                and vm_id = #{vm_id}
+            </if>
+            <if test="iaas_id != null">
+                and iaas_id = #{iaas_id}
+            </if>
+            <if test="cluster_id != null">
+                and cluster_id = #{cluster_id}
+            </if>
+            <if test="ip != null">
+                and ip like concat('%',#{ip},'%')
+            </if>
+            <if test="cpu != null">
+                and cpu = #{cpu}
+            </if>
+            <if test="memory != null">
+                and memory = #{memory}
+            </if>
+            <if test="disk != null">
+                and disk = #{disk}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="page" parameterType="java.util.Map" resultType="java.util.HashMap">
+        select *
+        from ad_node
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="name != null">
+                and name = #{name}
+            </if>
+            <if test="vm_id != null">
+                and vm_id = #{vm_id}
+            </if>
+            <if test="iaas_id != null">
+                and iaas_id = #{iaas_id}
+            </if>
+            <if test="cluster_id != null">
+                and cluster_id = #{cluster_id}
+            </if>
+            <if test="ip != null">
+                and ip like concat('%',#{ip},'%')
+            </if>
+            <if test="cpu != null">
+                and cpu = #{cpu}
+            </if>
+            <if test="memory != null">
+                and memory = #{memory}
+            </if>
+            <if test="disk != null">
+                and disk = #{disk}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        limit #{offset},#{rows}
+    </select>
+
+    <select id="ui" parameterType="java.util.Map" resultType="java.util.HashMap">
+        select id, name, ip, `timestamp`, status
+        from ad_node
+        <where>
+            <if test="labels != null">
+                id in (
+                select distinct node.id
+                from ad_node node, ad_label label
+                where label.node_id = node.id
+                and node.cluster_id = #{cluster_id}
+                and label.`key` in
+                <foreach collection="labels" index="index" item="label" open="(" separator="," close="))">
+                    #{label}
+                </foreach>
+            </if>
+            and cluster_id = #{cluster_id}
+        </where>
+        order by name
+        limit #{offset},#{rows}
+    </select>
+
+    <select id="uicount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*)
+        from ad_node
+        <where>
+            <if test="labels != null">
+                id in (
+                select distinct node.id
+                from ad_node node, ad_label label
+                where label.node_id = node.id
+                and node.cluster_id = #{cluster_id}
+                and label.`key` in
+                <foreach collection="labels" index="index" item="label" open="(" separator="," close="))">
+                    #{label}
+                </foreach>
+            </if>
+            and cluster_id = #{cluster_id}
+        </where>
+    </select>
+
+    <select id="getLabel" parameterType="java.lang.String" resultType="java.util.HashMap">
+        select *
+        from ad_label
+        where node_id = #{node_id}
+    </select>
+
+    <select id="checkName" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*)
+        from ad_node
+        where name = #{name}
+        and cluster_id = #{cluster_id}
+        <if test="id != null">
+            and id != #{id}
+        </if>
+    </select>
+
+    <select id="one" parameterType="java.lang.String" resultType="java.util.HashMap">
+        select node.*, cluster.name as cluster_name
+        from ad_node node, ad_cluster cluster
+        where node.id = #{id}
+        and node.cluster_id = cluster.id
+    </select>
+
+    <update id="updateByStatus" parameterType="java.util.Map">
+        update ad_node
+        set status = #{status_new}
+        where id = #{id}
+        and status = #{status_old}
+    </update>
+    
+    <insert id="multiAdd" parameterType="java.util.Map">
+    	insert into ad_node(id, name, cluster_id, ip, `status`)
+    	values
+    	<foreach collection="nodes" item="item" index="index" open="" separator="," close="">
+    		(#{item.id},#{item.name},#{clusterId},#{item.ip},#{item.status})
+    	</foreach>
+    </insert>
+
+</mapper>
