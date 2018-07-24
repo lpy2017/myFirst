@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<client>
+
+
+	<inbox>
+		<ServiceName>SystemAdminService</ServiceName>
+		<JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+		<ProviderURL>tcp://10.1.108.163:4141</ProviderURL>
+		<QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+		<QueueName>AdminService.in</QueueName>
+		<SessionCount>1</SessionCount>
+		<LocationDepend>false</LocationDepend>
+	</inbox>
+	
+	<outbox>
+		<ServiceName>SystemAdminService</ServiceName>
+		<JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+		<ProviderURL>tcp://10.1.108.163:4141</ProviderURL>
+		<QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+		<QueueName>AdminService.out</QueueName>
+		<DeliveryMode>NON_PERSISTENT</DeliveryMode>
+		<SessionCount>1</SessionCount>
+	</outbox>
+	
+	<inbox>
+		<ServiceName>NodeService</ServiceName>
+		<JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+		<ProviderURL>tcp://10.1.108.163:4141</ProviderURL>
+		<QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+		<QueueName>NodeService.in</QueueName>
+		<SessionCount>1</SessionCount>
+		<LocationDepend>false</LocationDepend>
+	</inbox>
+
+	<outbox>
+		<ServiceName>NodeService</ServiceName>
+		<JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+		<ProviderURL>tcp://10.1.108.163:4141</ProviderURL>
+		<QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+		<QueueName>NodeService.out</QueueName>
+		<DeliveryMode>NON_PERSISTENT</DeliveryMode>
+		<SessionCount>1</SessionCount>
+	</outbox>
+	
+	<inbox>
+		<ServiceName>RouterService</ServiceName>
+		<JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+		<ProviderURL>tcp://10.1.108.163:4141</ProviderURL>
+		<QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+		<QueueName>RouterService.in</QueueName>
+		<SessionCount>1</SessionCount>
+		<LocationDepend>true</LocationDepend>
+	</inbox>
+
+	<outbox>
+		<ServiceName>RouterService</ServiceName>
+		<JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+		<ProviderURL>tcp://10.1.108.163:4141</ProviderURL>
+		<QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+		<QueueName>RouterService.out</QueueName>
+		<DeliveryMode>NON_PERSISTENT</DeliveryMode>
+		<SessionCount>1</SessionCount>
+	</outbox>
+	
+	<inbox>
+		<ServiceName>LBService</ServiceName>
+		<JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+		<ProviderURL>tcp://10.1.108.163:4141</ProviderURL>
+		<QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+		<QueueName>LBService.in</QueueName>
+		<SessionCount>1</SessionCount>
+		<LocationDepend>true</LocationDepend>
+	</inbox>
+
+	<outbox>
+		<ServiceName>LBService</ServiceName>
+		<JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+		<ProviderURL>tcp://10.1.108.163:4141</ProviderURL>
+		<QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+		<QueueName>LBService.out</QueueName>
+		<DeliveryMode>NON_PERSISTENT</DeliveryMode>
+		<SessionCount>1</SessionCount>
+	</outbox>
+    
+    <inbox>
+        <ServiceName>OutService</ServiceName>
+        <JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+        <ProviderURL>tcp://10.1.108.163:4141</ProviderURL>
+        <QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+        <QueueName>OutService.in</QueueName>
+        <SessionCount>1</SessionCount>
+        <LocationDepend>true</LocationDepend>
+    </inbox>
+    
+    <outbox>
+        <ServiceName>OutService</ServiceName>
+        <JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+        <ProviderURL>tcp://10.1.108.163:4141</ProviderURL>
+        <QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+        <QueueName>OutService.out</QueueName>
+        <DeliveryMode>NON_PERSISTENT</DeliveryMode>
+        <SessionCount>1</SessionCount>
+    </outbox>
+    
+    <inbox>
+        <ServiceName>LCService</ServiceName>
+        <JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+        <ProviderURL>tcp://10.1.108.163:4141</ProviderURL>
+        <QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+        <QueueName>LCService.in</QueueName>
+        <SessionCount>1</SessionCount>
+        <LocationDepend>true</LocationDepend>
+    </inbox>
+    
+    <outbox>
+        <ServiceName>LCService</ServiceName>
+        <JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+        <ProviderURL>tcp://10.1.108.163:4141</ProviderURL>
+        <QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+        <QueueName>LCService.out</QueueName>
+        <DeliveryMode>NON_PERSISTENT</DeliveryMode>
+        <SessionCount>1</SessionCount>
+    </outbox>
+	
+	<inbox>
+        <ServiceName>MonitorService</ServiceName>
+        <JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+        <ProviderURL>tcp://10.1.108.163:4141</ProviderURL>
+        <QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+        <QueueName>monitor.in</QueueName>
+        <SessionCount>1</SessionCount>
+        <LocationDepend>false</LocationDepend>
+    </inbox>
+    
+    <outbox>
+        <ServiceName>MonitorService</ServiceName>
+        <JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+        <ProviderURL>tcp://10.1.108.163:4141</ProviderURL>
+        <QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+        <QueueName>monitor.out</QueueName>
+        <DeliveryMode>NON_PERSISTENT</DeliveryMode>
+        <SessionCount>1</SessionCount>
+    </outbox>
+</client>

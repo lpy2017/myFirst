@@ -1,0 +1,12 @@
+set long 9000;
+set linesize 9000;
+set pagesize 0;
+set feedback off;
+set echo off;
+set verify off;
+set trimout on;
+set trimspool on;
+spool &1;
+select DBMS_METADATA.GET_DDL('&2',n.NAME) from (select name from user_source u where u.name='&3' AND u.TYPE='&4' AND line=1) n;
+spool off;
+exit;

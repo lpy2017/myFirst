@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<client>
+	<outbox>
+		    <ServiceName>nodemsg</ServiceName>
+			<JNDIContextFactory>com.dc.messageclient.jndi.TopicInitialContextFactory</JNDIContextFactory>
+			<ProviderURL>tcp://127.0.0.1:4141</ProviderURL>
+			<TopicConnectionFactory>ConnectionFactory</TopicConnectionFactory>
+			<TopicName>lb</TopicName>
+	</outbox> 
+</client> 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<invokers>
+	
+	<!-- client -->
+	<!-- node通讯 （部署、启/停、销毁命令下发）-->
+	<invoker name="NodeCommandInvoker" implClass="com.dc.appengine.plugins.message.client.NodeCommandInvoker" autoRun="false"/>
+	<!-- node执行完命令返回结果，调用下面invoker -->
+	<invoker name="NodeSendInvoker" implClass="com.dc.appengine.plugins.message.client.NodeSendInvoker" autoRun="false"/>
+</invokers>
