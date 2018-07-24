@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="app" class="csstransforms3d">
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+   <meta name="description" content="{{app.description}}">
+   <meta http-equiv="pragma" content="no-cache"> 
+   <meta  http-equiv="Cache-Control" content="no-cache, must-revalidate"> 
+   <meta  http-equiv="expires" content="0">
+   <!-- <base href="/"> -->
+   <link rel="icon" ng-href="{{app.logosrc_favicon}}">
+   <title data-ng-bind="::pageTitle()"></title>
+   <!-- Bootstrap styles-->
+   <link rel="stylesheet" href="app/css/bootstrap.css">
+   <link rel="stylesheet" href="app/css/jquery.mCustomScrollbar.min.css">
+   <link rel="stylesheet" href="app/css/app.css">
+   <link rel="stylesheet" href="app/css/theme.css">
+   <link rel="stylesheet" href="app/css/custom.css">
+   <link rel="stylesheet" href="app/css/cd2.css">
+   <link rel="stylesheet" href="app/css/style.css">
+   <link rel="stylesheet" ng-href="app/css/{{app.pageStyle}}.css">
+   <link rel="stylesheet" href="app/css/help.css">
+   <link rel="stylesheet" href="app/css/jquery.pagewalkthrough.css">
+   <link rel="stylesheet" href="app/css/releases.css">
+   <style type="text/css">
+      #walkthrough-content{display:none}
+      #walkthrough-content h3{height:30px; line-height:30px}
+      #walkthrough-content p{line-height:28px}
+   </style>
+
+</head>
+
+<body class="layout-fixed" data-ng-class="{'aside-collapsed' : isCollapsed,'whirl' : app.layout.isShadow,'double-up' : app.layout.isShadow,'offsidebar-open':app.layout.userHistoryBol}">
+   <div data-ui-view="" data-autoscroll="false" class="wrapper"></div> 
+   <div id="walkthrough-content">
+       <div id="walkthrough">
+           <h3>欢迎来到{{app.name}}！</h3>
+       </div>
+
+       <div id="walkthrough1">
+           <h3>一、准备环境与主机</h3>
+       </div>
+
+       <div id="walkthrough-1-1">
+           创建环境，并在此环境上添加主机！
+       </div>
+
+       <div id="walkthrough2">
+           <h3>二、安装NodeAgent</h3>
+       </div>
+
+       <div id="walkthrough-2-1">
+           第一步：搜索NodeAgent蓝图，点击创建蓝图实例，对资源池进行配置创建蓝图实例；
+       </div>
+
+       <div id="walkthrough-2-2">
+           第二步：搜索之前创建的NodeAgent蓝图实例，点击配置，对相关组件的目标版本和当前版本进行配置;
+       </div>
+
+       <div id="walkthrough-2-3">
+           第三步：在创建的NodeAgent蓝图实例上点击执行过程-deploy，部署NodeAgent;
+       </div>
+
+       <div id="walkthrough3">
+           <h3>三、部署Tomcat</h3>
+       </div>
+
+       <div id="walkthrough-3-1">
+           第一步：搜索Tomcat蓝图，点击创建蓝图实例，对资源池进行配置创建蓝图实例；
+       </div>
+
+       <div id="walkthrough-3-2">
+           第二步：搜索之前创建的Tomcat蓝图实例，点击配置，对相关组件的目标版本和当前版本进行配置;
+       </div>
+
+       <div id="walkthrough-3-3">
+           第三步：在创建的Tomcat蓝图实例上点击执行过程-deploy，部署Tomcat;
+       </div>
+    
+   </div>
+   <script src="app/js/base.js"></script>
+   <script src="app/js/app.js"></script>
+   <script src="app/js/jquery.mCustomScrollbar.concat.min.js"></script>
+   <script src="app/js/custom-server.js"></script><!-- 自定义服务 -->
+   <script src="app/js/custom-directive.js"></script><!-- 自定义指令 -->
+   <script src="app/js/route-config.js"></script><!-- 路由配置 -->
+   <script src="app/js/sidebar.js"></script><!-- 左侧菜单 -->
+   <script src="app/js/cluster-controllers.js"></script><!-- 资源池管理控制器 -->
+   <script src="app/js/blueprint-controllers.js"></script><!-- 蓝图管理控制器 -->
+   <script src="app/js/blueprint-ins-controllers.js"></script><!-- 蓝图实例管理控制器 -->
+   <script src="app/js/blueprint-designer.js"></script><!-- 蓝图设计器 -->
+   <script src="app/js/flow-designer.js"></script><!-- 流程设计器 -->
+   <script src="app/js/component-controllers.js"></script><!-- 组件管理控制器 -->
+   <script src="app/js/plugin-controllers.js"></script><!-- 插件管理控制器 -->
+   <script src="app/js/script-controllers.js"></script><!-- 脚本管理控制器 -->
+   <script src="app/js/workpiece-package-controllers.js"></script><!-- 工件包管理控制器 -->
+   <script src="app/js/statistics-controllers.js"></script><!-- 操作统计控制器 -->
+   <script src="app/js/limit-controllers.js"></script><!-- 权限管理控制器 -->
+   <script src="app/js/custom-controllers.js"></script><!-- 定制管理控制器 -->
+   <script src="app/js/label-controllers.js"></script><!-- 标签管理控制器 -->
+   <script src="app/js/quartz-controller.js"></script><!-- 定时任务控制器 -->
+   <script src="app/js/operational-controller.js"></script><!-- 操作审计控制器 -->
+   <script src="app/js/summary-controller.js"></script><!-- 操作审计控制器 -->
+   <script src="app/js/itsm-patch-statistics-controllers.js"></script><!-- itsm补丁统计控制器 -->
+   <script src="app/js/help-controller.js"></script><!-- 咨询窗口控制器 -->
+   <script src="app/js/release-controller.js"></script><!-- 工银安盛发布任务控制器 -->
+   <script src="app/js/jquery.pagewalkthrough.min.js"></script>
+   <script src="app/js/approveManageCtrl.js"></script>
+   <script src="app/js/releaseIns.js"></script>
+   <script src="app/js/ngDraggable.js"></script> <!-- 拖拽 -->
+   <script src="app/js/releases-controller.js"></script><!-- 发布系统 -->
+   <script src="app/js/release-task-controller.js"></script><!-- 任务管理 -->
+   <script src="app/js/release-strategy-controller.js"></script><!-- 应用发布策略管理 -->
+   <script src="app/js/release-integration-controller.js"></script><!-- 集成 -->
+</body>
+
+</html>
