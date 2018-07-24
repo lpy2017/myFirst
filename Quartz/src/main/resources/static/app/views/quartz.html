@@ -1,0 +1,54 @@
+<div class="panel">
+<div class="panel-body">
+<div class="row clearfix">
+   <div class="col-sm-6">
+        <a ui-sref="app.quartz_create" class="btn btn-info"><em class="fa fa-plus"></em> 添加任务</a>
+   </div>
+   <div class="col-sm-6">
+      <div class="search">
+        <input type="text" ng-keyup="search()" class="form-control search-form-control" placeholder="按任务名称搜索" ng-model="searchval" />
+        <em class="icon-magnifier"></em>
+      </div>
+   </div>
+</div>
+<table class="table table_title mt20">
+   <thead>
+      <tr>
+         <th>定时任务名称</th>
+         <th>表达式</th>
+         <th>更新时间</th>
+         <th>操作</th>
+      </tr>
+   </thead>
+   <tbody>
+      <tr ng-if="!listoff">
+         <td colspan="4">
+           <p class="noresult"><em class="icon-info"></em> {{warninginfo}}</p>
+         </td>
+      </tr>
+      <tr ng-repeat="item in quartzList.rows">
+         <td>{{item.quartzName}}</td>
+         <td>{{item.quartzCron}}</td>
+         <td>{{item.updateTime}}</td>
+         <td>
+         <a ui-sref="app.quartz_update({quartzId:item.quartzId})" class="btn btn-info btn-sm">更新</a>
+         <a ui-sref="app.quartz_jobs({quartzId:item.quartzId})" class="btn btn-info btn-sm">查看Jobs</a>
+         <a ui-sref="app.quartz_info({quartzName:item.quartzName,quartzId:item.quartzId})" class="btn btn-info btn-sm">添加Job</a>
+         <button class="btn btn-info btn-sm" ng-click="stopQuartzJob($index,item.quartzId)">暂停Jobs
+         </button>
+         <button class="btn btn-info btn-sm" ng-click="resumeQuartzJob($index,item.quartzId)">恢复Jobs
+         </button>
+             <button class="btn btn-danger btn-sm" ng-click="delQuartz($index,item.quartzId)">
+                <em class="fa fa-trash"></em>
+             </button>
+         </td>
+      </tr>
+      <tr ng-show="listoff">
+         <td colspan="4">
+            <page page-count="pageCount" page-num="pageNum" on-page-change="onPageChange()"></page>
+         </td>
+      </tr>
+   </tbody>
+</table>
+</div>
+</div>

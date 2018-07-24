@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="app">
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+   <meta name="description" content="{{app.description}}">
+   <meta http-equiv="pragma" content="no-cache"> 
+   <meta  http-equiv="Cache-Control" content="no-cache, must-revalidate"> 
+   <meta  http-equiv="expires" content="0">
+   <!-- <base href="/"> -->
+   <title data-ng-bind="::pageTitle()"></title>
+   <!-- Bootstrap styles-->
+   <link rel="stylesheet" href="app/css/bootstrap.css">
+   <link rel="stylesheet" href="app/css/app.css">
+   <link rel="stylesheet" href="app/css/theme.css">
+   <link rel="stylesheet" href="app/css/cd2.css">
+   
+</head>
+
+<body class="layout-fixed" data-ng-class="{'aside-collapsed' : app.layout.isCollapsed,'whirl' : app.layout.isShadow,'double-up' : app.layout.isShadow}">
+   <div data-ui-view="" data-autoscroll="false" class="wrapper"></div> 
+   <script src="app/js/base.js"></script>
+   <script src="app/js/app.js"></script>
+   <script src="app/js/custom-server.js"></script><!-- 自定义服务 -->
+   <script src="app/js/custom-directive.js"></script><!-- 自定义指令 -->
+   <script src="app/js/route-config.js"></script><!-- 路由配置 -->
+   <script src="app/js/sidebar.js"></script><!-- 左侧菜单 -->
+   <script src="app/js/quartz-controller.js"></script><!-- 定时任务控制器 -->
+</body>
+
+</html>

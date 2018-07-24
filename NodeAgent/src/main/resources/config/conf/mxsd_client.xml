@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<client>
+	<outbox>
+		<ServiceName>NodeService</ServiceName>
+		<JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+		<ProviderURL>tcp://10.1.108.33:4141</ProviderURL>
+		<QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+		<QueueName>NodeService.in</QueueName>
+		<DeliveryMode>NON_PERSISTENT</DeliveryMode>
+		<SessionCount>1</SessionCount>
+	</outbox>
+	<inbox>
+		<ServiceName>NodeService</ServiceName>
+		<JNDIContextFactory>com.dc.messageclient.jndi.MessageServerInitialContextFactory</JNDIContextFactory>
+		<ProviderURL>tcp://10.1.108.33:4141</ProviderURL>
+		<QueueConnectionFactory>ConnectionFactory</QueueConnectionFactory>
+		<QueueName>NodeService.out</QueueName>
+		<SessionCount>1</SessionCount>
+		<LocationDepend>true</LocationDepend>
+	</inbox>
+</client>

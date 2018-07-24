@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<client>
+	<outbox>
+		<ServiceName>lb</ServiceName>
+		<JNDIContextFactory>com.dc.messageclient.jndi.TopicInitialContextFactory</JNDIContextFactory>
+		<ProviderURL>tcp://10.1.108.33:4141</ProviderURL>
+		<TopicConnectionFactory>ConnectionFactory</TopicConnectionFactory>
+		<TopicName>lb</TopicName>
+	</outbox>
+	<inbox>
+		<ServiceName>nodemsg</ServiceName>
+		<JNDIContextFactory>com.dc.messageclient.jndi.TopicInitialContextFactory</JNDIContextFactory>
+		<ProviderURL>tcp://10.1.108.33:4141</ProviderURL>
+		<TopicConnectionFactory>ConnectionFactory</TopicConnectionFactory>
+		<TopicName>nodemsg</TopicName>
+		<IsDurable>false</IsDurable>
+	</inbox>
+</client>

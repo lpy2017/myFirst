@@ -1,0 +1,23 @@
+delete from sfwf_processnotify; 
+-- delete from sfwf_resendinfo;  
+delete from sfwf_job;
+delete from sfwf_donejobhistory;
+delete from sfwf_tokensuspend;
+delete from sfwf_instancesuspend;
+delete from sfwf_donetokensuspend;  
+delete from sfwf_doneinstancesuspend;
+delete from sfwf_token;
+delete from sfwf_instanceexpr;
+delete from sfwf_instance;
+delete from sfwf_donetokenhistory;
+delete from sfwf_doneinstanceexpr;
+delete from sfwf_doneinstance;
+
+//frame clean database for mysql
+
+delete from sfwf_donejobhistory;
+delete from sfwf_donetokensuspend;  
+delete from sfwf_doneinstancesuspend;
+delete from sfwf_donetokenhistory;
+delete from sfwf_doneinstanceexpr;
+delete from sfwf_doneinstance;

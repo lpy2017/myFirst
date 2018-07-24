@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<flows xmlns="http://node.appengine.dc.com/flow">
+	<flow name="sync_request" synchronous="true">
+		<to uri="bean://jsonHandler?method=disassemble" />
+		<to uri="bean://dispatcher" />
+		<to uri="bean://jsonHandler?method=assemble" />
+	</flow>
+
+	<flow name="async_request" synchronous="false">
+		<to uri="bean://jsonHandler?method=disassemble" />
+		<to uri="bean://dispatcher" />
+		<to uri="bean://jsonHandler?method=assemble" />
+		<broker id="jmsClient" uri="env://broker/out">
+			<property name="MXSD_MSG_TYPE" value="ADMIN_MESSAGE" />
+			<property name="MXSD_DISTINCT_TO" value="appmaster" />
+			<property name="MXSD_ADMIN_SUB_TYPE" value="NodeServerInvoker" />
+		</broker>
+	</flow>
+	<flow name="register" synchronous="true">
+		<to uri="bean://jsonHandler?method=assemble" />
+		<broker id="jmsClient" uri="env://broker/out">
+			<property name="MXSD_MSG_TYPE" value="ADMIN_MESSAGE" />
+			<property name="MXSD_ADMIN_SUB_TYPE" value="registerInvoker" />
+		</broker>
+		<to uri="bean://jsonHandler?method=disassemble" />
+	</flow>
+
+	<!-- 主动向master发送部署等动作完成后的消息 -->
+	<flow name="send_master" synchronous="true">
+		<to uri="bean://jsonHandler?method=assemble" />
+		<to uri="bean://jsonHandler?method=disassemble" />
+	</flow>
+
+	<flow name="sync_errnodereply" synchronous="true">
+		<to uri="bean://jsonHandler?method=disassemble" />
+		<to uri="bean://errnodereply" />
+		<to uri="bean://jsonHandler?method=assemble" />
+	</flow>
+	<flow name="error_report">
+		<to uri="bean://jsonHandler?method=assemble" />
+		<tcp uri="env://loadbalance" workMode="a" />
+	</flow>
+</flows>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+	<author>hansn</author>
+	<desc>脚本工具类插件</desc>
+	<name>ScriptPlugin</name>
+	<code>CD_PLUGIN_SCRIPTUTILS</code>
+	<version>1.0.0</version>
+	<requires>
+		<!-- 位数 (逗号分隔)  (星号[*]表示所有） --> 
+		<arch>32,64</arch>
+		<!-- os 名称 (逗号分隔) --> 
+		<os>linux</os>
+		<!-- os版本(逗号分隔) --> 
+		<osVersion>*</osVersion>
+		<!-- java版本(逗号分隔) --> 
+		<javaVersion>1.6+</javaVersion>
+		<!-- 插件服务器的版本 --> 
+		<pluginServerVersion>1.0</pluginServerVersion>
+		<!-- 必须安装的插件 编码，空表示不需要 --> 
+		<plugin></plugin>
+   </requires>
+   <!-- 实现方式 httpServer,java--> 
+   <implType>java</implType>
+   <!-- 如果是采用httpserver实现，这里填写httpserver的信息,否则可以不填 -->
+   <httpServer>
+         <!-- 是否安装为服务 是/否 : true/false --> 
+		<serviceMode>false</serviceMode>
+		<!-- 调用 plugin 启动脚本要传的参数 --> 
+		<startParam></startParam>
+		<!-- 调用 plugin 停止脚本要传的参数 --> 
+		<stopParam></stopParam>
+		 <!-- 端口 --> 
+		<port></port>
+		 <!-- 接口URL地址 --> 
+		<serviceUrl></serviceUrl>
+   </httpServer>
+   <!-- 如果是采用java实现，这里填写全类名，否则可以不填 -->
+   <javaClass>com.dc.cd.plugins.utils.ScriptUtilsPlugin</javaClass>
+</plugin>

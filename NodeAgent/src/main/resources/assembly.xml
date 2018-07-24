@@ -1,0 +1,27 @@
+<assembly>
+	<id>bin</id>
+	<formats>
+		<format>tar</format>
+	</formats>
+	<fileSets>
+		<fileSet>
+			<directory>src/main/resources</directory>
+			<outputDirectory>${file.separator}</outputDirectory>
+			<includes>
+				<include>**/*.*</include>
+			</includes>
+			<excludes>
+				<!-- <exclude>config/application.properties</exclude> -->
+				<exclude>**/META-INF/*.*</exclude>
+				<exclude>assembly.xml</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}</directory>
+			<outputDirectory>${file.separator}lib</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+</assembly>

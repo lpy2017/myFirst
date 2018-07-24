@@ -1,0 +1,17 @@
+<client>
+	<outbox>
+		<ServiceName>lb</ServiceName>
+		<JNDIContextFactory>com.dc.messageclient.jndi.TopicInitialContextFactory</JNDIContextFactory>
+		<ProviderURL>tcp://127.0.0.1:4141</ProviderURL>
+		<TopicConnectionFactory>ConnectionFactory</TopicConnectionFactory>
+		<TopicName>lb</TopicName>
+	</outbox>
+	<inbox>
+		<ServiceName>nodemsg</ServiceName>
+		<JNDIContextFactory>com.dc.messageclient.jndi.TopicInitialContextFactory</JNDIContextFactory>
+		<ProviderURL>tcp://127.0.0.1:4141</ProviderURL>
+		<TopicConnectionFactory>ConnectionFactory</TopicConnectionFactory>
+		<TopicName>nodemsg</TopicName>
+		<IsDurable>false</IsDurable>
+	</inbox>
+</client>

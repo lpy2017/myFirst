@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+    
+<mapper namespace="quartz">
+	
+	<!-- quartz的数目 -->
+	<select id="countQuartzByUser" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM  quartz_info qi 
+		<trim prefix="where" prefixOverrides="and">
+			<include refid="CountCondtion_userIds"/>
+			<include refid="CountCondtion_quartzName"/>
+		</trim>
+		
+	</select>
+	<!-- 根据userid和搜索关键词查询应用个数 -->
+	<sql id="CountCondtion_userIds">
+		<if test=" userIds != null and userIds != '' ">
+			and	qi.user_id in 
+			<foreach collection="userIds" index="index" item="userId" open="("  separator="," close=")">
+			 #{userId}
+			</foreach>
+		</if>
+	</sql>
+	<sql id="CountCondtion_quartzName">
+		<if test=" quartzName != null and quartzName != '' ">
+			and	qi.quartz_name like '%${quartzName}%'
+		</if>
+	</sql>
+	
+	<!-- 分页查询quartz的结果 -->
+	<select id="listQuartzs" parameterType="page" resultType="java.util.Map">
+		select id quartzId,quartz_name quartzName,quartz_cron quartzCron,update_time updateTime,
+		status from quartz_info qi
+		<trim prefix="where" prefixOverrides="and">
+			<include refid="CountCondtion_userIds_page"/>
+			<include refid="CountCondtion_quartzName_page"/>
+		</trim>
+	</select>
+	<sql id="CountCondtion_userIds_page">
+		<if test=" userIds != null and userIds != '' ">
+			and	qi.user_id in 
+			<foreach collection="userIds" index="index" item="userId" open="("  separator="," close=")">
+			 #{userId}
+			</foreach>
+		</if>
+	</sql>
+	<sql id="CountCondtion_quartzName_page">
+		<if test=" quartzName != null and quartzName != '' ">
+			and	qi.quartz_name like '%${quartzName}%'
+		</if>
+	</sql>
+	<!-- 更新 -->
+	<update id="updateQuartzInfo"  parameterType="java.util.Map">
+		update quartz_info qi  set  
+       	<if test="quartzName != null and quartzName != ''">
+       		qi.quartz_name=#{quartzName},
+       	</if>
+       	<if test="quartzCron != null and quartzCron != ''">
+       		qi.quartz_cron=#{quartzCron},
+       	</if>
+       	<if test="status != null and status != ''">
+       		qi.status=#{status},
+       	</if>
+		qi.update_time=now()  
+		where qi.id=#{quartzId} 
+	</update>
+	
+	<!-- 新增 -->
+	<insert id="insertQuartz" parameterType="java.util.Map">
+		insert quartz_info(ID,QUARTZ_NAME,QUARTZ_CRON,STATUS,UPDATE_TIME,USER_ID) values(
+		#{quartzId},#{quartzName},#{quartzCron},#{status},now(),#{userId})
+	</insert>
+	
+	<!-- 删除 -->
+	<delete id="deleteQuartzById" parameterType="java.lang.String">
+		delete from quartz_info where id=#{quartzId} 
+	</delete>
+	
+	<!-- job列表 -->
+	<select id="listJonsByQuatzId" parameterType="java.lang.String" resultType="java.lang.String">
+		select job_name jobName from quartz_job where quartz_id=#{quartzId}
+	</select>
+	
+	<!-- 任务与job关联表 -->
+	<insert id="insertQuartzJob" parameterType="java.util.Map">
+		insert quartz_job(quartz_id,job_name,job_status) values(#{quartzId},#{jobName},#{jobStatus})
+	</insert>
+	
+	<select id="selectCronById" parameterType="java.lang.String" resultType="java.lang.String">
+		select quartz_cron quartzCron from quartz_info where id=#{quartzId}
+	</select>
+	
+	<select id="getQuartz" parameterType="java.lang.String" resultType="java.util.Map">
+		select quartz_name quartzName,update_time updateTime, quartz_cron quartzCron from quartz_info where id=#{quartzId}
+	</select>
+	
+	<update id = "updateJobStatus" parameterType="java.util.Map">
+		update quartz_job qj  set  
+       	<if test="jobStatus != null and jobStatus != ''">
+       		qj.job_status=#{jobStatus}
+       	</if>
+		where qj.job_name=#{jobName} 
+	</update>
+	
+	<select id="getJobsOfQuartz" parameterType="page" resultType="java.util.Map">
+		select qj.job_name jobName,qj.job_status jobStatus,qi.quartz_name from quartz_info qi,quartz_job qj 
+		where qi.id=qj.quartz_id and
+		qj.quartz_id=#{quartzId}
+	</select>
+	
+	<delete id= "deleteQuartzJobs" parameterType="java.lang.String">
+		delete from quartz_job where quartz_id=#{quartzId}
+	</delete>
+	
+	<delete id="deleteQuartzJobByJob" parameterType="java.lang.String">
+		delete from quartz_job where job_name=#{jobName}
+	</delete>
+	
+	<select id="countJobFromQT" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM qrtz_job_details WHERE job_name = #{job}
+	</select>
+</mapper>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scheduled-config xmlns="http://appengine.dc.com/scheduled">
+	<job-config id="node-status-collect" delay="4000" period="2000"
+		unit="millis">
+		<!-- 宿主机信息 -->
+		<step class="com.dc.appengine.node.scheduler.impl.NodeStatCollectScheduled"
+			method="execute" singleton="true" />
+	</job-config>
+</scheduled-config>

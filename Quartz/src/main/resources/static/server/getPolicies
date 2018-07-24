@@ -1,0 +1,12 @@
+[
+    {
+        "icon": "fa fa-tasks",
+        "page_id": 1,
+        "policyChild": [],
+        "serialNum": 0,
+        "sref": "app.listQuartz",
+        "text": "定时任务管理",
+        "title": "定时任务管理",
+        "type": "quartz"
+    }
+]

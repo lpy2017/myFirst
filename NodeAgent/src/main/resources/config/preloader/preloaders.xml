@@ -1,0 +1,19 @@
+<preloaders xmlns="http://appengine.dc.com/preloader">
+	<preloader
+		class="com.dc.appengine.node.preloader.impl.PluginMannagerPreloader"
+		priority="1" />
+	<preloader class="com.dc.appengine.node.preloader.impl.CommandPreloader"
+		priority="2" />
+	<preloader class="com.dc.appengine.node.preloader.impl.MomAddressPreloader"
+		priority="7" />
+	<preloader
+		class="com.dc.appengine.node.preloader.impl.OsInfoCollectPreloader"
+		priority="3" />
+	<preloader class="com.dc.appengine.node.preloader.impl.DispatcherPreloader"
+		priority="5" />
+	<!-- <preloader class="com.dc.appengine.node.preloader.impl.PortScanPreloader" 
+		priority="5" /> -->
+	<!-- 定时任务 用于采集主机和应用信息 -->
+	<!--<preloader class="com.dc.appengine.node.preloader.impl.ScheduledPreloader"
+		priority="6" />-->
+</preloaders>

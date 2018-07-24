@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<invokers>
+	<invoker name="NodeSendInvoker"
+		implClass="com.dc.appengine.node.message.invoker.impl.NodeSendInvoker"
+		autoRun="false" />
+	<invoker name="NodeCommandInvoker"
+		implClass="com.dc.appengine.node.message.invoker.impl.NodeCommandInvoker"
+		autoRun="false" />
+</invokers>

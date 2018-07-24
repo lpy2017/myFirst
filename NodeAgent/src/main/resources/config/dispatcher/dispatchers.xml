@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dispatcher xmlns="http://appengine.dc.com/dispatcher">
+	<operation name="heart_beat"
+		class="com.dc.appengine.node.provider.impl.HeartBeatProvider" />
+	<operation name="DOWNLOAD"
+		class="com.dc.appengine.node.provider.impl.DownloadProvider" />
+</dispatcher>
