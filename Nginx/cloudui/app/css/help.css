@@ -1,0 +1,77 @@
+/*用户帮助*/
+.userHelp {
+    position: fixed;
+    right: 0;
+    bottom: 35%;
+    width: 18px;
+    background-color: #35bded;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    z-index: 10000;
+}
+
+.userHelp p {
+    margin: 0;
+    text-align: center;
+    color: white;
+    font-size: 12px;
+}
+
+.helpCenter {
+    position: fixed;
+    bottom: 30%;
+    right: 18px;
+    display: none;
+    width: 280px;
+    background-color: white;
+    box-shadow: 2px 2px 2px 2px #cfd7e0;
+    padding: 15px 10px 15px 10px;
+}
+
+.helpList {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.helpList li {
+    min-height: 42px;
+    margin-bottom: 6px;
+}
+
+.helpList p {
+    margin: 0;
+}
+
+.helpIcon {
+    float: left;
+    height: 100%;
+    width: 25%;
+    padding-left: 5%;
+}
+
+.helpIcon img {
+    width: 30px;
+    height: 30px;
+    margin-top: 6px;
+}
+
+.helpText {
+    float: left;
+    height: 100%;
+    width: 75%;
+}
+
+.helpText p:nth-child(1) {
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.helpText p:nth-child(2) {
+    color: #9d9d9d;
+    font-size: 12px;
+}
+
+.hcHover:hover {
+    color: #2596ec;
+}

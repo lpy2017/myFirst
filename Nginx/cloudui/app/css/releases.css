@@ -1,0 +1,17 @@
+.life-head a { margin: 10px 0 0 0; }
+.stagecont { height: 500px; overflow-y:auto; }
+.margin-no-l-r { margin-left: 0!important; margin-right: 0 !important;}
+.stage { margin: 0; padding: 0; }
+.stage li { list-style: none; margin-bottom: 10px; cursor: move; }
+.stage .stage-show { position: relative; }
+.stage .stage-main { padding: 30px; border: 1px solid #ddd; background: #fafafa; }
+.stage-move { position: absolute; left: 10px; top: 10px; font-size: 16px; cursor: move; }
+.stage-btn { position: absolute; right: 10px; top: 10px; font-size: 16px; }
+.stage-btn a { margin: 0 4px; }
+.stage h4 { font-weight: normal; }
+.stage p { margin: 0; }
+.stage-edit{ padding: 10px 0; background: #DDF2F9; border: 1px solid rgb(3, 169, 244); box-shadow: 2px 2px 10px rgba(3,169,244,0.3); }
+.mt30 { margin-top: 30px; }   
+    
+    
+    
