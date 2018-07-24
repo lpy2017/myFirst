@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+
+<mapper namespace="blueprint">
+
+	<insert id="saveAllBlueprint" parameterType="java.util.Map">
+		insert into
+		ma_blueprint_template (id,name,user_id,info) values
+		(#{blueprint_id},#{blueprint_name},#{user_id},#{blueprint_info})
+	</insert>
+
+	<insert id="saveBlueprintTemplate" parameterType="java.util.Map">
+		insert into
+		ma_blueprint_template (id,name,user_id,info,`desc`) values
+		(#{blueprint_id},#{blueprint_name},#{user_id},#{blueprint_info},#{blueprintDesc})
+	</insert>
+
+	<insert id="saveBluePrintType" parameterType="blueprinttype">
+		insert into
+		ma_blueprint_type
+		(id,blueprint_instance_id,flow_id,flow_type,flow_info,flow_name) values
+		(#{id},#{blueprint_id},#{flow_id},#{flow_type},#{flow_info},#{flow_name,
+		jdbcType=VARCHAR})
+	</insert>
+
+	<select id="getAllBlueprint" parameterType="java.lang.String"
+		resultType="java.lang.String">
+		select info from ma_blueprint_instance where ID =
+		#{blueprint_instance_name}
+	</select>
+
+	<select id="getBlueprint_id" parameterType="java.lang.String"
+		resultType="java.lang.String">
+		select id from ma_blueprint_template where NAME =
+		#{blueprint_name}
+	</select>
+
+	<select id="getBlueprint" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		select * from ma_blueprint_template where NAME =
+		#{blueprint_name}
+	</select>
+
+	<select id="getBlueprintType" parameterType="java.lang.String"
+		resultType="java.util.List">
+		select * from ma_blueprint_type where BLUEPRINT_INSTANCE_ID
+		=
+		(select ID from ma_blueprint_template where NAME = #{blueprint_name})
+	</select>
+
+	<select id="getBlueprintInstanceById" resultType="java.util.Map">
+		select * from
+		ma_blueprint_instance where ID = #{id}
+	</select>
+
+	<select id="getBlueprintTypeByFlowId" resultType="java.util.Map">
+		select * from
+		ma_blueprint_type where FLOW_ID = #{flowId}
+	</select>
+	<select id="getBlueprintTypeById" resultType="java.util.Map">
+		select * from
+		ma_blueprint_type where ID = #{id}
+	</select>
+	<select id="getBlueprintInstance" resultType="java.util.Map">
+		select * from
+		ma_blueprint_instance where instance_id = #{instance_id}
+	</select>
+
+	<update id="updateAllBlueprint" parameterType="java.util.Map">
+		update
+		ma_blueprint_template set info = #{blueprint_info} where NAME =
+		#{blueprint_name}
+	</update>
+
+	<update id="updateBlueprintType" parameterType="java.util.Map">
+		<foreach collection="list" item="item" index="index"
+			separator="">
+			update ma_blueprint_type set flow_info = #{item.flow_info}
+			where ID = (select ID from ma_blueprint_template where NAME =
+			#{blueprint_name})
+			and FLOW_TYPE = #{item.flow_type}
+		</foreach>
+	</update>
+
+	<delete id="delBlueprintTemplate" parameterType="java.lang.String">
+		delete from
+		ma_blueprint_template where ID = #{blueprint_id}
+	</delete>
+
+	<delete id="delBluePrintType" parameterType="java.lang.String">
+		delete from
+		ma_blueprint_type where BLUEPRINT_INSTANCE_ID = #{blueprint_id}
+	</delete>
+
+	<select id="getBlueprintInstanceNum" resultType="java.lang.Integer">
+		select count(*)
+		from ma_blueprint_instance
+	</select>
+
+	<select id="findBlueprintType" resultType="java.util.Map">
+		select * from
+		ma_blueprint_type where BLUEPRINT_INSTANCE_ID = #{blueprintId}
+		and
+		FLOW_TYPE=#{flowType}
+	</select>
+
+	<insert id="saveBlueprintInstance">
+		insert into
+		ma_blueprint_instance(instance_id,instance_name,info,userid,instance_desc,resource_pool_config,template_id)
+		values
+		(#{blue_instance_id},#{blue_instance_name},#{blue_instance_info},#{user_id},#{blue_instance_desc},#{resource_pool_config},#{blueprint_template_id})
+	</insert>
+
+	<select id="getbluePrintInstanceId" resultType="java.lang.Integer">
+		select id from
+		ma_blueprint_instance where
+		INSTANCE_ID = #{blueprint_id}
+		and
+		instance_name=#{blueprint_instance_name}
+	</select>
+
+	<select id="getBlueprint_userid" resultType="java.lang.Long">
+		select userid from
+		ma_blueprint_instance where id = #{blueprint_id}
+	</select>
+
+	<select id="getElementIns" resultType="java.lang.Long">
+		SELECT count(*) from
+		ma_instance
+		where APP_ID = #{appId}
+		and NODE_ID = #{nodeId}
+	</select>
+
+	<select id="listBlueprints" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		SELECT * FROM ma_blueprint_template mb WHERE 1=1
+		<if test="blueprintName != null and blueprintName != '' ">
+			and mb.NAME like '%${blueprintName}%'
+		</if>
+		<if test=" userIds != null and userIds != '' ">
+			and mb.user_id in
+			<foreach collection="userIds" index="index" item="userId"
+				open="(" separator="," close=")">
+				#{userId}
+			</foreach>
+		</if>
+	</select>
+	<select id="listBlueprintInstances" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		SELECT mbi.*,
+		MAX(CASE mbp.FLOW_TYPE WHEN 'deploy' THEN mbp.FLOW_ID
+		ELSE 0 END) AS deployFlowId,
+		MAX(CASE mbp.FLOW_TYPE WHEN 'start' THEN
+		mbp.FLOW_ID ELSE 0 END) AS startFlowId,
+		MAX(CASE mbp.FLOW_TYPE WHEN
+		'stop' THEN mbp.FLOW_ID ELSE 0 END) AS stopFlowId,
+		MAX(CASE
+		mbp.FLOW_TYPE WHEN 'destroy' THEN mbp.FLOW_ID ELSE 0 END) AS
+		destroyFlowId,
+		MAX(CASE mbp.FLOW_TYPE WHEN 'snapshot' THEN mbp.FLOW_ID
+		ELSE 0 END) AS snapshotFlowId,
+		MAX(CASE mbp.FLOW_TYPE WHEN 'upgrade'
+		THEN mbp.FLOW_ID ELSE 0 END) AS upgradeFlowId,
+		MAX(CASE mbp.FLOW_TYPE
+		WHEN 'rollback' THEN mbp.FLOW_ID ELSE 0 END) AS rollbackFlowId
+		FROM
+		ma_blueprint_instance mbi
+		LEFT JOIN ma_blueprint_type mbp ON
+		mbi.INSTANCE_ID =
+		mbp.BLUEPRINT_INSTANCE_ID
+		WHERE 1=1
+		<if test="instanceName != null and instanceName != '' ">
+			and mbi.INSTANCE_NAME like '%${instanceName}%'
+		</if>
+		<if test="blueprintId != null and blueprintId != '' ">
+			and mbi.BLUEPRINT_TEMPLATE_ID = #{blueprintId}
+		</if>
+		GROUP BY mbi.ID
+	</select>
+
+	<update id="updateBlueprintInstance" parameterType="java.util.Map">
+		UPDATE ma_blueprint_instance
+		<trim prefix="SET" suffixOverrides=","
+			suffix=" where ID = #{blueprintInstanceId}">
+			<if test="deployId != null and deployId != '' ">
+				DEPLOYID=#{deployId}
+			</if>
+			<if test="startId != null and startId != '' ">
+				STARTID=#{startId}
+			</if>
+			<if test="stopId != null and stopId != '' ">
+				STOPID=#{stopId}
+			</if>
+			<if test="destroyId != null and destroyId != '' ">
+				DESTROYID=#{destroyId}
+			</if>
+			<if test="snapshotId != null and snapshotId != '' ">
+				SNAPSHOTID=#{snapshotId}
+			</if>
+			<if test="upgradeId != null and upgradeId != '' ">
+				UPGRADEID=#{upgradeId}
+			</if>
+			<if test="rollbackId != null and rollbackId != '' ">
+				ROLLBACKID=#{rollbackId}
+			</if>
+		</trim>
+	</update>
+
+	<select id="getEmptyFlowId" resultType="java.lang.Long">
+		select flow_id from
+		ma_blueprint_type
+		where FLOW_TYPE = 'emptyFlow'
+		and FLOW_INFO is null
+	</select>
+
+	<select id="listAllBlueprintInstances" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		SELECT * FROM ma_blueprint_instance mb WHERE 1=1
+		<if test=" userIds != null and userIds != '' ">
+			and mb.userId in
+			<foreach collection="userIds" index="index" item="userId"
+				open="(" separator="," close=")">
+				#{userId}
+			</foreach>
+		</if>
+		order by mb.INSTANCE_NAME
+	</select>
+	<select id="getBlueprints" resultType="java.lang.String">
+		select INSTANCE_NAME from
+		ma_blueprint_instance
+	</select>
+	<select id="getFlowInfoById" resultType="java.util.Map">
+	 select bp.FLOW_INFO_GROUP as FLOW_INFO from ma_blueprint_type bp where bp.FLOW_ID=#{id}
+		union
+	select sv.FLOW_INFO_CONDITION as FLOW_INFO from sv_flow sv where sv.FLOW_ID=#{id}
+	</select>
+
+
+	<update id="updateBlueprintComponentConfig" parameterType="java.util.Map">
+		UPDATE ma_application
+		<trim prefix="SET" suffixOverrides="," suffix=" where ID = #{componentId}">
+<!-- 			<if test="currentVersion != null and currentVersion != '' "> -->
+				CURRENT_VERSION=#{currentVersion},
+<!-- 			</if> -->
+<!-- 			<if test="currentInput != null and currentInput != '' "> -->
+				CURRENT_INPUT=#{currentInput},
+<!-- 			</if> -->
+<!-- 			<if test="currentOutput != null and currentOutput != '' "> -->
+				CURRENT_OUTPUT=#{currentOutput},
+<!-- 			</if> -->
+<!-- 			<if test="targetVersion != null and targetVersion != '' "> -->
+				TARGET_VERSION=#{targetVersion},
+<!-- 			</if> -->
+<!-- 			<if test="targetInput != null and targetInput != '' "> -->
+				TARGET_INPUT=#{targetInput},
+<!-- 			</if> -->
+<!-- 			<if test="targetOutput != null and targetOutput != '' "> -->
+				TARGET_OUTPUT=#{targetOutput},
+<!-- 			</if> -->
+				SMART_FLAG=#{smartFlag},
+				EXECUTE_FLAG=#{executeFlag},
+		</trim>
+	</update>
+
+	<update id="updateBpInsKeyConfig" parameterType="java.util.Map">
+		UPDATE ma_blueprint_instance
+		set KEY_VALUE = #{configValue}
+		WHERE INSTANCE_ID = #{blueprintId}
+	</update>
+	
+	<select id="getResourcePoolConfigsById" parameterType="java.lang.String" resultType="java.lang.String">
+		select RESOURCE_POOL_CONFIG from ma_blueprint_instance where ID = #{blueprintId}
+	</select>
+	
+	<select id="getResourcePoolConfigsByInstanceId" parameterType="java.lang.String" resultType="java.lang.String">
+		select RESOURCE_POOL_CONFIG from ma_blueprint_instance where INSTANCE_ID = #{blueprintInstanceId}
+	</select>
+	
+	<select id="getClusters" parameterType="java.lang.Integer" resultType="java.util.Map">
+		select ID, NAME from ad_cluster where USER_ID = #{userId}
+	</select>
+	
+	<update id="updateResourcePoolConfig" parameterType="java.util.Map">
+		update ma_blueprint_instance set INFO = #{info}, RESOURCE_POOL_CONFIG = #{resourcePoolConfig} where ID = #{id}
+	</update>
+	
+	<select id="getBluerintAppByAppName" parameterType="java.util.Map" resultType="java.util.Map">
+		select app.* from ma_application app, ma_blueprint_instance bp
+		WHERE bp.ID = app.BLUE_INSTANCE_ID
+		and app.APP_NAME = #{appName}
+		and bp.ID = #{id}
+	</select>
+	
+	<select id="getBluerintAppInstances" parameterType="java.util.Map" resultType="java.util.Map">
+		select ins.* from ma_application app, ma_instance ins, ma_blueprint_instance bp
+		WHERE bp.ID = app.BLUE_INSTANCE_ID
+		and ins.APP_ID = app.ID
+		and app.APP_NAME = #{appName}
+		and bp.ID = #{id}
+	</select>
+	
+	<select id="getBlueprintInstanceByInstanceId" resultType="java.util.Map">
+		select * from
+		ma_blueprint_instance 
+		WHERE INSTANCE_ID = #{blueprintId}
+	</select>
+    <select id="getFlowInstanceIdsByMap" parameterType="java.util.Map" resultType="java.util.Map">
+	    select mfi.ID as id, mfi.INSTANCEID as instanceId,mfi.START_TIME as startTime,mfi.FLOWNAME as flowName from ma_flowInstance mfi 
+	    where 1=1 and mfi.APPNAME = ''
+   		<if test="id != null and id != '' ">
+			and mfi.ID=#{id}
+		</if>
+		<if test="flowName != null and flowName != '' ">
+			and mfi.FLOWNAME=#{flowName}
+		</if>
+		order by START_TIME DESC
+	</select>
+	<insert id="saveFlowInstanceId" parameterType="java.util.Map">
+	    insert into ma_flowInstance(ID,INSTANCEID,FLOWNAME,START_TIME,APPNAME,POOLCONFIG,FLOWID,APPVERSION) values(#{id},#{instanceId},#{flowName},now(),
+	    #{appName},#{poolConfig},#{flowId},#{appVersions}) 
+	</insert>
+	<delete id="deleteFlowInstanceIdById">
+	    delete from ma_flowInstance where ID=#{id} 
+	</delete>
+    <select id="getBrotherBlueprintInstance" parameterType="java.util.Map" resultType="java.util.Map">
+	    SELECT mbi.ID,mbi.INSTANCE_ID,mbi.INSTANCE_NAME,mbi.TEMPLATE_ID
+	    FROM MA_BLUEPRINT_INSTANCE mbi
+	    WHERE mbi.TEMPLATE_ID= #{blueprintId} and mbi.INSTANCE_ID != #{bluePrintInsId}
+	</select>
+    <select id="getBlueprintInstanceKV" parameterType="java.lang.String" resultType="java.lang.String">
+	    SELECT mbi.KEY_VALUE
+	    FROM MA_BLUEPRINT_INSTANCE mbi
+	    WHERE mbi.INSTANCE_ID = #{bluePrintInsId}
+	</select>
+	
+	<select id="getLatestFlowInstanceId" parameterType="java.lang.String" resultType="java.util.Map">
+	    select mfi.ID as id, mfi.INSTANCEID as instanceId,mfi.START_TIME as startTime from ma_flowinstance mfi 
+	    where mfi.ID=#{id} and mfi.FLOWNAME=#{flowName}
+	    order by mfi.start_time desc limit 0, 1
+	</select>
+	
+	<select id="getBlueInstanceInfo" parameterType="java.util.Map" resultType="java.util.Map">
+	    select mbi.* from ma_flowinstance mf,ma_blueprint_instance mbi where mf.id=mbi.instance_id and mf.INSTANCEID=#{instanceId}
+	</select>
+	
+	<insert id="saveSnapshotOfBlueprintInstance" parameterType="java.util.Map">
+		insert into ma_snapshot_blueprint_instance (BLUE_INSTANCE_ID, SNAPSHOT_NAME, SNAPSHOT_INFO, USER_ID) values
+		(#{blueInstanceId}, #{snapshotName}, #{snapInfo}, #{userId})
+	</insert>
+	
+	<select id="checkSnapshotNameOfBlueprintInstance" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT count(*) from ma_snapshot_blueprint_instance where BLUE_INSTANCE_ID = #{blueInstanceId} and SNAPSHOT_NAME = #{snapshotName}
+	</select>
+	
+	<select id="listSnapshotOfBlueprintInstance" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from ma_snapshot_blueprint_instance where BLUE_INSTANCE_ID = #{blueInstanceId}
+	</select>
+	
+	<select id="getSnapshotDetailByBlueprintInstance" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from ma_snapshot_blueprint_instance where BLUE_INSTANCE_ID = #{blueInstanceId} and SNAPSHOT_NAME = #{snapshotName}
+	</select>
+	
+	<delete id="deleteSnapshotByBlueprintInstanceId" parameterType="java.lang.String">
+		delete from ma_snapshot_blueprint_instance where BLUE_INSTANCE_ID = #{blueInstanceId}
+	</delete>
+	
+	<delete id="deleteSnapshotByBlueprintInstance" parameterType="java.util.Map" >
+		delete from ma_snapshot_blueprint_instance where BLUE_INSTANCE_ID = #{blueInstanceId} and SNAPSHOT_NAME = #{snapshotName}
+	</delete>
+	
+	<select id="getSnapshotDetailById" parameterType="java.lang.String" resultType="java.util.Map">
+		select * from ma_snapshot_blueprint_instance where ID = #{id}
+	</select>
+	
+	<select id="getRcDetailsByBlueprintId" parameterType="java.lang.String" resultType="java.util.Map">
+		select * from ma_rc_blueprint_instance where BLUE_INSTANCE_ID = #{blueprintId}
+	</select>
+	
+	<insert id="saveRcOfBlueprintId" parameterType="java.util.Map">
+		insert into ma_rc_blueprint_instance (BLUE_INSTANCE_ID,RC_RESOURCE_POOL,INCREASE_APP_INSTANCE,REDUCE_APP_INSTANCE) 
+			values (#{blueprintId},#{rcResourcePool},#{increaseAppInstance},#{reduceAppInstance})
+	</insert>
+	
+	<update id="updateRcDetailByBlueprintId" parameterType="java.util.Map">
+		update ma_rc_blueprint_instance set RC_RESOURCE_POOL = #{rcResourcePool}, INCREASE_APP_INSTANCE = #{increaseAppInstance}, 
+			REDUCE_APP_INSTANCE = #{reduceAppInstance} where BLUE_INSTANCE_ID = #{blueprintId}
+	</update>
+	<delete id="deleteFlowInstanceIds" parameterType="java.lang.String" >
+		delete from ma_flowinstance where ID = #{id}
+	</delete>
+	<select id="listFlowInstanceIds" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		select mfi.ID as id, mfi.INSTANCEID as instanceId,mfi.START_TIME as startTime ,mfi.FLOWID as flowId, 
+		mfi.APPVERSION as componentDetail from ma_flowInstance mfi 
+	    WHERE 1=1
+		<if test="id != null and id != '' ">
+			and mfi.ID=#{id}
+		</if>
+		<if test=" flowName != null and flowName != '' ">
+			and mfi.FLOWNAME=#{flowName}
+		</if>
+		<if test=" appName != null and appName != '' ">
+			and mfi.APPNAME=#{appName}
+		</if>
+		<if test=" flowId != null and flowId != '' ">
+			and mfi.FLOWID=#{flowId}
+		</if>
+		<if test=" instanceId != null and instanceId != '' ">
+			and mfi.INSTANCEID=#{instanceId}
+		</if>
+		order by mfi.START_TIME DESC
+	</select>
+	<select id="getBlueprintTemplateByInsId" parameterType="java.lang.String" resultType="java.util.Map">
+		select mbt.* from ma_blueprint_template mbt,ma_blueprint_instance mbi 
+		where mbi.INSTANCE_ID = #{blueprintId} and mbi.TEMPLATE_ID = mbt.ID
+	</select>
+	<select id="getFlowRecordByInstanceId" parameterType="java.util.Map" resultType="java.util.Map">
+	    select mfi.* from ma_flowInstance mfi where mfi.INSTANCEID=#{value}
+	</select>
+	<update id="updateBlueprintReducePoolConfig" parameterType="java.util.Map">
+		update ma_blueprint_instance set REDUCE_POOL_CONFIG = #{reducePoolConfig} where INSTANCE_ID = #{blueprintInstanceId}
+	</update>
+	<select id="getBlueprintReducePoolSize" parameterType="java.lang.String" resultType="java.lang.String">
+	    select REDUCE_POOL_CONFIG from ma_blueprint_instance where INSTANCE_ID=#{blueprintInstanceId}
+	</select>
+	<select id="listBlueprintByNameAndTemplateAndApp" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT instance.*, temp.NAME AS TEMPLATE_NAME FROM ma_blueprint_instance instance, ma_blueprint_template temp WHERE temp.ID = instance.TEMPLATE_ID 
+		and instr(lower(temp.NAME), lower(#{templateName})) > 0 and instr(lower(instance.INSTANCE_NAME), lower(#{blueprintName})) > 0 
+		<if test=" userIds != null and userIds != '' ">
+			and	instance.USERID in 
+			<foreach collection="userIds" index="index" item="userId" open="("  separator="," close=")">
+			 	#{userId}
+			</foreach>
+		</if>
+		ORDER BY instance.ID DESC
+	</select>
+	
+	<select id="getFlowInstanceIdsByMapNew" parameterType="java.util.Map" resultType="java.util.Map">
+	    select mbi.INSTANCE_NAME as instanceName,mfi.ID as id, mfi.INSTANCEID as instanceId,mfi.START_TIME as startTime,mfi.FLOWNAME as flowName from ma_flowInstance mfi,ma_blueprint_instance mbi 
+	    where mbi.INSTANCE_ID=mfi.ID and mfi.APPNAME = ''
+   		<if test="id != null and id != '' ">
+			and mfi.ID=#{id}
+		</if>
+		<if test="flowName != null and flowName != '' ">
+			and mfi.FLOWNAME=#{flowName}
+		</if>
+		<if test="startTime != null and startTime !=''">
+			and mfi.START_TIME &gt;=#{startTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			and mfi.START_TIME &lt;=#{endTime}
+		</if>
+		order by START_TIME DESC
+	</select>
+	
+	<select id="getFlowInstanceIds" parameterType="java.util.Map" resultType="java.util.Map">
+	    select mbi.INSTANCE_NAME as instanceName,mfi.ID as id, mfi.INSTANCEID as instanceId,mfi.START_TIME as startTime,mfi.FLOWNAME as flowName from ma_flowInstance mfi,ma_blueprint_instance mbi 
+	    where mbi.INSTANCE_ID=mfi.ID and mfi.APPNAME = ''
+	    <if test="names != null">
+   		   and mbi.INSTANCE_NAME in
+	   		<foreach collection="names" index="index" item="item" open="(" separator="," close=")">
+			    #{item}
+			</foreach>
+		</if>
+   		<if test="ids != null">
+   		   and mfi.ID in
+	   		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+			    #{item}
+			</foreach>
+		</if>
+		<if test="flowNames != null">
+			and mfi.FLOWNAME in
+			<foreach collection="flowNames" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null and startTime !=''">
+			and mfi.START_TIME &gt;=#{startTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			and mfi.START_TIME &lt;=#{endTime}
+		</if>
+		order by START_TIME DESC
+	</select>
+	<select id="getBlueprintById" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		select * from ma_blueprint_template where ID =
+		#{value}
+	</select>
+	<select id="findBlueInstanceIds" parameterType="java.util.Map"
+		resultType="java.lang.String">
+		select id from ma_blueprint_instance where INSTANCE_ID in
+		<foreach collection="instanceIds" index="index" item="item" open="(" separator="," close=")">
+		    #{item}
+		</foreach>
+	</select>
+</mapper>

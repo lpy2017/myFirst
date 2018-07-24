@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+
+<mapper namespace="release">
+	<resultMap id="releaseTask" type="com.dc.appengine.appmaster.entity.ReleaseTask">
+		<result column="ID" property="id" javaType="java.lang.Integer" />
+		<result column="NAME" property="name" javaType="java.lang.String" />
+		<result column="INITIATOR" property="initiator" javaType="java.lang.String" />
+		<result column="SYSTEM" property="system" javaType="java.lang.String" />
+		<result column="MODULE" property="module" javaType="java.lang.String" />
+		<result column="START_TIME" property="startTime" javaType="java.util.Date" />
+		<result column="STOP_TIME" property="stopTime" javaType="java.util.Date" />
+		<result column="END_TIME" property="endTime" javaType="java.util.Date" />
+		<result column="DESCRIPTION" property="description" javaType="java.lang.String" />
+		<result column="STATUS" property="status" javaType="java.lang.String" />
+		<result column="BLURPRINT_TEMPLATE" property="blueprintTemplate" javaType="java.lang.String" />
+		<result column="BLUEPRINT_INSTANCE" property="blueprintInstance" javaType="java.lang.String" />
+		<result column="BLUEPRINT_FLOW" property="blueprintFlow" javaType="java.lang.String" />
+		<result column="BLUEPRINT_FLOW_INSTANCE" property="blueprintFlowInstance" javaType="java.lang.String" />
+		<result column="BUS_ID" property="busId" javaType="java.lang.Integer" />
+		<result column="DEPEND_ID" property="dependId" javaType="java.lang.Integer" />
+		<result column="AUTO_EXECUTE" property="autoExecute" javaType="java.lang.Boolean" />
+		<result column="CRONEXPRESSION" property="cronExepression" javaType="java.lang.String" />
+		<result column="BLUEPRINT_NAME" property="blueprintName" javaType="java.lang.String" />
+		<result column="INSTANCE_NAME" property="blueprintInstanceName" javaType="java.lang.String" />
+		<result column="FLOW_NAME" property="blueprintFlowName" javaType="java.lang.String" />
+		<result column="BUS_NAME" property="busName" javaType="java.lang.String" />
+		<result column="DEPEND_NAME" property="dependName" javaType="java.lang.String" />
+	</resultMap>
+	<resultMap id="releaseApproval" type="com.dc.appengine.appmaster.entity.ReleaseApproval">
+		<result column="ID" property="id" javaType="java.lang.Integer" />
+		<result column="TASK_ID" property="taskId" javaType="java.lang.Integer" />
+		<result column="APPROVER" property="approver" javaType="java.lang.String" />
+		<result column="PERFORMER" property="performer" javaType="java.lang.String" />
+		<result column="APPLY_TIME" property="applyTime" javaType="java.util.Date" />
+		<result column="APPROVE_TIME" property="approveTime" javaType="java.util.Date" />
+		<result column="APPROVE_ORDER" property="approveOrder" javaType="java.lang.Integer" />
+		<result column="STATUS" property="status" javaType="java.lang.String" />
+		<result column="NAME" property="taskName" javaType="java.lang.String" />
+		<result column="INITIATOR" property="taskInitiator" javaType="java.lang.String" />
+		<result column="START_TIME" property="taskStartTime" javaType="java.util.Date" />
+	</resultMap>
+	
+	<resultMap id="releaseBus" type="com.dc.appengine.appmaster.entity.ReleaseBus">
+		<result column="ID" property="id" javaType="java.lang.Integer" />
+		<result column="NAME" property="name" javaType="java.lang.String" />
+		<result column="START_TIME" property="startTime" javaType="java.util.Date" />
+		<result column="STOP_TIME" property="stopTime" javaType="java.util.Date" />
+		<result column="AUTHOR" property="author" javaType="java.lang.String" />
+	</resultMap>
+	
+	<select id="getReleaseTaskById" resultMap="releaseTask" parameterType="java.lang.Integer">
+		SELECT rt.*, rb.NAME as BUS_NAME, blue.NAME as BLUEPRINT_NAME, blueIns.INSTANCE_NAME as INSTANCE_NAME, flow.FLOW_NAME as FLOW_NAME FROM release_task rt, release_bus rb, ma_blueprint_template blue, ma_blueprint_instance blueIns, ma_blueprint_type flow WHERE rt.ID = #{taskId} 
+		 and blueIns.TEMPLATE_ID = blue.ID and rt.BLUEPRINT_INSTANCE = blueIns.INSTANCE_ID and rt.BLUEPRINT_FLOW = flow.ID and rt.BUS_ID = rb.ID
+	</select>
+	
+	<select id="getReleaseTaskByName" resultMap="releaseTask" parameterType="java.lang.String">
+		SELECT * FROM release_task WHERE NAME = #{taskName}
+	</select>
+	
+	<select id="getReleaseApprovalById" resultMap="releaseApproval" parameterType="java.lang.Integer">
+		SELECT * FROM release_approval WHERE ID = #{approvalId}
+	</select>
+	
+	<select id="listReadyReleaseApprovalsByUser" resultMap="releaseApproval" parameterType="java.lang.String">
+		SELECT ra.*, rt.INITIATOR, rt.NAME, rt.START_TIME FROM release_approval ra left join release_task rt on rt.ID = ra.TASK_ID WHERE ra.APPROVER = #{user} and ra.STATUS = '01' order by ra.TASK_ID
+	</select>
+	
+	<select id="listDoneReleaseApprovalsByUser" resultMap="releaseApproval" parameterType="java.lang.String">
+		SELECT ra.*, rt.INITIATOR, rt.NAME, rt.START_TIME FROM release_approval ra left join release_task rt on rt.ID = ra.TASK_ID WHERE ra.APPROVER = #{user} and ra.STATUS in ('02', '03') order by ra.TASK_ID
+	</select>
+	
+	<select id="listReleaseApprovalsByUser" resultMap="releaseApproval" parameterType="java.util.Map">
+		SELECT ra.*, rt.INITIATOR, rt.NAME, rt.START_TIME FROM release_approval ra left join release_task rt on rt.ID = ra.TASK_ID 
+		<trim prefix="where" prefixOverrides="and">
+			<include refid="CountCondtion_status" />
+		</trim>
+		<if test="approver != null and approver != '' ">
+			and ra.APPROVER = #{approver}
+		</if>
+		<if test="performer != null and performer != '' ">
+			and ra.PERFORMER = #{performer}
+		</if>
+		order by ra.TASK_ID
+	</select>
+	<sql id="CountCondtion_status">
+		<if test=" statuses != null ">
+			and ra.STATUS in
+			<foreach collection="statuses" index="index" item="status"
+				open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+	</sql>
+	
+	<select id="listReleaseTask" resultMap="releaseTask" parameterType="java.util.Map">
+		SELECT rt.*, rb.NAME as BUS_NAME FROM release_task rt, release_bus rb WHERE rt.BUS_ID = rb.ID 
+		<if test="busId != null and busId != -1 ">
+			and rt.BUS_ID = #{busId}
+		</if>
+		<if test="initiator != null and initiator != '' ">
+			and rt.INITIATOR like '%${initiator}%'
+		</if>
+		<if test="name != null and name != '' ">
+			and rt.NAME like '%${name}%'
+		</if>
+		<if test="system != null and system != '' ">
+			and rt.SYSTEM like '%${system}%'
+		</if>
+		<if test="module != null and module != '' ">
+			and rt.MODULE like '%${module}%'
+		</if>
+		<if test="startTime != null">
+			and rt.START_TIME &gt; #{startTime}
+		</if>
+		<if test="stopTime != null">
+			and rt.STOP_TIME &lt; #{stopTime}
+		</if>
+		<if test="status != null and status != '' ">
+			and rt.STATUS = #{status}
+		</if>
+		 order by rt.BUS_ID, rt.NAME
+	</select>
+	
+	<insert id = "saveReleaseTask" parameterType="com.dc.appengine.appmaster.entity.ReleaseTask" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+    	INSERT INTO release_task(NAME, INITIATOR, SYSTEM, MODULE, START_TIME, STOP_TIME, DESCRIPTION, STATUS, BLURPRINT_TEMPLATE,
+    	 BLUEPRINT_INSTANCE, BLUEPRINT_FLOW, BUS_ID, 
+    	 <if test="dependId != null and dependId != -1 ">
+				DEPEND_ID,
+		 </if>
+		 AUTO_EXECUTE, CRONEXPRESSION) VALUES(#{name}, #{initiator},
+    	 #{system,jdbcType=VARCHAR}, #{module,jdbcType=VARCHAR}, #{startTime}, #{stopTime}, #{description,jdbcType=VARCHAR}, 
+    	 #{status}, #{blueprintTemplate}, #{blueprintInstance}, #{blueprintFlow}, #{busId}, 
+    	 <if test="dependId != null and dependId != -1 ">
+				#{dependId},
+		 </if>
+    	 #{autoExecute}, #{cronExepression,jdbcType=VARCHAR})
+    </insert>
+    
+    <update id="updateReleaseTask" parameterType="com.dc.appengine.appmaster.entity.ReleaseTask">
+		update release_task
+		<trim prefix="SET" suffixOverrides="," suffix=" where id = #{id} ">
+		    END_TIME = NULL, BLUEPRINT_FLOW_INSTANCE = NULL,
+			<if test="busId != null and busId != -1 ">
+				BUS_ID = #{busId},
+			</if>
+			<if test="name != null and name != '' ">
+				NAME = #{name},
+			</if>
+			<if test="system !=null and system != '' ">
+				SYSTEM = #{system},
+			</if>
+			<if test="module != null and module != '' ">
+				MODULE = #{module},
+			</if>
+			<if test="description != null and description != '' ">
+				DESCRIPTION = #{description},
+			</if>
+			<if test="startTime != null">
+				START_TIME = #{startTime},
+			</if>
+			<if test="stopTime != null">
+				STOP_TIME = #{stopTime},
+			</if>
+			<if test="status != null and status != '' ">
+				STATUS = #{status},
+			</if>
+			<if test="blueprintTemplate != null and blueprintTemplate != '' ">
+				BLURPRINT_TEMPLATE = #{blueprintTemplate},
+			</if>
+			<if test="blueprintInstance != null and blueprintInstance != '' ">
+				BLUEPRINT_INSTANCE = #{blueprintInstance},
+			</if>
+			<if test="blueprintFlow != null and blueprintFlow != '' ">
+				BLUEPRINT_FLOW = #{blueprintFlow},
+			</if>
+			<if test="dependId != null and dependId != -1 ">
+				DEPEND_ID = #{dependId},
+			</if>
+			<if test="autoExecute != null">
+				AUTO_EXECUTE = #{autoExecute},
+			</if>
+			<if test="cronExepression != null and cronExepression != '' ">
+				CRONEXPRESSION = #{cronExepression},
+			</if>
+		</trim>
+	</update>
+    
+    <delete id="deleteReleaseTask">
+		DELETE FROM release_task WHERE ID = #{taskId}
+	</delete>
+	
+	<select id="listReleaseApprovalByTaskId" resultMap="releaseApproval" parameterType="java.lang.Integer">
+		SELECT * FROM release_approval WHERE TASK_ID = #{taskId} order by APPROVE_ORDER ASC
+	</select>
+	
+	<insert id = "saveReleaseApproval" parameterType="com.dc.appengine.appmaster.entity.ReleaseApproval">
+    	INSERT INTO release_approval(TASK_ID, APPROVER, APPROVE_ORDER, STATUS) 
+    	VALUES(#{taskId}, #{approver}, #{approveOrder}, #{status})
+    </insert>
+    
+    <update id="updateReleaseApprovalSingle" parameterType="java.util.Map">
+		update release_approval set PERFORMER = #{user}, APPROVE_TIME = now(), STATUS = #{status} where id = #{id}
+	</update>
+	
+	<update id="updateReleaseApprovalStatus" parameterType="java.util.Map">
+		update release_approval set STATUS = #{status} where id = #{id}
+	</update>
+	
+	<delete id="deleteReleaseApprovalsByTaskId">
+		DELETE FROM release_approval WHERE TASK_ID = #{taskId}
+	</delete>
+	
+	<delete id="deleteReleaseApprovalById">
+		DELETE FROM release_approval WHERE ID = #{approvalId}
+	</delete>
+	
+	<update id="updateReleaseTaskExecute" parameterType="java.util.Map">
+		update release_task set STATUS = #{status}, BLUEPRINT_FLOW_INSTANCE = #{blueprintFlowInstance} where id = #{id}
+	</update>
+	
+	<update id="updateReleaseTaskDone" parameterType="java.util.Map">
+		update release_task set STATUS = #{status} where id = #{id}
+	</update>
+	
+	<update id="updateReleaseTaskStatus" parameterType="java.util.Map">
+		update release_task set STATUS = #{status}, END_TIME = now() where BLUEPRINT_FLOW_INSTANCE = #{flowInstanceId}
+	</update>
+	
+	<select id="listReleaseBus" resultMap="releaseBus" parameterType="java.util.Map">
+		SELECT * FROM release_bus order by START_TIME DESC
+	</select>
+	
+	<select id="getReleaseBusById" resultMap="releaseBus" parameterType="java.lang.Integer">
+		SELECT * FROM release_bus where ID = #{busId}
+	</select>
+	
+	<select id="listReleaseTaskByBusId" resultMap="releaseTask" parameterType="java.lang.Integer">
+		SELECT rt.*, rb.NAME as BUS_NAME FROM release_task rt, release_bus rb where rt.BUS_ID = rb.ID
+		<if test="value != null and value != -1 ">
+			and rt.BUS_ID = #{value}
+		</if>
+	</select>
+	
+	<select id="listDependReleaseTaskByBusId" resultMap="releaseTask" parameterType="java.util.Map">
+		SELECT * FROM release_task where BUS_ID = #{busId}
+	</select>
+	
+	<insert id = "saveReleaseBus" parameterType="com.dc.appengine.appmaster.entity.ReleaseBus">
+    	INSERT INTO release_bus(NAME, START_TIME, STOP_TIME, AUTHOR) VALUES(#{name}, #{startTime}, #{stopTime}, #{author})
+    </insert>
+    
+    <update id="updateReleaseBus" parameterType="com.dc.appengine.appmaster.entity.ReleaseBus">
+		update release_bus 
+		<trim prefix="SET" suffixOverrides="," suffix=" where id = #{id} ">
+			<if test="name != null and name != '' ">
+				NAME = #{name},
+			</if>
+			<if test="startTime != null">
+				START_TIME = #{startTime},
+			</if>
+			<if test="stopTime !=null">
+				STOP_TIME = #{stopTime},
+			</if>
+			<if test="author != null and author != '' ">
+				AUTHOR = #{author},
+			</if>
+		</trim>
+	</update>
+	
+	<delete id="deleteReleaseBusById">
+		DELETE FROM release_bus WHERE ID = #{busId}
+	</delete>
+
+	<select id="listReleaseTasksByBusId" resultType="java.util.Map" parameterType="java.lang.Integer">
+		SELECT * FROM release_task where BUS_ID = #{value} order by ID
+	</select>
+	<select id="judgeHaveChild" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		SELECT count(*) FROM release_task where DEPEND_ID = #{value}
+	</select>
+	<select id="findReleaseTaskById" resultType="java.util.Map" parameterType="java.lang.Integer">
+		SELECT * FROM release_task where ID = #{value}
+	</select>
+	
+	<select id="countReleaseTaskByFlowInstanceId" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT count(ID) FROM release_task where BLUEPRINT_FLOW_INSTANCE = #{flowInstanceId}
+	</select>
+	
+	<select id="countReleaseBusByName" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT count(ID) FROM release_bus WHERE NAME = #{busName}
+	</select>
+</mapper>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+
+<mapper namespace="releaseManage">
+	<select id="listReleases" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT tmp1.* ,ifnull(tmp2.appCount,0) appCount FROM (
+		SELECT rs.id,rs.name as releaseName,rs.description,rsl.name as lifecycleName,rs.update_time as updateTime 
+		,rsl.id as lifecycleId
+		FROM ma_release rs,release_lifecycle rsl WHERE rs.lifecycle_id=rsl.id
+			<if test="releaseName != null and releaseName != '' ">
+				and rs.name like concat('%',#{releaseName},'%')
+			</if>
+			<if test="description != null and description != '' ">
+				and rs.description like concat('%',#{description},'%')
+			</if>
+			<if test="lifecycleName !=null and lifecycleName != '' ">
+				and rsl.name like concat('%',#{lifecycleName},'%')
+			</if>
+			) tmp1 left join (select release_id,count(*) as appCount from release_apps GROUP BY release_id) tmp2 
+			on tmp1.id=tmp2.release_id
+	</select>
+	
+	<insert id = "saveRelease" parameterType="java.util.Map">
+    	INSERT INTO ma_release(id,name,lifecycle_id,user_id,update_time,description)
+    		VALUES(#{id},#{name},#{lifecycleId},#{userId},now(),#{description})
+    </insert>
+    
+    <update id="updateRelease" parameterType="java.util.Map">
+		update ma_release
+		<trim prefix="SET" suffixOverrides="," suffix=" where id = #{id} ">
+			<if test="name != null and name != '' ">
+				name = #{name},
+			</if>
+			<if test="description != null and description != '' ">
+				description = #{description},
+			</if>
+			<if test="lifecycleId !=null and lifecycleId != '' ">
+				lifecycle_id = #{lifecycleId},
+			</if>
+			update_time = now()
+		</trim>
+	</update>
+    <delete id="deleteReleaseById">
+		DELETE FROM ma_release WHERE id = #{id}
+	</delete>
+	<delete id="deleteReleaseApps" parameterType="java.util.Map">
+		DELETE FROM release_apps WHERE release_id = #{releaseId}
+		<if test="resourceId !=null and resourceId !=''">
+			and resource_id=#{resourceId}
+		</if>
+	</delete>
+	<select id="checkRelease" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT * FROM ma_release mr WHERE name = #{releaseName}
+		<if test="id != null and id != '' ">
+				and mr.id != #{id}
+		</if>
+	</select>
+	<select id="listAllLifecycles" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT * FROM release_lifecycle rsl where 1=1
+		<if test="userId != null and userId != 0 ">
+				and rsl.user_id = #{userId}
+		</if>
+	</select>
+	<insert id="addReleaseApps" parameterType="java.util.Map">
+		INSERT INTO release_apps(release_id,resource_id) VALUES
+		<foreach collection="resourceIds" index="index" item="item" open="" separator="," close="">
+		    (#{releaseId},#{item})
+		</foreach>
+	</insert>
+	<select id="findAppIds" parameterType="java.util.Map" resultType="java.lang.String">
+		select resource_id from release_apps where release_id=#{releaseId} and resource_id in
+		<foreach collection="resourceIds" index="index" item="item" open="(" separator="," close=")">
+		    #{item}
+		</foreach>
+	</select>
+	<select id="findReleaseById" resultType="java.util.Map">
+		SELECT rs.id,rs.name as releaseName,rs.description,rsl.name as lifecycleName,rs.update_time as updateTime 
+		,rsl.id as lifecycleId FROM ma_release rs,release_lifecycle rsl WHERE rs.lifecycle_id=rsl.id and rs.id=#{value}
+	</select>
+	<select id="findReleaseAppsById" resultType="java.util.Map">
+		SELECT rap.release_id as releaseId,rap.resource_id as resourceId,svs.RESOURCE_NAME as resourceName,svs.RESOURCE_TYPE as resourceType FROM release_apps rap,sv_resource svs WHERE svs.id=rap.resource_id and rap.release_id=#{value}
+	</select>
+	<select id="findReleaseStageEnvs" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT rls.*, rse.id as envId,rse.release_id as releaseId,rse.blueprint_ins_id as blueInsId, rse.flow_id as cdFlowId FROM release_stage_env rse,release_lifecycle_stage rls WHERE 
+		rse.lifecycle_stage_id=rls.id and rse.release_id=#{releaseId}
+		<if test="resourceId !=null and resourceId !=''">
+				and rse.resource_id=#{resourceId}
+		</if>
+		<if test="phaseId !=null and phaseId !=''">
+				and rse.lifecycle_stage_id=#{phaseId}
+		</if>
+	</select>
+	<select id="findPhaseBylifecycleId" resultType="java.util.Map">
+		SELECT rls.* FROM release_lifecycle_stage rls WHERE rls.release_lifecycle_id=#{value}
+	</select>
+	
+	<insert id="addReleaseStageEnvs" parameterType="java.util.Map">
+		INSERT INTO release_stage_env(id,release_id,resource_id,lifecycle_stage_id) VALUES
+		<foreach collection="stageMaps" index="index" item="item" open="" separator="," close="">
+		    (#{item.id},#{item.releaseId},#{item.resourceId},#{item.lifecycleStageId})
+		</foreach>
+	</insert>
+	<delete id="deleteReleaseStageEnvByStageId">
+		DELETE FROM release_stage_env WHERE lifecycle_stage_id = #{stageId}
+	</delete>
+	<select id="findReleaseStageEnvsById" resultType="java.util.Map">
+		SELECT rse.* FROM release_stage_env rse WHERE rse.release_id = #{value}
+	</select>
+	<delete id="deleteReleaseStageEnvs" parameterType="java.util.Map">
+		DELETE FROM release_stage_env WHERE release_id = #{releaseId}
+		<if test="resourceId !=null and resourceId !=''">
+				and resource_id=#{resourceId}
+		</if>
+	</delete>
+	<select id="findReleaseByName" resultType="java.util.Map">
+		SELECT rs.id,rs.name as releaseName,rs.description,rsl.name as lifecycleName,rs.update_time as updateTime 
+		,rsl.id as lifecycleId FROM ma_release rs,release_lifecycle rsl WHERE rs.lifecycle_id=rsl.id and rs.name=#{value}
+	</select>
+	<select id="findResourceInfo" resultType="java.util.Map">
+		SELECT svs.id as resourceId,svs.RESOURCE_NAME as resourceName,svs.RESOURCE_TYPE as resourceType FROM sv_resource svs 
+		WHERE svs.RESOURCE_NAME=#{value} 
+	</select>
+	<select id="findNodeIps" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT IP as ip FROM ma_node WHERE ADAPTERNODEID in
+		<foreach collection="nodeIds" index="index" item="item" open="(" separator="," close=")">
+		    #{item}
+		</foreach>
+	</select>
+	<update id="updateReleaseEnv" parameterType="java.util.Map">
+		update release_stage_env  SET blueprint_ins_id=#{blueprintInsId},blueprint_tmplate_id=#{blueprintId},flow_id=#{cdFlowId}
+		where release_id=#{releaseId} and resource_id=#{resourceId} and lifecycle_stage_id=#{phaseId}
+	</update>
+	<update id="updateReleaseEnvFlow" parameterType="java.util.Map">
+		update release_stage_env  SET flow_id=#{cdFlowId} where blueprint_ins_id=#{blueprintInsId}
+	</update>
+	<select id="findReleaseIdsBylifecycleId" resultType="java.util.Map">
+		SELECT rs.id,rse.resource_id as resourceId
+		FROM ma_release rs,release_stage_env rse WHERE rs.id=rse.release_id and rs.lifecycle_id =#{lifecycleId} group by rs.id,rse.resource_id
+	</select>
+</mapper>

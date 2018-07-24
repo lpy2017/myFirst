@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+
+<mapper namespace="rollback">
+
+	<resultMap id="resultMap_AppSnapshot" type="com.dc.appengine.appmaster.entity.AppSnapshot">
+		<result column="ID" property="snapshotId" javaType="java.lang.String" />
+		<result column="SNAPSHOT_NAME" property="snapshotName"
+			javaType="java.lang.String" />
+		<result column="APP_ID" property="appId" javaType="java.lang.Long" />
+		<result column="APP_NAME" property="appName" javaType="java.lang.String" />
+		<result column="SNAPSHOT_INFO" property="snapshotInfo"
+			javaType="java.lang.String" />
+		<result column="BLUE_INSTANCE_ID" property="blueInstanceId"
+			javaType="java.lang.Long" />
+		<result column="APP_KEY" property="appKey" javaType="java.lang.Long" />
+		<result column="UPDATE_TIME" property="updateTime" javaType="java.lang.String" />
+		<result column="USER_ID" property="userId" javaType="java.lang.Long" />
+	</resultMap>
+
+	<select id="getSnapshotOfApp" parameterType="java.util.Map"
+		resultMap="resultMap_AppSnapshot">
+		SELECT * FROM ma_snapshot_application where id=#{snapId}
+		and
+		app_id=#{appId}
+	</select>
+
+	<update id="updateInstanceById" parameterType="java.util.HashMap">
+		update ma_instance
+		set id=#{tId}, deploy_time=now() where id=#{sId}
+	</update>
+
+	<select id="getInstanceById" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		select ins.STATUS as status, ins.RESOURCE_VERSION_ID as
+		resVersionId, node.IP as nodeIp from ma_application app,
+		ma_instance
+		ins ,ma_node node
+		where ins.app_id=app.id and node.ADAPTERNODEID =
+		ins.NODE_ID
+		and
+		ins.id=#{instanceId}
+	</select>
+
+	<insert id="saveInstanceBySnapshot" parameterType="java.util.HashMap">
+		insert into ma_instance
+		(ID,APP_ID,NODE_ID,DEPLOY_TIME,RESOURCE_VERSION_ID,COMPONENT_INPUT,COMPONENT_OUTPUT)
+		values(#{id},#{appId},#{nodeId},now(),#{resVersionId},
+		#{input},
+		#{output})
+	</insert>
+	
+	<select id="getSnapshotByAppId" parameterType="java.util.Map"
+		resultMap="resultMap_AppSnapshot">
+		SELECT * FROM ma_snapshot_application where app_id=#{appId}
+	</select>
+	
+	<update id="updateSnapshotInfoById" parameterType="java.util.HashMap">
+		update ma_snapshot_application
+		set snapshot_info=#{snapshotInfo} where id=#{id}
+	</update>
+	
+</mapper>

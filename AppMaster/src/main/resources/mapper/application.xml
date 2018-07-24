@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+
+<mapper namespace="application">
+
+	<resultMap id="resultMap_applicationMap5" type="com.dc.appengine.appmaster.entity.Application">
+		<result column="ID" property="id" javaType="java.lang.Long" />
+		<result column="DESCRIPTION" property="description" javaType="java.lang.String" />
+		<result column="USERID" property="userId" javaType="java.lang.Long" />
+		<result column="APP_NAME" property="appName" javaType="java.lang.String" />
+		<result column="DESTROY_ID" property="destroyId" javaType="java.lang.Integer" />
+		<result column="DEPLOY_ID" property="deployId" javaType="java.lang.Integer" />
+		<result column="START_ID" property="startId" javaType="java.lang.Integer" />
+		<result column="STOP_ID" property="stopId" javaType="java.lang.Integer" />
+		<result column="CLUSTER_ID" property="clusterId" javaType="java.lang.String" />
+		<result column="BLUE_INSTANCE_ID" property="blueInstanceId"
+			javaType="java.lang.Long" />
+		<!-- <result column="RESOURCE_VERSION_ID" property="resourceVersionId" 
+			javaType="java.lang.String"/> -->
+		<result column="VERSIONID" property="versionid" javaType="java.lang.String" />
+		<result column="KEY" property="key" javaType="java.lang.Integer" />
+		<result column="RC_FLAG" property="rcFlag" javaType="java.lang.Boolean" />
+		<result column="COMPONENT_NAME" property="componentName"
+			javaType="java.lang.String" />
+		<result column="resourceId" property="resourceId" javaType="java.lang.String" />
+		<result column="NODE_NAME" property="nodeDisplay" javaType="java.lang.String" />
+	</resultMap>
+
+	<resultMap id="resultMap_applicationMapConfig" type="com.dc.appengine.appmaster.entity.Application">
+		<result column="ID" property="id" javaType="java.lang.Long" />
+		<result column="DESCRIPTION" property="description" javaType="java.lang.String" />
+		<result column="USERID" property="userId" javaType="java.lang.Long" />
+		<result column="APP_NAME" property="appName" javaType="java.lang.String" />
+		<result column="DESTROY_ID" property="destroyId" javaType="java.lang.Integer" />
+		<result column="DEPLOY_ID" property="deployId" javaType="java.lang.Integer" />
+		<result column="START_ID" property="startId" javaType="java.lang.Integer" />
+		<result column="STOP_ID" property="stopId" javaType="java.lang.Integer" />
+		<result column="CLUSTER_ID" property="clusterId" javaType="java.lang.String" />
+		<result column="BLUE_INSTANCE_ID" property="blueInstanceId"
+			javaType="java.lang.Long" />
+		<result column="VERSIONID" property="versionid" javaType="java.lang.String" />
+		<result column="KEY" property="key" javaType="java.lang.Integer" />
+		<result column="RC_FLAG" property="rcFlag" javaType="java.lang.Boolean" />
+		<result column="COMPONENT_NAME" property="componentName"
+			javaType="java.lang.String" />
+		<result column="CURRENT_VERSION" property="currentVersion" javaType="java.lang.String" />
+		<result column="CURRENT_INPUT" property="currentInput" javaType="java.lang.String" />
+		<result column="CURRENT_OUTPUT" property="currentOutput" javaType="java.lang.String" />
+		<result column="TARGET_VERSION" property="targetVersion" javaType="java.lang.String" />
+		<result column="TARGET_INPUT" property="targetInput" javaType="java.lang.String" />
+		<result column="TARGET_OUTPUT" property="targetOutput" javaType="java.lang.String" />
+		<result column="RESOURCE_ID" property="resourceId" javaType="java.lang.String" />
+		<result column="SMART_FLAG" property="smartFlag" javaType="java.lang.Integer" />
+		<result column="NODE_NAME" property="nodeDisplay" javaType="java.lang.String" />
+		<result column="EXECUTE_FLAG" property="executeFlag" javaType="java.lang.Integer" />
+	</resultMap>
+
+	<resultMap id="resultMap_applicationMap" type="com.dc.appengine.appmaster.entity.Application">
+		<result column="ID" property="id" javaType="java.lang.Long" />
+		<result column="DESCRIPTION" property="description" javaType="java.lang.String" />
+		<result column="USERID" property="userId" javaType="java.lang.Long" />
+		<result column="DEPLOY_TIME" property="deployTime" javaType="java.util.Date" />
+		<result column="APP_NAME" property="appName" javaType="java.lang.String" />
+		<result column="DESTROY_ID" property="destroyId" javaType="java.lang.Integer" />
+		<result column="DEPLOY_ID" property="deployId" javaType="java.lang.Integer" />
+		<result column="START_ID" property="startId" javaType="java.lang.Integer" />
+		<result column="STOP_ID" property="stopId" javaType="java.lang.Integer" />
+		<result column="CLUSTER_ID" property="clusterId" javaType="java.lang.String" />
+		<result column="BLUE_INSTANCE_ID" property="blueInstanceId"
+			javaType="java.lang.Long" />
+		<result column="COMPONENT_NAME" property="componentName"
+			javaType="java.lang.String" />
+		<result column="NODE_NAME" property="nodeDisplay" javaType="java.lang.String" />
+	</resultMap>
+
+
+
+	<!-- getAppUpdateTime -->
+	<select id="getAppUpdateTime" resultType="java.lang.String">
+		SELECT
+		MAX(instance.deploy_time) FROM ma_application app , ma_instance
+		instance
+		WHERE app.id = instance.app_id AND app.id=#{value}
+	</select>
+
+	<select id="countAppsByUserIdSearch" parameterType="application"
+		resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM ma_application app
+		<trim prefix="where" prefixOverrides="and">
+			<include refid="CountCondtion_userIds" />
+			<include refid="CountCondtion_appName" />
+			<include refid="CountCondtion_description" />
+		</trim>
+		and app.blue_instance_id=#{blueInstanceId}
+	</select>
+	<!-- 根据userid和搜索关键词查询应用个数 -->
+	<sql id="CountCondtion_userIds">
+		<if test=" userIds != null and userIds != '' ">
+			and app.userid in
+			<foreach collection="userIds" index="index" item="userId"
+				open="(" separator="," close=")">
+				#{userId}
+			</foreach>
+		</if>
+	</sql>
+	<sql id="CountCondtion_userName">
+		<if test=" userName != null and userName != '' ">
+			and ai.USERID like '%${userName}%'
+		</if>
+	</sql>
+	<sql id="CountCondtion_appName">
+		<if test=" appName != null and appName != '' ">
+			and app.app_name like '%${appName}%'
+		</if>
+	</sql>
+
+	<sql id="CountCondtion_description">
+		<if test=" description != null and description != '' ">
+			and app.description like '%${description}%'
+		</if>
+	</sql>
+
+	<select id="listOperationApps" parameterType="java.util.Map" resultMap="resultMap_applicationMap">
+		SELECT app.*,sr.ID resourceId FROM ma_application app ,sv_resource sr
+		<trim prefix="where" prefixOverrides="and">
+			<include refid="Condtion_userIds" />
+		</trim>
+		and app.blue_instance_id=#{objCondition.blueInstanceId}
+		and app.COMPONENT_NAME = sr.RESOURCE_NAME
+		GROUP BY app.id
+		ORDER BY app.`ID` DESC
+
+	</select>
+	<!-- 分页查询 -->
+	<sql id="Condtion_userIds">
+		<if
+			test=" objCondition != null and objCondition.userIds != null and objCondition.userIds != '' ">
+			and app.userid in
+			<foreach collection="objCondition.userIds" index="index"
+				item="userId" open="(" separator="," close=")">
+				#{userId}
+			</foreach>
+		</if>
+	</sql>
+	<sql id="Condtion_userId">
+		<if
+			test=" objCondition != null and objCondition.userId != null and objCondition.userId != '' ">
+			and app.userid = #{objCondition.userId}
+		</if>
+	</sql>
+	<sql id="Condtion_appName">
+		<if
+			test=" objCondition != null and objCondition.appName != null and objCondition.appName != '' ">
+			and app.app_name like '%${objCondition.appName}%'
+		</if>
+	</sql>
+
+	<sql id="Condtion_description">
+		<if
+			test=" objCondition != null and objCondition.description != null and objCondition.description != '' ">
+			and app.description like '%${objCondition.description}%'
+		</if>
+	</sql>
+
+	<select id="countInstanceNum" resultType="java.lang.Integer">
+		SELECT COUNT(1) AS
+		INSTANCENUM FROM ma_instance i
+		WHERE i.app_id=#{value}
+	</select>
+	<select id="getAppInfo" parameterType="String"
+		resultMap="resultMap_applicationMapConfig">
+		select * from ma_application app
+		where app.id =#{appId}
+	</select>
+
+	<select id="getClusterName" parameterType="java.util.Map"
+		resultType="java.lang.String">
+		SELECT cluster.name clusterName FROM ma_application app ,
+		ad_cluster cluster
+		WHERE app.cluster_id=cluster.id AND
+		app.cluster_id=#{clusterId} and app.id=#{appId}
+	</select>
+
+	<insert id="save" parameterType="application">
+		insert into ma_application
+		(app_name,app_type,description,
+		cluster_id,userid,BLUE_INSTANCE_ID,VERSIONID,`KEY`,COMPONENT_NAME, NODE_NAME)
+		values
+		(#{appName},#{appType},#{description},
+		#{clusterId},#{userId},#{blueInstanceId},#{versionid},#{key},#{componentName,jdbcType=VARCHAR}, #{nodeDisplay})
+		<selectKey resultType="long" keyProperty="id">
+			select
+			LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<delete id="delApp" parameterType="java.lang.Long">
+		delete from
+		ma_application
+		where id=#{value}
+	</delete>
+
+	<select id="findAppByBlueprintInstIdAndKey" resultMap="resultMap_applicationMap">
+		select *
+		from ma_application a where a.BLUE_INSTANCE_ID = #{blueprintInsId}
+	</select>
+
+	<select id="findAppIdformAppName" resultType="java.lang.Long">
+		select id from
+		ma_application where app_name = #{appName}
+		and blue_instance_id =
+		#{bluePrintInstanceId}
+		and `key` = #{key}
+	</select>
+	<select id="getAppByBlueInstanceId" resultType="java.util.Map">
+		select app.id
+		appId from ma_application app where
+		app.BLUE_INSTANCE_ID=#{blueInstanceId}
+		and app.USERID=#{userId}
+	</select>
+	<select id="listAppsOfCluster" resultMap="resultMap_applicationMap5">
+		select * from ma_application app
+		<trim prefix="where" prefixOverrides="and">
+			<include refid="CountCondtion_userIds" />
+		</trim>
+		and app.cluster_id = #{clusterId}
+	</select>
+
+	<insert id="save2" parameterType="application">
+		insert into ma_application
+		(id,app_name,app_type,description,
+		cluster_id,userid,BLUE_INSTANCE_ID,VERSIONID,`KEY`)
+		values
+		(#{id},#{appName},#{appType},#{description},
+		#{clusterId},#{userId},#{blueInstanceId},#{versionid},#{key})
+		<selectKey resultType="long" keyProperty="id">
+			select
+			LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<update id="updateAppScalableStatus" parameterType="java.util.Map">
+		UPDATE
+		ma_application SET RC_FLAG=#{status} WHERE id=#{appId}
+	</update>
+	<select id="getMasterApplications" resultType="java.util.Map">
+		select * from
+		ma_application
+	</select>
+	<select id="getMasterInstanceByApplicationId" resultType="java.util.Map"
+		parameterType="java.lang.Long">
+		SELECT * FROM ma_instance WHERE app_id=#{value}
+	</select>
+	<select id="getInsNumByAppIdAndResId" resultType="java.util.Map"
+		parameterType="java.util.Map">
+		SELECT * FROM ma_rc WHERE app_id=#{appId} AND
+		resource_version_id=#{versionId}
+	</select>
+	<insert id="insertRc" parameterType="java.util.Map">
+		insert into ma_rc
+		(app_id,RESOURCE_VERSION_ID,INSTANCE_NUMBER)
+		values
+		(#{appId},#{versionId},#{targetCount})
+	</insert>
+
+	<select id="listApps" resultMap="resultMap_applicationMap5">
+		select * from ma_application app where
+		app.BLUE_INSTANCE_ID=#{blueInstanceId}
+		<if test=" userIds != null and userIds != '' ">
+			and app.userId in
+			<foreach collection="userIds" index="index" item="userId"
+				open="(" separator="," close=")">
+				#{userId}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="getBlueprintComponents" resultMap="resultMap_applicationMapConfig">
+		SELECT
+		app.*,res.ID as RESOURCE_ID
+		FROM
+		ma_application app,
+		ma_blueprint_instance blu,
+		sv_resource res
+		WHERE
+		blu.ID = app.BLUE_INSTANCE_ID
+		AND blu.INSTANCE_ID =#{blueprintId}
+		AND app.COMPONENT_NAME = RES.RESOURCE_NAME
+	</select>
+
+	<select id="getNodeDisplayByAppName"  parameterType="java.util.Map"
+		resultMap="resultMap_applicationMapConfig">
+		select * from
+		MA_APPLICATION where APP_NAME=#{appName} and BLUE_INSTANCE_ID=#{blueID}
+	</select>
+	
+	<update id="updateAppVersion" parameterType="java.util.Map">
+		update ma_application set EXECUTE_FLAG=#{executeFlag}
+		<if test=" versionId != null and versionId != '' ">
+			, CURRENT_VERSION=#{versionId}, TARGET_VERSION=#{versionId}
+		</if>
+		where ID=#{appId}
+	</update>
+	
+</mapper>

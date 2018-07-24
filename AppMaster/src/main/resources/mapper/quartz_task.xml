@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="quartz_task">
+	<select id="getCronExpression" parameterType="long" resultType="java.util.Map">
+		select * from release_task
+		where ID = #{taskId}
+	</select>
+	<select id="getPreTaskNotFinished" parameterType="long" resultType="java.util.Map">
+		select * from release_task
+		where ID = (select DEPEND_ID from release_task where ID = #{taskId})
+		and STATUS != '03'
+	</select>
+	<select id="getApproverNotPass" parameterType="long" resultType="java.util.Map">
+		select * from release_approval
+		where TASK_ID = #{taskId}
+		and STATUS != '02'
+	</select>
+	<update id="updateTask" parameterType="java.util.Map">
+		update release_task
+		<set>
+			<if test=" status != null ">
+				STATUS = #{status},
+			</if>
+			<if test=" flowInstanceId != null ">
+				BLUEPRINT_FLOW_INSTANCE = #{flowInstanceId}
+			</if>
+		</set>
+		where ID = #{taskId}
+	</update>
+	<select id="getTaskByAppAndStatus" parameterType="java.util.Map" resultType="java.util.Map">
+		select *
+		from release_task_order
+		where `STATUS` = #{task_status}
+		and SYSTEM_ID = #{app_id}
+	</select>
+</mapper>

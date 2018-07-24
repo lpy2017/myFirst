@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cop">
+	<insert id="multiInsertNodes" parameterType="java.util.Map">
+		insert into ma_node(`IP`,`NAME`,`CLUSTERID`,`ADAPTERNODEID`,`USER_NAME`,`USER_PASSWORD`)
+		values
+		<foreach collection="list" item="item" index="index" open="" separator="," close="">
+			(#{item.ip},#{item.name},#{item.clusterId},#{item.id},#{item.userName},#{item.userPassword})
+		</foreach>
+	</insert>
+	
+	<select id="getBlueprintTemplates" resultType="java.util.Map">
+		select ID id, NAME name, `DESC` description
+		from ma_blueprint_template
+	</select>
+	
+	<select id="getFlows" parameterType="java.lang.String" resultType="java.util.Map">
+		select ID flowId, FLOW_NAME flowName
+		from ma_blueprint_type
+		where BLUEPRINT_INSTANCE_ID = #{blueprintTemplateId} and APP_NAME = ''
+	</select>
+	
+	<select id="getBlueprintTemplate" parameterType="java.lang.String" resultType="java.util.Map">
+		select NAME name, INFO info
+		from ma_blueprint_template
+		where ID = #{id}
+	</select>
+	
+	<select id="getComponentVersions" parameterType="java.lang.String" resultType="java.util.Map">
+		select sv.ID id, sv.VERSION_NAME name, sv.INPUT input, sv.OUTPUT output
+		from sv_version sv
+		where sv.RESOURCE_ID = #{componentId}
+	</select>
+	
+	<insert id="insertLabel" parameterType="java.util.Map">
+		insert into ma_node_labels(node_id, label_key, label_value, label_type)
+		values
+		<foreach collection="list" item="label" separator=",">
+			<foreach collection="label.nodes" item="node" separator=",">
+				(#{node}, #{label.key}, #{label.value}, #{label.type})
+			</foreach>
+		</foreach>
+	</insert>
+	
+	<select id="getNodes" parameterType="java.lang.String" resultType="java.util.Map">
+		select node.IP ip
+		from ma_node node
+		where node.ADAPTERNODEID in
+		<foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach> 
+	</select>
+	
+	<update id="updateBlueprintInstance" parameterType="java.util.Map">
+		update ma_blueprint_instance mbi
+		set mbi.KEY_VALUE = #{config}
+		where mbi.INSTANCE_ID = #{instanceId}
+	</update>
+	
+	<update id="updateComponentConfig" parameterType="java.util.Map">
+		update ma_application ma
+		set ma.CURRENT_VERSION = #{currentVersion},
+		ma.CURRENT_INPUT = #{currentInput},
+		ma.CURRENT_OUTPUT = #{currentOutput},
+		ma.TARGET_VERSION = #{targetVersion},
+		ma.TARGET_INPUT = #{targetInput},
+		ma.TARGET_OUTPUT = #{targetOutput}
+		where ma.BLUE_INSTANCE_ID = #{blueprintInstanceId}
+		and ma.APP_NAME = #{componentName}
+	</update>
+	
+	<select id="getBlueprintInstance" parameterType="java.lang.String" resultType="java.util.Map">
+		select mbi.ID id, mbi.INSTANCE_ID instanceId
+		from ma_blueprint_instance mbi
+		where mbi.INSTANCE_ID = #{blueprintInstanceId}
+	</select>
+	
+	<select id="getComponent" parameterType="java.util.Map" resultType="java.util.Map">
+		select ma.ID id
+		from ma_application ma
+		where ma.APP_NAME = #{componentName}
+		and ma.BLUE_INSTANCE_ID = #{blueprintInstanceId}
+	</select>
+</mapper>

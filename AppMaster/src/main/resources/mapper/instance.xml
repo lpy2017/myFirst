@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+
+<mapper namespace="instance">
+	<!-- 按照instanceId查询 -->
+	<select id="findByInstanceId" resultType="java.util.HashMap" parameterType="java.lang.String">
+		select * from ma_instance i where i.id=#{value}
+	</select>
+	<select id="isExitInstance" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(1) from ma_instance where ma_instance.id=#{value}
+	</select>
+	<select id="countInstancesByAppId" resultType="java.lang.Integer" parameterType="java.lang.Long">
+		select count(*) from ma_instance where ma_instance.app_id=#{value}
+	</select>
+	<select id = "listInstances" resultType="java.util.HashMap" parameterType="com.dc.appengine.appmaster.entity.Page">
+		SELECT ins.id ,ins.app_id appId, ins.deploy_time deployTime,node.ip nodeIp ,
+		ins.RESOURCE_VERSION_ID resVersionId,ins.status status
+  		FROM ma_instance ins , ma_node node 
+  		WHERE ins.node_id=node.adapternodeid 
+  		AND  ins.`APP_ID`=#{appId}
+  		order by ins.id
+	</select>
+	<select id="findInstanceList" resultType="java.util.HashMap" parameterType="java.lang.Long">
+		select ins.id id,ins.status status,ins.deploy_time deployTime ,ins.node_id nodeId ,ins.resource_version_id resVersionId
+		,ins.deploy_path deployPath,ins.COMPONENT_INPUT input,ins.COMPONENT_OUTPUT output,ins.node_id nodeId,ins.COMPONENT_INPUT_TEMP inputTemp
+		,ins.COMPONENT_OUTPUT_TEMP outputTemp
+		from ma_instance ins 
+		where ins.app_id=#{value}
+	</select>
+	<select id="getInstances" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select ins.id id,ins.status status,ins.deploy_time deployTime ,ins.node_id nodeId ,ins.resource_version_id resVersionId
+		,ins.deploy_path deployPath
+		from ma_instance ins 
+		where ins.app_id=#{id} 
+		and ins.resource_version_id=#{resourceVersionId}
+		and ins.node_id=#{nodeId}
+	</select>
+	<select id="findAppList" resultType="java.util.HashMap" parameterType="java.lang.Integer">
+		select app.id id,app.app_name appName ,
+		app.CLUSTER_ID clusterId,app.versionid configId
+		from ma_application app 
+		where app.blue_instance_id=#{value} 
+	</select>
+	<select id="delInstance" parameterType="java.lang.String">
+		delete from ma_instance where id=#{value}
+	</select>
+	<select id="listInstancesByAppId" resultType="java.util.HashMap">
+		select ins.id instanceId ,ins.app_id appId, ins.deploy_time deployTime,node.ip nodeIp,ins.RESOURCE_VERSION_ID resId
+		,ins.COMPONENT_INPUT_TEMP inputTemp,ins.COMPONENT_OUTPUT_TEMP outputTemp,ins.NODE_ID nodeId,ins.status status,ins.PARAMS params
+		FROM ma_instance ins , ma_node node 
+		where ins.node_id=node.ADAPTERNODEID and ins.APP_ID=#{appId}
+	</select>
+	<insert id="saveInstance" parameterType="instance">
+		insert into ma_instance
+		(ID,APP_ID,NODE_ID,DEPLOY_TIME,STATUS)
+		values(#{id},#{appId},#{nodeId},now(),#{status})
+	</insert>
+	<select id="findApp" parameterType="java.lang.String" resultType="java.util.HashMap">
+		select app.* from ma_application app, ma_instance ins where ins.app_id=app.id 
+		and ins.id=#{value}
+	</select>
+	<update id="updateInstance" parameterType="java.util.Map">
+		update ma_instance ins set  
+		<if test="status != null and status != ''">
+       		ins.status=#{status},
+       	</if>
+       	<if test="resourceVersionId != null and resourceVersionId != ''">
+       		ins.resource_version_id = #{resourceVersionId},
+       	</if>
+		ins.deploy_time=now()  
+		where ins.id=#{instanceId} 
+	</update>
+	<update id="updateInstanceAll" parameterType="instance">
+		update ma_instance ins set ins.deploy_time=now()
+		where ins.id=#{id}
+	</update>
+	
+	<select id="findversionId" parameterType="java.lang.String" resultType="java.lang.String">
+		select app.versionId from ma_application app, ma_instance ins where ins.app_id=app.id 
+		and ins.id=#{value}
+	</select>
+	
+	
+	<select id="findnodeIP" parameterType="java.lang.String" resultType="java.lang.String">
+		select IP AS nodeIp from ma_instance,ma_node where ma_instance.ID=#{value} and ma_instance.NODE_ID=ma_node.adapterNodeId
+	</select>
+	
+	<select id="findresourceVersionId" parameterType="java.lang.String" resultType="java.lang.String">
+		select ins.resource_version_id from ma_instance ins where ins.id=#{value}
+	</select>
+	
+	<!-- <select id="findMessage" parameterType="java.lang.String" resultType="java.util.Map">
+		select app.`key`,app.versionId,app.app_name,ins.component_input_temp,ins.resource_version_id,ins.deploy_path,node.ip,app.blue_instance_id as blueInstanceId  from ma_application app, ma_instance ins,ma_node node where ins.app_id=app.id 
+		and  ins.id=#{instanceId} and ins.NODE_ID=node.adapterNodeId
+	</select> -->
+	<select id="findMessage" parameterType="java.lang.String" resultType="java.util.Map">
+		select app.`key`,app.versionId,app.app_name,
+		ins.component_input_temp as componentInputTemp,ins.component_output_temp as componentOutputTemp,ins.component_input as componentInput, 
+		ins.resource_version_id as resourceVersionId,ins.deploy_path as deployPath,
+		app.blue_instance_id as blueInstanceId ,node.IP as nodeIp, node.USER_NAME userName, node.USER_PASSWORD userPassword from ma_application app, ma_instance ins ,ma_node node
+        where ins.app_id=app.id  and node.ADAPTERNODEID = ins.NODE_ID
+		and  ins.id=#{instanceId}
+	</select> 
+	<select id="findComponentInput" parameterType="java.util.Map" resultType="java.lang.String">
+		select ins.component_input as componentInput from ma_application app, ma_instance ins where ins.app_id=app.id 
+		and app.blue_instance_id=#{blueId}
+        and app.`key`=#{bluekey}
+        and ins.id=#{instanceId} 
+	</select> 
+	<select id="countVersionByAppId" resultType="java.lang.Integer" parameterType="java.lang.Long">
+		SELECT COUNT(DISTINCT resource_version_id) FROM ma_instance where ma_instance.app_id=#{value}
+	</select>
+	<select id = "listVersions" resultType="java.util.HashMap" parameterType="com.dc.appengine.appmaster.entity.Page">
+		SELECT DISTINCT(ins.RESOURCE_VERSION_ID)  FROM ma_instance ins WHERE ins.`APP_ID`=#{appId}
+  		order by ins.RESOURCE_VERSION_ID
+  		limit #{startRowNum}, #{pageSize}
+	</select>
+	<select id="countInstancesByVersion" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+		SELECT COUNT(*) FROM ma_instance WHERE ma_instance.`RESOURCE_VERSION_ID`= #{versionId} and ma_instance.app_id = #{appId}
+	</select>
+	
+	<select id="getConfigInfoByVersionId" resultType="java.lang.String" parameterType="java.util.HashMap">
+		SELECT DISTINCT(COMPONENT_INPUT_TEMP) FROM ma_instance WHERE ma_instance.`RESOURCE_VERSION_ID`=#{configId} and ma_instance.app_id=#{appId}
+	</select>
+	<update id="updateComponentInputTemp" parameterType="java.util.HashMap">
+		update ma_instance ins set 
+		ins.component_input_temp=#{newInputTemp}
+		where ins.APP_ID=#{appId} and ins.RESOURCE_VERSION_ID=#{resId}
+	</update>
+	<select id="getInstanceListByResVerionId" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT ins.id id FROM ma_instance ins WHERE ins.app_id=#{appId} AND ins.RESOURCE_VERSION_ID=#{resId}
+	</select>
+	<update id="updateInstanceResVersionId" parameterType="java.util.HashMap">
+		update ma_instance ins set 
+		ins.RESOURCE_VERSION_ID=#{resVersionId}
+		where ins.id=#{insId}
+	</update>
+	<select id="getInstanceOfAppAndVersion" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT * FROM ma_instance ins WHERE ins.app_id=#{appId} AND ins.resource_version_id=#{versionId}
+	</select>
+	<select id="getAppVersionListByAppId" parameterType="java.lang.Long" resultType="java.util.HashMap">
+		SELECT *  FROM ma_instance ins WHERE ins.app_id=#{appId} GROUP BY ins.RESOURCE_VERSION_ID
+	</select>
+	<select id = "getVersionName" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT version_name versionName FROM sv_version WHERE id=#{value}
+	</select>
+	<select id="findresVerId" parameterType="java.util.Map" resultType="java.lang.String">
+		select ver.id from	sv_version ver ,sv_resource res
+		where ver.resource_id=res.id
+		and ver.version_name=#{version}
+		and res.RESOURCE_NAME=#{componentName}
+	</select> 
+	<select id="findInstances" parameterType="java.util.Map" resultType="java.util.Map">
+	SELECT * FROM ma_instance  WHERE
+		 APP_ID=(
+		 		SELECT id FROM ma_application  WHERE 
+							BLUE_INSTANCE_ID=(select app.blue_instance_id from ma_application app,ma_instance ins where
+												app.id=ins.app_id and ins.id=#{instanceId})
+							AND APP_NAME like '${componentName}%')
+		AND RESOURCE_VERSION_ID=#{resourceVersionId}
+	</select>
+	<select id="findInstancesBybp" parameterType="java.util.Map" resultType="java.util.Map">
+		select ins.* from ma_instance ins, ma_application app,ma_blueprint_instance blu
+		WHERE blu.ID = app.BLUE_INSTANCE_ID
+		and ins.APP_ID = app.ID
+		and app.APP_NAME = #{componentName}
+		and blu.INSTANCE_NAME=#{blueInstanceName}
+		<if test="resourceVersionId != null and resourceVersionId != '' ">
+			and ins.RESOURCE_VERSION_ID=#{resourceVersionId}
+		</if>
+	</select>
+	
+	<select id = "getInstanceBuInsId" parameterType="java.lang.String" resultType="java.util.Map">
+		select ins.id id, ins.status status, ins.node_id nodeId,ins.DEPLOY_TIME deployTime,
+		ins.RESOURCE_VERSION_ID resVersionId, ins.COMPONENT_OUTPUT output,ins.COMPONENT_INPUT input
+		from ma_instance ins where ins.id=#{value}
+	</select>
+	
+	<select id="getInstanceDetailById" resultType="java.util.HashMap" parameterType="java.lang.String">
+		select ins.id id,ins.app_id appId,ins.status status,ins.deploy_time deployTime ,ins.node_id nodeId ,ins.resource_version_id resVersionId
+		,ins.deploy_path deployPath,ins.COMPONENT_INPUT input,ins.COMPONENT_OUTPUT output,ins.node_id nodeId,ins.COMPONENT_INPUT_TEMP inputTemp
+		,ins.COMPONENT_OUTPUT_TEMP outputTemp,ins.PARAMS params from ma_instance ins, ma_application app where ins.app_id=app.id and ins.id=#{value}
+	</select>
+	
+	<update id="updateInstanceStatus" parameterType="java.util.Map">
+		update ma_instance set DEPLOY_TIME = now(), STATUS = #{status} where ID=#{instanceId}
+	</update>
+	
+	<update id="updateBlueprintComponentInstanceParams" parameterType="java.util.Map">
+		update ma_instance set PARAMS = #{params} where ID=#{instanceId}
+	</update>
+</mapper>

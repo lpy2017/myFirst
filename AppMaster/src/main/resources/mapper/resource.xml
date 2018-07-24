@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+<mapper namespace="resource">
+	<resultMap id="resultMap_resource" type="Resource">
+		<result column="ID" property="id" javaType="java.lang.String" />
+		<result column="RESOURCE_NAME" property="resourceName"
+			javaType="java.lang.String" />
+		<result column="RESOURCE_TYPE" property="resourceType"
+			javaType="java.lang.String" />
+		<result column="RESOURCE_DESC" property="resourceDesc"
+			javaType="java.lang.String" />
+	</resultMap>
+
+	<resultMap id="resultMap_version" type="Version">
+		<result column="ID" property="id" javaType="java.lang.String" />
+		<result column="RESOURCE_ID" property="resourceId" javaType="java.lang.String" />
+		<result column="RESOURCE_NAME" property="resourceName"
+			javaType="java.lang.String" />
+		<result column="RESOURCE_PATH" property="resourcePath"
+			javaType="java.lang.String" />
+		<result column="VERSION_DESC" property="versionDesc" javaType="java.lang.String" />
+		<result column="UPDATE_TIME" property="updateTime" javaType="java.util.Date" />
+		<result column="DEPLOY_TIMEOUT" property="deployTimeout"
+			javaType="java.lang.Integer" />
+		<result column="START_TIMEOUT" property="startTimeout"
+			javaType="java.lang.Integer" />
+		<result column="STOP_TIMEOUT" property="stopTimeout" javaType="java.lang.Integer" />
+		<result column="DESTROY_TIMEOUT" property="destroyTimeout"
+			javaType="java.lang.Integer" />
+		<result column="VERSION_NAME" property="versionName" javaType="java.lang.String" />
+		<result column="REGISTRY_ID" property="registryId" javaType="java.lang.Integer" />
+		<result column="MD5" property="md5" javaType="java.lang.String" />
+		<result column="INPUT" property="input" javaType="java.lang.String" />
+		<result column="OUTPUT" property="output" javaType="java.lang.String" />
+		<result column="STATUS" property="status" javaType="java.lang.String" />
+		<result column="VERSIONNUM" property="versionNum" javaType="java.lang.Integer" />
+	</resultMap>
+
+	<resultMap id="resultMap_versionFtl" type="VersionFtl">
+		<result column="ID" property="id" javaType="java.lang.String" />
+		<result column="VERSION_ID" property="resourceVersionId"
+			javaType="java.lang.String" />
+		<result column="FTL_NAME" property="ftlName" javaType="java.lang.String" />
+		<result column="TEMPLATES" property="templates" javaType="java.lang.String" />
+		<result column="FTL_TEXT" property="ftlText" javaType="java.lang.String" />
+	</resultMap>
+
+	<insert id="saveResource" parameterType="Resource">
+		INSERT INTO
+		sv_resource(ID,RESOURCE_NAME,RESOURCE_TYPE,RESOURCE_DESC,ICON) VALUES
+		(#{id},#{resourceName},#{resourceType},#{resourceDesc},#{icon})
+	</insert>
+
+	<insert id="saveVersion" parameterType="Version">
+		INSERT INTO
+		sv_version(ID,RESOURCE_ID,VERSION_NAME,RESOURCE_PATH,
+		VERSION_DESC,UPDATE_TIME,DEPLOY_TIMEOUT,START_TIMEOUT,STOP_TIMEOUT,DESTROY_TIMEOUT,
+		REGISTRY_ID,MD5,TYPE,INPUT,OUTPUT,VERSIONNUM)
+		VALUES(#{id},#{resourceId},#{versionName},#{resourcePath},#{versionDesc},#{updateTime},
+		#{deployTimeout},#{startTimeout},#{stopTimeout},#{destroyTimeout},#{registryId},#{md5},#{type},#{input},#{output},
+		#{versionNum})
+	</insert>
+
+	<insert id="saveVersionFtl" parameterType="VersionFtl">
+		INSERT INTO sv_ftl
+		(ID,VERSION_ID,FTL_NAME,TEMPLATES,FTL_TEXT) VALUES(
+		#{id},#{resourceVersionId},#{ftlName},#{templates},#{ftlText})
+	</insert>
+	<select id="listResource" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		SELECT * FROM (
+		SELECT sr.RESOURCE_NAME AS resourceName,sr.RESOURCE_DESC AS
+		resourceDesc,sr.ID AS resourceId,sr.ICON AS icon,
+		IFNULL(temp.versionNum,0) AS
+		versionNum,temp.updateTime,temp.versionName
+		FROM sv_resource sr LEFT
+		JOIN
+		(SELECT COUNT(1) AS versionNum,sv.RESOURCE_ID,
+		MAX(sv.UPDATE_TIME)
+		AS
+		updateTime,sv.VERSION_NAME AS versionName FROM
+		(SELECT * FROM
+		sv_version ORDER BY UPDATE_TIME DESC) sv GROUP BY
+		sv.RESOURCE_ID) temp
+		ON sr.ID = temp.RESOURCE_ID WHERE 1=1
+		<if test="resourceName != null and resourceName != '' ">
+			and sr.RESOURCE_NAME like '%${resourceName}%'
+		</if>
+		<if test="resourceType != null and resourceType != '' ">
+			and sr.RESOURCE_TYPE = #{resourceType}
+		</if>
+		) resource left join ma_resource_label mrl on resource.resourceId = mrl.RESOURCE_ID
+		<if test="labelId != null and labelId != '' ">
+			<if test="labelId == 'none'">
+				where mrl.LABEL_ID IS NULL
+			</if>
+			<if test="labelId != 'none'">
+				where mrl.LABEL_ID=#{labelId}
+			</if>
+		</if>
+		group by resourceId
+	</select>
+
+	<select id="listResourceVersion" resultMap="resultMap_version">
+		SELECT sv.*,sr.RESOURCE_NAME FROM sv_version sv
+		LEFT JOIN sv_resource
+		sr ON sv.RESOURCE_ID = sr.ID
+		WHERE RESOURCE_ID = #{resourceId}
+		<if test="versionName != null and versionName != '' ">
+			and sv.VERSION_NAME like '%${versionName}%'
+		</if>
+	</select>
+
+	<select id="getResourceVersion" resultMap="resultMap_version">
+		SELECT
+		sv.*,sr.RESOURCE_NAME FROM sv_version sv
+		LEFT JOIN sv_resource sr ON
+		sv.RESOURCE_ID = sr.ID
+		WHERE sv.ID = #{resourceVersionId}
+	</select>
+
+	<delete id="deleteResourceVersion">
+		DELETE FROM sv_version WHERE 1=1
+		<if test="id != null and id != '' ">
+			AND ID = #{id}
+		</if>
+		<if test=" resourceId != null and resourceId != '' ">
+			AND RESOURCE_ID = #{resourceId}
+		</if>
+	</delete>
+
+	<delete id="deleteResource">
+		DELETE FROM sv_resource WHERE ID = #{id}
+	</delete>
+	<update id="updateVersionStatus" parameterType="java.util.Map">
+		update sv_version
+		<trim prefix="SET" suffixOverrides="," suffix=" where id = #{versionId} ">
+			<if test="status != null and status != '' ">
+				status=#{status},
+			</if>
+			<if test="resourcePath !=null and resourcePath != '' ">
+				resource_path = #{resourcePath},
+			</if>
+			<if test="md5 != null and md5 != '' ">
+				MD5 = #{md5},
+			</if>
+		</trim>
+	</update>
+	<select id="getVsersionStatus" resultType="java.lang.String">
+		select status from
+		sv_version where id=#{value}
+	</select>
+	<select id="findResourceByName" resultType="java.lang.Integer">
+		select count(*) from
+		sv_resource where sv_resource.RESOURCE_NAME=#{value}
+	</select>
+	<select id="findResourceIdByName" resultType="java.lang.String">
+		select id from
+		sv_resource where sv_resource.RESOURCE_NAME=#{value}
+	</select>
+
+	<insert id="saveVersionFlow" parameterType="java.util.Map">
+		INSERT INTO
+		sv_version_flow(VERSIONID,FLOWTYPE,FLOWID)
+		VALUES(#{versionId},#{flowType},#{flowId})
+	</insert>
+	<delete id="deleteVersionFlow">
+		DELETE FROM sv_version_flow WHERE VERSIONID =
+		#{versionId}
+	</delete>
+	<select id="getAllFlowByVersionId" resultType="java.util.Map">
+		SELECT
+		FLOWTYPE,FLOWID FROM sv_version_flow WHERE VERSIONID = #{versionId}
+	</select>
+	<update id="updateVersionFlow" parameterType="java.util.Map">
+		UPDATE
+		sv_version_flow SET FLOWID = #{flowId} WHERE VERSIONID=#{versionId}
+		and FLOWTYPE = #{flowType}
+	</update>
+	<select id="getAppSubflowInfo" resultType="java.lang.String">
+		select flow_info from
+		ma_blueprint_type where FLOW_ID=#{value}
+	</select>
+	<select id="getFlowByVersionIdAndFlowType" parameterType="java.util.Map"
+		resultType="java.lang.String">
+		SELECT FLOWID FROM sv_version_flow WHERE VERSIONID =
+		#{versionId} and
+		FLOWTYPE = #{flowType}
+	</select>
+
+	<insert id="saveScriptResource" parameterType="java.util.Map">
+		INSERT INTO
+		ma_resource_script(ID,RESOURCE_NAME,RESOURCE_DESC,RESOURCE_PATH,UPDATE_TIME)
+		VALUES(#{id},#{resourceName},#{resourceDesc},#{resourcePath},now())
+	</insert>
+	<delete id="deleteScriptResource">
+		delete from ma_resource_script where id=#{value}
+	</delete>
+	<select id="listScriptResource" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		SELECT mrs.RESOURCE_NAME AS resourceName,mrs.RESOURCE_DESC AS
+		resourceDesc,mrs.ID AS id,
+		mrs.RESOURCE_PATH AS
+		resourcePath,mrs.UPDATE_TIME AS updateTime FROM ma_resource_script
+		mrs
+		WHERE 1=1
+		<if test="resourceName != null and resourceName != '' ">
+			and mrs.RESOURCE_NAME like '%${resourceName}%'
+		</if>
+	</select>
+
+	<select id="findScriptById" resultType="java.util.Map">
+		SELECT * FROM
+		ma_resource_script WHERE ID = #{value}
+	</select>
+	<select id="getResourceDetail" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		SELECT sr.RESOURCE_NAME AS resourceName,sr.RESOURCE_DESC AS
+		resourceDesc,sr.ID AS resourceId,sr.ICON AS icon,
+		IFNULL(temp.versionNum,0) AS
+		versionNum,temp.updateTime,temp.versionName
+		FROM sv_resource sr LEFT
+		JOIN
+		(SELECT COUNT(1) AS versionNum,sv.RESOURCE_ID,
+		MAX(sv.UPDATE_TIME)
+		AS
+		updateTime,sv.VERSION_NAME AS versionName FROM
+		(SELECT * FROM
+		sv_version ORDER BY UPDATE_TIME DESC) sv GROUP BY
+		sv.RESOURCE_ID) temp
+		ON sr.ID = temp.RESOURCE_ID WHERE sr.RESOURCE_NAME = #{resourceName}
+	</select>
+	<update id="updateVersion" parameterType="java.util.Map">
+		update sv_version
+		<trim prefix="SET" suffixOverrides=","
+			suffix=" where id = #{resourceVersionId}">
+			<if test="resource_path != null and resource_path != '' ">
+				resource_path = #{resource_path},
+			</if>
+			<if test="input != null and input != '' ">
+				input = #{input},
+			</if>
+			<if test="output != null and output != '' ">
+				output = #{output},
+			</if>
+		</trim>
+	</update>
+	<select id="getVersionFtl" resultMap="resultMap_versionFtl">
+		SELECT
+		ID,VERSION_ID,FTL_NAME,TEMPLATES,FTL_TEXT FROM
+		sv_ftl WHERE VERSION_ID
+		= #{resourceVersionId}
+	</select>
+
+	<update id="updateVersionFtl" parameterType="java.util.Map">
+		update sv_ftl
+		<trim prefix="SET" suffixOverrides="," suffix=" where id = #{id}">
+			<if test="ftlName != null and ftlName != '' ">
+				FTL_NAME = #{ftlName},
+			</if>
+			<if test="templates != null and templates != '' ">
+				TEMPLATES = #{templates},
+			</if>
+			<if test="ftlText != null and ftlText != '' ">
+				FTL_TEXT = #{ftlText},
+			</if>
+		</trim>
+	</update>
+	
+	<select id="findResourceFlowByTypeAndName" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(*) from sv_flow where RESOURCE_ID = #{resourceId} and FLOW_TYPE = #{flowType} and FLOW_NAME = #{flowName}
+	</select>
+	
+	<insert id="saveNewResourceFlow" parameterType="java.util.Map">
+		INSERT INTO sv_flow(ID,RESOURCE_ID, FLOW_TYPE, FLOW_NAME, FLOW_ID, FLOW_INFO, FLOW_INFO_CONDITION) VALUES(#{id},#{resourceId}, #{flowType}, #{flowName}, #{flowId}, #{flowInfo}, #{flowInfo_condition})
+	</insert>
+	
+	<select id="getAllFlowByResourceId" resultType="java.util.Map">
+		SELECT ID, FLOW_TYPE, FLOW_NAME, FLOW_ID FROM sv_flow WHERE RESOURCE_ID = #{resourceId}
+	</select>
+	
+	<select id="getNewFlowInfoByFlowId" resultType="java.lang.String">
+		select FLOW_INFO_CONDITION from sv_flow where ID=#{value}
+	</select>
+	
+	<select id="getNewFlowDetailByFlowId" resultType="java.util.Map">
+		select * from sv_flow where ID=#{cdFlowId}
+	</select>
+	
+	<update id="updateNewFlowDetailById" parameterType="java.util.Map">
+		UPDATE sv_flow SET FLOW_ID = #{flowId}, FLOW_INFO = #{flowInfo} WHERE ID=#{id}
+	</update>
+	
+	<update id="updateNewFlowInfoByFlowId" parameterType="java.util.Map">
+		UPDATE sv_flow SET FLOW_ID=#{flowId}, FLOW_INFO = #{flowInfo_workflow}, FLOW_INFO_CONDITION = #{flowInfo_condition} WHERE ID=#{cdFlowId}
+	</update>
+	
+	<delete id="deleteNewResourceFlow">
+		DELETE FROM sv_flow WHERE ID = #{cdFlowId}
+	</delete>
+	
+	<delete id="deleteNewVersion">
+		DELETE FROM sv_version WHERE ID = #{versionId}
+	</delete>
+	
+	<delete id="deleteNewVersionFtl">
+		DELETE FROM sv_ftl WHERE VERSION_ID = #{versionId}
+	</delete>
+	
+	<delete id="deleteNewResourceFlowByResourceId">
+		DELETE FROM sv_flow WHERE RESOURCE_ID = #{resourceId}
+	</delete>
+	<delete id="deleteVersionFtl">
+		DELETE FROM sv_ftl WHERE ID = #{id}
+	</delete>
+	
+	<select id="getVersionName" resultType="java.lang.String">
+		select version_name from sv_version 
+		where id = #{resourceVersionId}
+	</select>
+
+	<select id="exportResource" parameterType="java.util.List" resultType="java.util.Map">
+		select * 
+		from sv_resource sr
+		WHERE 1=1 and sr.ID in
+		<foreach collection ="list" index="index" item="val" open="("  separator="," close=")" >
+                  #{val}
+        </foreach>
+	</select>
+	<select id="exportVersion" parameterType="java.lang.String" resultType="java.util.Map">
+		select * 
+		from sv_version sv
+		WHERE 1=1 and sv.RESOURCE_ID = #{resourceId}
+	</select>
+	<select id="exportFtl" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			*
+		FROM
+			SV_FTL sf
+		WHERE 
+			sf.VERSION_ID = #{versionId}
+	</select>
+	<select id="exportFlow" parameterType="java.lang.String" resultType="java.util.Map">
+		select * 
+		from SV_FLOW sf
+		WHERE 1=1 and sf.RESOURCE_ID = #{resourceId}
+	</select>
+	<insert id="importResource" parameterType="java.util.Map">
+		INSERT INTO
+		sv_resource(ID,RESOURCE_NAME,RESOURCE_TYPE,RESOURCE_DESC) VALUES
+		(#{ID},#{RESOURCE_NAME},#{RESOURCE_TYPE},#{RESOURCE_DESC})
+	</insert>
+	<insert id="importVersion" parameterType="java.util.Map">
+		INSERT INTO
+		sv_version(ID,RESOURCE_ID,VERSION_NAME,RESOURCE_PATH,
+		VERSION_DESC,UPDATE_TIME,DEPLOY_TIMEOUT,START_TIMEOUT,STOP_TIMEOUT,DESTROY_TIMEOUT,
+		REGISTRY_ID,MD5,TYPE,INPUT,OUTPUT,VERSIONNUM)
+		VALUES(#{ID},#{RESOURCE_ID},#{VERSION_NAME},#{RESOURCE_PATH},#{VERSION_DESC},#{UPDATE_TIME},
+		#{DEPLOY_TIMEOUT},#{START_TIMEOUT},#{STOP_TIMEOUT},#{DESTROY_TIMEOUT},#{REGISTRY_ID},#{MD5},#{TYPE},#{INPUT},#{OUTPUT},
+		#{VERSIONNUM})
+	</insert>
+	<insert id="importFtl" parameterType="java.util.Map">
+		INSERT INTO sv_ftl
+		(ID,VERSION_ID,FTL_NAME,TEMPLATES,FTL_TEXT) VALUES(
+		#{ID},#{VERSION_ID},#{FTL_NAME},#{TEMPLATES},#{FTL_TEXT})
+	</insert>
+	
+	<select id="getsubFlowInfo" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT * FROM sv_flow sf WHERE 1=1
+		<if test="flowType != null and flowType != '' ">
+			and sf.FLOW_TYPE = #{flowType}
+		</if>
+		and sf.RESOURCE_ID in (SELECT sr.ID FROM `sv_resource` sr where 1=1
+																	<if test="resourceName != null and resourceName != '' ">
+																		and sr.RESOURCE_NAME = #{resourceName}
+																	</if>
+		)
+	</select>
+	
+	<select id="findScriptResource" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		SELECT mrs.RESOURCE_NAME AS resourceName,mrs.RESOURCE_DESC AS
+		resourceDesc,mrs.ID AS id,
+		mrs.RESOURCE_PATH AS
+		resourcePath,mrs.UPDATE_TIME AS updateTime FROM ma_resource_script
+		mrs
+		WHERE 1=1
+		<if test="resourceName != null and resourceName != '' ">
+			and mrs.RESOURCE_NAME=#{resourceName}
+		</if>
+	</select>
+	<select id="getAllResourceFlow" resultType="java.util.Map">
+		SELECT ID, FLOW_TYPE, FLOW_NAME FROM sv_flow order by ID;
+	</select>
+	
+	<select id="getResourceByFtlId" resultType="java.util.Map" parameterType="java.lang.String">
+		select sr.*,sv.VERSION_NAME,sft.FTL_NAME from 
+		  	sv_resource sr,sv_version sv,sv_ftl sft 
+		where  sr.ID = sv.RESOURCE_ID and sv.ID=sft.VERSION_ID and sft.ID=#{id} 
+	</select>
+	<select id="getResourceInfo" resultType="java.util.Map">
+		select sr.* from sv_resource sr left join sv_version sv on 
+		sr.ID = sv.RESOURCE_ID where sr.ID=#{id} group by ID
+	</select>
+	<update id="updateResourceInfo" parameterType="java.util.Map">
+		update sv_resource sr set sr.VERSION=#{newVersion} where sr.ID=#{resourceId} and sr.VERSION=#{version}
+	</update>
+	<insert id="saveAudit" parameterType="java.util.Map">
+		insert into sv_version_audit(id,userId,resourceVersionId,opType,status,updateTime,description) 
+		values(#{id},#{userId},#{resourceVersionId},#{opType},#{status},now(),#{description})
+	</insert>
+	<update id="bindComponentReleaseFlow" parameterType="java.util.Map">
+		update sv_resource set RELEASE_BLUEPRINT_ID=#{blueprintId}, RELEASE_BLUEPRINT_FLOW=#{blueprintFlow} where ID=#{componentId}
+	</update>
+	<update id="bindComponentRollbackFlow" parameterType="java.util.Map">
+		update sv_resource set ROLLBACK_BLUEPRINT_ID=#{blueprintId}, ROLLBACK_BLUEPRINT_FLOW=#{blueprintFlow} where ID=#{componentId}
+	</update>
+	<select id="getResourceDetailByVersionId" resultType="java.util.Map" parameterType="java.lang.String">
+		select sr.* from sv_resource sr, sv_version sv where sr.ID = sv.RESOURCE_ID and sv.ID=#{versionId}
+	</select>
+	<select id="getVersionDetailByVersionId" resultType="java.util.Map" parameterType="java.lang.String">
+		select * from sv_version where ID=#{versionId}
+	</select>
+	<select id="getResourceDetailById" resultType="java.util.Map" parameterType="java.lang.String">
+		select * from sv_resource where ID=#{resourceId}
+	</select>
+	<select id="getResourceVersionMaxNum" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select max(VERSIONNUM) from sv_version where RESOURCE_ID=#{resourceId}
+	</select>
+	<update id="updateAudit" parameterType="java.util.Map">
+		update sv_version_audit set status=#{status}, updateTime=now() where id=#{id}
+	</update>
+	
+	<select id="getVersionDetailByVersionIds" resultType="java.util.Map" parameterType="java.util.List">
+		select * from sv_version where ID in
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+		  #{id}
+		</foreach>
+		ORDER BY VERSIONNUM ASC
+	</select>
+	<select id="listResourceVersionStatuses" resultType="java.lang.String" parameterType="java.lang.String">
+		select STATUS from sv_version where RESOURCE_ID=#{resourceId}
+	</select>
+	<update id="bindComponentStartFlow" parameterType="java.util.Map">
+		update sv_resource set START_BLUEPRINT_ID=#{blueprintId}, START_BLUEPRINT_FLOW=#{blueprintFlow} where ID=#{componentId}
+	</update>
+	<update id="bindComponentStopFlow" parameterType="java.util.Map">
+		update sv_resource set STOP_BLUEPRINT_ID=#{blueprintId}, STOP_BLUEPRINT_FLOW=#{blueprintFlow} where ID=#{componentId}
+	</update>
+	<select id="getAuditStatusById" resultType="java.lang.String" parameterType="java.lang.String">
+		select status from sv_version_audit where id=#{auditId}
+	</select>
+	<select id="getResourceStatus" resultType="java.lang.String" parameterType="java.lang.String">
+		select STATUS from sv_resource where ID=#{resourceId}
+	</select>
+	<update id="updateResourceStatus" parameterType="java.util.Map">
+		UPDATE sv_resource SET STATUS = #{status} WHERE ID=#{resourceId}
+	</update>
+	<select id="getLatestVersionById" resultType="java.util.Map" parameterType="java.lang.String">
+		select * from sv_version where RESOURCE_ID=#{resourceId} order by versionnum DESC limit 0,1
+	</select>
+	<select id="listAllSystems" resultMap="resultMap_resource" parameterType="java.util.Map">
+		SELECT * FROM sv_resource WHERE 1 = 1
+		<if test="systemName != null and systemName != '' ">
+			and RESOURCE_NAME like '%${systemName}%'
+		</if>
+		order by RESOURCE_NAME 
+	</select>
+</mapper>

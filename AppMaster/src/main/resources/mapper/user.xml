@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="user">
+
+
+	<resultMap id="resultMap_user" type="com.dc.appengine.appmaster.entity.User">
+
+		<result column="ID" property="id" javaType="java.lang.Long" />
+		<result column="USERID" property="name" javaType="java.lang.String" />
+		<result column="USERPASSWORD" property="pwd" javaType="java.lang.String" />
+
+	</resultMap>
+	
+	<select id = "getUsersByPage" resultType="java.lang.String" parameterType="page">
+		SELECT userid FROM accounts_info u,user_role ur WHERE ur.role_id=2 AND u.id=ur.user_id LIMIT #{startRowNum},#{pageSize}
+	</select>
+	
+	<select id = "numOfUser" resultType="java.lang.Integer">
+		select COUNT(user_id) from user_role where role_id=2
+	</select>
+	
+	
+	<select id = "getUserMaps"  resultType = "java.util.Map"  parameterType="java.util.List">
+		select id , userid  from accounts_info where accounts_info.id in 
+		<foreach collection ="list" index="index" item="val" open="("  separator="," close=")" >
+                   #{val}
+        </foreach>
+	</select>
+	<select id = "getUsersOfFather" resultType="java.lang.Long" parameterType="java.lang.Long">
+		SELECT user_id FROM user_relationship WHERE father_id = #{value}
+	</select>
+	
+	<select id="login" parameterType="java.util.Map" resultMap="resultMap_user">
+		select * from accounts_info t where t.userid = #{userName} and
+		t.userpassword = #{pwd}
+	</select>
+
+	<select id="getUserId" parameterType="java.lang.String"
+		resultType="java.lang.Long">
+		select id from accounts_info where userid= #{userName}
+	</select>
+
+	<select id="getAllUsers" resultType="java.lang.String">
+		select userid from accounts_info
+	</select>
+
+	<select id="getUserName" resultType="java.lang.String">
+		select userid from
+		accounts_info where id=#{value}
+	</select>
+
+	<insert id="add">
+		insert into accounts_info (USERID, USERPASSWORD) values (#{userName},
+		#{password})
+		<selectKey resultType="long" keyProperty="id">
+			select
+			LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<select id="existsUserName" resultType="java.lang.Integer">
+		select count(1) from
+		accounts_info a where a.USERID=#{value}
+	</select>
+	<select id="getUserInfo" parameterType="long" resultMap="resultMap_user">
+		select *
+		from accounts_info where ID=#{value}
+	</select>
+	
+	<insert id="addUserRole">
+		insert into user_role (user_id, role_id) values
+		(#{userId}, #{roleId})
+	</insert>
+	
+	<insert id="addUserRelationship">
+		insert into user_relationship (user_id, father_id) values
+		(#{userId}, #{parentId})
+	</insert>	
+	
+	<select id="getRoleOfUser" parameterType="java.lang.Long" resultType="java.lang.Integer">
+		select role_id from user_role where user_id=#{userId}
+	</select>
+	
+	<delete id="deleteAccountsInfoItem">
+		delete from accounts_info where ID=#{id}
+	</delete>
+
+		<delete id="deleteUserRoleItem">
+		delete from user_role where user_id=#{id}
+	</delete>
+	
+	<delete id="deleteUserRelationshipItem">
+		delete from user_relationship where user_id=#{id}
+	</delete>
+	
+	<select id="countAppUser" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT COUNT(accounts_info.`ID`)  FROM accounts_info , user_role ,role 
+		WHERE role.`id`=2 AND role.`id`=user_role.`role_id` 
+		AND accounts_info.`ID`=user_role.`user_id` 
+		<if test=" key != null and key != '' ">
+			and accounts_info.userid LIKE '%${key}%'
+		</if>
+	</select>
+	
+	<select id="getAllAppUsers" parameterType="page" resultType="java.util.Map">
+		SELECT accounts_info.`ID`,accounts_info.`USERID` userName,`USERPASSWORD` as password,role.`name` roleName 
+		FROM accounts_info , user_role ,role 
+		WHERE  role.`id`=user_role.`role_id` 
+		AND accounts_info.`ID`=user_role.`user_id`
+		<if test="key != null and key != '' ">
+			and accounts_info.userid LIKE '%${key}%'
+		</if>
+		<if test="role != null and role != '' ">
+			and role.`id`=#{role}
+		</if>
+		ORDER BY  accounts_info.id  DESC
+	</select>
+	<update id="updateUser" parameterType ="java.util.Map">
+		update accounts_info set USERID=#{username},USERPASSWORD=#{password} where ID=#{id}
+	</update>
+	<select id="getUsers" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from accounts_info where USERID=#{userName}
+		<if test=" id != null">
+			and ID !=#{id}
+		</if> 
+	</select>
+	<select id="getUserInfoByName" parameterType="java.lang.String" resultType="java.util.Map">
+		select USERID name, IS_NEW isNew
+		from accounts_info
+		where USERID = #{name}
+	</select>
+	<update id="setNotNew" parameterType="java.lang.String">
+		update accounts_info
+		set IS_NEW = 0
+		where USERID = #{name}
+	</update>
+</mapper>

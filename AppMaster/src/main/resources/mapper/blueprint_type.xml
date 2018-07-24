@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="blueprinttype">
+
+  	<select id="getFlowIdByBlueInstanceId" parameterType="java.util.Map" resultType="java.lang.Integer">
+  		SELECT bt.flow_id flowId FROM ma_blueprint_instance bi, ma_blueprint_type bt
+		WHERE bi.blueprint_id = bt.blueprint_id AND bi.id=#{blueInstanceId} AND bt.flow_type=#{flowType}
+  	</select>
+  	
+  	<select id="getUserId" parameterType="java.lang.String" resultType="java.lang.Long">
+  		select b.user_id from ma_blueprint b, ma_blueprint_instance bi 
+  		where b.blueprint_id=bi.blueprint_id and bi.id=#{value}
+  	</select>
+  	<select id="getSubFlowInfo" resultType="java.lang.String">
+		select FLOW_INFO from ma_blueprint_type where FLOW_ID = #{flowId}
+	</select>
+	<select id="getEmptyFlow" resultType="java.lang.Long">
+		select FLOW_ID from ma_blueprint_type where FLOW_TYPE='emptyFlow'
+	</select>
+	<delete id="delBluePrintTypeByFlowId" parameterType="java.lang.Long">
+		delete from ma_blueprint_type where FLOW_ID = #{flow_id}
+	</delete>
+	<select id="listBpInstanceFlows" resultType="java.util.Map">
+		select * from ma_blueprint_type where BLUEPRINT_INSTANCE_ID = #{blueprintInstanceId}
+	</select>
+	<update id="updateBluePrintTypeByFlowId" parameterType="java.util.Map">
+		update ma_blueprint_type set BLUEPRINT_INSTANCE_ID = #{blueprintInstanceId}, FLOW_INFO = #{flowInfo} where FLOW_ID = #{flowId}
+	</update>
+	<select id="getFlowNameByFlowId" resultType="java.lang.String">
+		select FLOW_NAME from ma_blueprint_type where FLOW_ID = #{flowId}
+	</select>
+	
+  	<select id="getFlowIdByBlueInstanceId2" parameterType="java.lang.String" resultType="java.util.Map">
+  		SELECT bt.flow_id FLOWID,bt.FLOW_TYPE FLOW_NAME,bt.FLOW_INFO FROM ma_blueprint_instance bi, ma_blueprint_type bt WHERE bi.INSTANCE_ID = bt.BLUEPRINT_INSTANCE_ID AND bi.id=#{blueInstanceId}
+  	</select>
+  	
+  	<select id="getFlowsByBlueInstanceId" parameterType="java.lang.String" resultType="java.util.HashMap">
+  		select bt.*
+		from ma_blueprint_type bt, ma_blueprint_instance bi
+		where bi.INSTANCE_ID = #{blueprintInstanceId}
+		and bi.TEMPLATE_ID = bt.BLUEPRINT_INSTANCE_ID
+		and bt.APP_NAME = '' order by bt.FLOW_NAME
+  	</select>
+  	
+  	<select id="getSecondFlowsInstanceList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  		select bt.*
+		from ma_blueprint_type bt, ma_blueprint_instance bi
+		where bi.INSTANCE_ID = #{blueprintInstanceId}
+		and bi.TEMPLATE_ID = bt.BLUEPRINT_INSTANCE_ID
+		and bt.APP_NAME= #{appName}
+  	</select>
+  	
+  	<select id="getAllBlueprintFlow" resultType="java.util.Map">
+	    select ID, FLOW_TYPE, FLOW_NAME from ma_blueprint_type order by ID
+	</select>
+</mapper>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+<mapper namespace="flow">    
+    <insert id = "saveUpdateInfo" parameterType="java.util.HashMap">
+    	insert into ma_application_flow_op
+		(ID,APP_ID,FLOW_ID,CREATE_TIME,JSON,USER_ID,TYPE)
+		values(#{id},#{appId},#{flowId},now(),#{json},#{userId},#{type})
+    </insert>
+</mapper>

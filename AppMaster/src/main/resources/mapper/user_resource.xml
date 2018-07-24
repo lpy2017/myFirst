@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+<mapper namespace="userResource">
+	
+	
+	<resultMap id="URMap"  type="userResource">
+
+		<result column="user_id" property="userId" javaType="java.lang.Long" />
+		<result column="cpu" property="cpu" javaType="java.lang.Long" />
+		<result column="memory" property="memory" javaType="java.lang.Long" />
+		<result column="disk" property="disk" javaType="java.lang.Long" />
+		<result column="cpu_used" property="cpu_used" javaType="java.lang.Long" />
+		<result column="disk_used" property="disk_used" javaType="java.lang.Long" />
+		<result column="memory_used" property="memory_used" javaType="java.lang.Long" />
+
+	</resultMap>
+
+	<select id = "getURByUId"  resultMap="URMap"  parameterType="java.lang.Long">
+		select u.user_id,u.cpu,u.memory,u.disk,u.cpu_used,u.disk_used,u.memory_used  from user_resource u where u.user_id = #{userId}
+	</select>
+	
+	<!-- 更新 -->
+	<update id="updateUserResource" parameterType="UserResource">
+		update user_resource u
+		<set>
+			
+				u.cpu = #{cpu},
+			
+				u.disk = #{disk},
+			
+				u.memory = #{memory},
+			
+				u.cpu_used = #{cpu_used},
+			
+				u.disk_used = #{disk_used},
+				
+				u.memory_used = #{memory_used}
+			
+		</set>
+		 where u.user_id = #{userId} 
+	</update>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+    
+<mapper namespace="log">
+
+  	<insert id="saveFlowNodeLog" parameterType="java.util.Map" >
+	insert into ma_flow_log (id,state,log,update_time) 
+	   values
+	   (#{id},#{state},#{flowNodeLog},now())
+	</insert>
+	
+	<select id="findFlowNodeLog" resultType="java.util.Map">
+		select * from ma_flow_log where id = #{value}
+	</select>
+	
+	<update id="updateFlowNodeLog" parameterType="java.util.Map">
+	update  ma_flow_log set state = #{state}, log = #{log}, update_time = now() where id = #{id}
+	</update>
+	<select id="findFlowNodeState" resultType="java.util.Map">
+		select mfl.state, mfl.flowNodeId,mfl.flowInstanceId,mfl.update_time from ma_flow_log mfl where flowInstanceId = #{flowInstanceId}
+	</select>
+</mapper>

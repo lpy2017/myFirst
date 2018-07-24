@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+
+<mapper namespace="blueprint_template">
+
+	<insert id="saveBlueprintTemplate" parameterType="java.util.Map">
+		insert into 
+			ma_blueprint_template (id,name,user_id,info,`desc`,CREATE_TIME,UPDATE_TIME) 
+		values
+			(#{blueprint_id},#{blueprint_name},#{user_id},#{blueprint_info},#{blueprintDesc},null,null)
+	</insert>
+
+	<select id="getBlueprintTemplate" parameterType="java.lang.String" resultType="java.util.Map">
+		select * from 
+			ma_blueprint_template 
+		where 
+			NAME = #{blueprint_name}
+	</select>
+
+	<update id="updateBlueprintTemplate" parameterType="java.util.Map">
+		update 
+			ma_blueprint_template 
+		set 
+			info = #{blueprint_info}
+			<if test="ID != null and ID != '' ">
+			 	,ID = #{ID}
+			</if>
+			<if test="USER_ID != null and USER_ID != '' ">
+			 	,USER_ID = #{USER_ID}
+			</if>
+			<if test="DESC != null and DESC != '' ">
+			 	,DESC = #{DESC}
+			</if>
+		where 
+			NAME = #{blueprint_name}
+	</update>
+
+	<delete id="delBlueprintTemplate" parameterType="java.lang.String">
+		delete from 
+			ma_blueprint_template
+		where 
+			ID = #{blueprint_id}
+	</delete>
+
+	<select id="listBlueprintTemplates" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		SELECT * FROM 
+			ma_blueprint_template mb 
+		WHERE 1=1
+		<if test="blueprintName != null and blueprintName != '' ">
+			and mb.NAME like '%${blueprintName}%'
+		</if>
+		<if test=" userIds != null and userIds != '' ">
+			and mb.user_id in
+			<foreach collection="userIds" index="index" item="userId"
+				open="(" separator="," close=")">
+				#{userId}
+			</foreach>
+		</if>
+	</select>
+	
+	
+	
+	<select id="listBpFlows" resultType="java.util.Map">
+		select * from 
+	    	ma_blueprint_type 
+		where 
+			BLUEPRINT_INSTANCE_ID = #{blueprintInstanceId} and APP_NAME = ''
+	</select>
+	
+	<select id="getBlueprintTemplateFlows" parameterType="java.lang.String" resultType="java.util.Map">
+		select * from 
+			ma_blueprint_type 
+		where 
+			BLUEPRINT_INSTANCE_ID = #{blueprint_id} and APP_NAME = ''
+	</select>
+	
+	<select id="getBlueprintTemplateFlowByFlowId" resultType="java.util.Map">
+		select * from
+			ma_blueprint_type 
+		where 
+			FLOW_ID = #{flowId}
+	</select>
+	
+	<insert id="saveBlueprintTemplateFlow" parameterType="blueprinttype">
+		insert into 
+			ma_blueprint_type (id,blueprint_instance_id,flow_id,flow_type,flow_info,flow_name,flow_info_group,app_name) 
+		values
+		   (#{id},#{blueprint_id},#{flow_id},#{flow_type},#{flow_info},#{flow_name, jdbcType=VARCHAR},#{flow_info_group},#{app_name})
+	</insert>
+	
+	<update id="updateBlueprintTemplateFlow" parameterType="java.util.Map">
+		update 
+			ma_blueprint_type 
+		set 
+			flow_info = #{flowInfo} , flow_info_group = #{flowInfoGroup}
+		where 
+			BLUEPRINT_INSTANCE_ID = #{blueprintInstanceId} and FLOW_ID = #{flowId}
+	</update>
+	
+	<delete id="delBlueprintTemplateFlow" parameterType="java.lang.String">
+		delete from 
+			ma_blueprint_type
+		where
+			FLOW_ID = #{flowId}
+	</delete>
+	
+	<select id="getBlueprintTemplateFlowByCdFlowId" resultType="java.util.Map">
+		select * from
+			ma_blueprint_type 
+		where 
+			ID = #{cdFlowId}
+	</select>
+	<select id="getBlueprintTemplateFlowBymap" resultType="java.util.Map">
+		select * from
+			ma_blueprint_type 
+		where 
+			BLUEPRINT_INSTANCE_ID = #{blueprintId}
+			and FLOW_NAME= #{flowName}
+	</select>
+	
+	<update id="updateBlueprintTemplateFlowByCdFlowId" parameterType="java.util.Map">
+		update 
+			ma_blueprint_type 
+		set 
+			flow_id = #{flowId} , flow_info = #{flowInfo} , flow_info_group = #{flowInfoGroup}
+		where 
+			id = #{cdFlowId}
+	</update>
+	
+	<delete id="delBlueprintTemplateFlowByCdFlowId" parameterType="java.lang.String">
+		delete from 
+			ma_blueprint_type
+		where
+			ID = #{cdFlowId}
+	</delete>
+	<delete id="delBlueprintTemplateFlowBymap" parameterType="java.lang.String">
+		delete from 
+			ma_blueprint_type
+		where
+			BLUEPRINT_INSTANCE_ID = #{blueprintId}
+			and FLOW_NAME= #{flowName}
+	</delete>
+	
+	
+	<select id="exportBlueprint" parameterType="java.util.List" resultType="java.util.Map">
+		select * from 
+			ma_blueprint_template mbt 
+		WHERE 1=1
+			and mbt.ID in
+		<foreach collection ="list" index="index" item="val" open="("  separator="," close=")" >
+                   #{val}
+        </foreach>
+	</select>
+	
+	<delete id="delBlueprintTemplate4Import" parameterType="java.lang.String">
+		delete from 
+			ma_blueprint_template
+		where 
+			ID = #{ID}
+	</delete>
+	<insert id="saveBlueprintTemplate4Import" parameterType="java.util.Map">
+		insert into 
+			ma_blueprint_template (id,name,user_id,info,`desc`,CREATE_TIME,UPDATE_TIME) 
+		values
+			(#{ID},#{NAME},#{USER_ID},#{INFO},#{DESC},null,null)
+	</insert>
+	
+    <select id="countBlueprintInsBytemplateId" parameterType="java.lang.String" resultType="java.lang.Integer">
+	    SELECT count(*)
+	    FROM MA_BLUEPRINT_INSTANCE mbi
+	    WHERE mbi.TEMPLATE_ID= #{templateId}
+	</select>
+	
+	<select id="getFlowByFlowName" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from 
+		MA_BLUEPRINT_TYPE 
+		WHERE FLOW_NAME = #{flowName} and APP_NAME=#{appName}
+	</select>
+	
+	<select id="listBlueprintTemplateByNameAndApp" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT * FROM ma_blueprint_template WHERE instr(lower(NAME), lower(#{templateName})) > 0 
+		<if test=" userIds != null and userIds != '' ">
+			and USER_ID in 
+			<foreach collection="userIds" index="index" item="userId" open="(" separator="," close=")">
+				#{userId}
+			</foreach>
+		</if>
+		ORDER BY UPDATE_TIME DESC
+	</select>
+</mapper>

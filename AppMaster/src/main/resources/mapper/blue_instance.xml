@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+    
+<mapper namespace="blueinstance">
+	
+	<select id="countBlueInstanceNumOfUser" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM  ma_blueprint_instance mbi 
+		<trim prefix="where" prefixOverrides="and">
+			<include refid="CountCondtion_userIds"/>
+			<include refid="CountCondtion_blueInstanceName"/>
+		</trim>
+		
+	</select>
+	<!-- 根据userid和搜索关键词查询应用个数 -->
+	<sql id="CountCondtion_userIds">
+		<if test=" userIds != null and userIds != '' ">
+			and	mbi.userid in 
+			<foreach collection="userIds" index="index" item="userId" open="("  separator="," close=")">
+			 #{userId}
+			</foreach>
+		</if>
+	</sql>
+	<sql id="CountCondtion_blueInstanceName">
+		<if test=" blueInstanceName != null and blueInstanceName != '' ">
+			and	mbi.instance_name like '%${blueInstanceName}%'
+		</if>
+	</sql>
+	<sql id="CountCondtion1_Id">
+			and	mbt.ID = mbi.TEMPLATE_ID
+	</sql>
+	
+	<select id = "listBlueInstance" parameterType="page" resultType="java.util.Map">
+		SELECT mbi.*,mbt.NAME AS TEMPLATE_NAME,
+		MAX(CASE mbp.FLOW_TYPE WHEN 'deploy' THEN mbp.FLOW_ID ELSE 0 END) AS deployFlowId,
+		MAX(CASE mbp.FLOW_TYPE WHEN 'start' THEN mbp.FLOW_ID ELSE 0 END) AS startFlowId,
+		MAX(CASE mbp.FLOW_TYPE WHEN 'stop' THEN mbp.FLOW_ID ELSE 0 END) AS stopFlowId,
+		MAX(CASE mbp.FLOW_TYPE WHEN 'destroy' THEN mbp.FLOW_ID ELSE 0 END) AS destroyFlowId,
+		MAX(CASE mbp.FLOW_TYPE WHEN 'snapshot' THEN mbp.FLOW_ID ELSE 0 END) AS snapshotFlowId,
+		MAX(CASE mbp.FLOW_TYPE WHEN 'upgrade' THEN mbp.FLOW_ID ELSE 0 END) AS upgradeFlowId,
+		MAX(CASE mbp.FLOW_TYPE WHEN 'rollback' THEN mbp.FLOW_ID ELSE 0 END) AS rollbackFlowId
+		FROM ma_blueprint_template mbt join ma_blueprint_instance mbi 
+		LEFT JOIN ma_blueprint_type mbp ON mbi.INSTANCE_ID = mbp.BLUEPRINT_INSTANCE_ID 
+		<trim prefix="where" prefixOverrides="and">
+			<include refid="CountCondtion1_Id"/>
+			<include refid="CountCondtion1_userIds"/>
+			<include refid="CountCondtion1_blueInstanceName"/>
+		</trim>
+		GROUP BY mbi.ID
+		limit #{startRowNum},#{pageSize}
+	</select>
+	<!-- 根据userid和搜索关键词查询应用个数 -->
+	<sql id="CountCondtion1_userIds">
+		<if test=" objCondition.userIds != null and objCondition.userIds != '' ">
+			and	mbi.userid in 
+			<foreach collection="objCondition.userIds" index="index" item="userId" open="("  separator="," close=")">
+			 #{userId}
+			</foreach>
+		</if>
+	</sql>
+	<sql id="CountCondtion1_blueInstanceName">
+		<if test=" objCondition.blueInstanceName != null and objCondition.blueInstanceName != '' ">
+			and	mbi.instance_name like '%${objCondition.blueInstanceName}%'
+		</if>
+	</sql>
+	<select id="getClusterName" parameterType="java.lang.Integer" resultType="java.lang.String">
+		SELECT DISTINCT(cluster.name)  clusterName 
+		FROM ma_application app ,ad_cluster cluster
+		WHERE cluster.id=app.`CLUSTER_ID`
+		AND app.`BLUE_INSTANCE_ID`=#{blueInstanceId}
+	</select>
+	<select id="getUpdateTime" resultType="java.lang.String">
+    	
+	SELECT MAX(op.deploy_time) FROM(
+	SELECT MAX(instance.deploy_time) deploy_time
+    	FROM ma_application app , ma_instance instance 
+    	WHERE app.id = instance.app_id AND app.`BLUE_INSTANCE_ID`=#{value}) op
+    </select>
+    <select id="getAppNumByBlueInstanceId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    	select count(1) from ma_application app where app.blue_instance_id=#{value}
+    </select>
+    
+    <select id="getBlueInstanceDetail" parameterType="java.lang.Integer" resultType="java.util.Map">
+    	SELECT ins.id, ins.instance_name instanceName ,ins.instance_id insId,ins.INFO,
+    	MAX(CASE mbp.FLOW_TYPE WHEN 'deploy' THEN mbp.FLOW_ID ELSE 0 END) AS deployFlowId,
+		MAX(CASE mbp.FLOW_TYPE WHEN 'start' THEN mbp.FLOW_ID ELSE 0 END) AS startFlowId,
+		MAX(CASE mbp.FLOW_TYPE WHEN 'stop' THEN mbp.FLOW_ID ELSE 0 END) AS stopFlowId,
+		MAX(CASE mbp.FLOW_TYPE WHEN 'destroy' THEN mbp.FLOW_ID ELSE 0 END) AS destroyFlowId
+		FROM ma_blueprint_instance ins LEFT JOIN ma_blueprint_type mbp ON ins.INSTANCE_ID = mbp.BLUEPRINT_INSTANCE_ID WHERE ins.id=#{value}
+    </select>
+    <delete id = "delBlueInstance" parameterType="java.lang.Integer">
+	DELETE FROM ma_blueprint_instance  WHERE ma_blueprint_instance.id=#{value}
+    </delete>
+    <delete id = "delBlueInstanceType" parameterType="java.lang.Integer">
+	DELETE FROM ma_blueprint_type WHERE blueprint_instance_id=(select instance_id FROM ma_blueprint_instance WHERE ID = #{value} )
+    </delete>
+    
+    
+    
+    <insert id = "saveSnapShot" parameterType="java.util.Map">
+    	INSERT INTO ma_snapshot_application(ID,SNAPSHOT_NAME,APP_ID,APP_NAME,APP_KEY,BLUE_INSTANCE_ID,SNAPSHOT_INFO,USER_ID) 
+    	VALUES(#{id},#{snapshotName},#{appId},#{appName},#{key},#{blueInstanceId},#{snapInfo},#{userId})
+    </insert>
+    
+    <insert id= "saveSnapShotOfBlueInstance" parameterType="java.util.Map">
+    	insert into ma_snapshot_blueinstance(ID,BLUE_INSTANCE_ID,SNAPSHOT_INFO,USER_ID) 
+    	values(#{id},#{blueInstanceId},#{snapInfo},#{userId})
+    </insert>
+    <select id="countSnapshotNum" parameterType="java.util.Map" resultType="java.lang.Integer">
+    	SELECT COUNT(1) FROM ma_snapshot_application 
+    	<trim prefix="where" prefixOverrides="and">
+			<include refid="CountCondtion_userIds1"/>
+		</trim>
+		and BLUE_INSTANCE_ID=#{blueInstanceId}
+    </select>
+    <sql id="CountCondtion_userIds1">
+		<if test=" userIds != null and userIds != '' ">
+			and	user_id in 
+			<foreach collection="userIds" index="index" item="userId" open="("  separator="," close=")">
+			 #{userId}
+			</foreach>
+		</if>
+	</sql>
+    <select id = "listSnapshots" parameterType="page" resultType="java.util.Map">
+    	select ID id,BLUE_INSTANCE_ID blueInstanceId,SNAPSHOT_NAME snapshotName,UPDATE_TIME updateTime,
+    	SNAPSHOT_INFO snapshotInfo from ma_snapshot_application 
+    	<trim prefix="where" prefixOverrides="and">
+			<include refid="CountCondtion_userIds2"/>
+		</trim>
+		and app_id=#{objCondition.appId}
+		order by UPDATE_TIME
+		limit #{startRowNum},#{pageSize}
+    </select>
+    <!-- 根据userid和搜索关键词查询应用个数 -->
+	<sql id="CountCondtion_userIds2">
+		<if test=" objCondition.userIds != null and objCondition.userIds != '' ">
+			and	user_id in 
+			<foreach collection="objCondition.userIds" index="index" item="userId" open="("  separator="," close=")">
+			 #{userId}
+			</foreach>
+		</if>
+	</sql>
+    <delete id="deleteSnapshot" parameterType="java.lang.String">
+    	delete from ma_snapshot_application where id=#{value}
+    </delete>
+    <select id="getSnapshot" parameterType="java.lang.String" resultType="java.util.Map">
+    	select ma_snapshot.id id,ma_snapshot.BLUE_INSTANCE_ID blueInstanceId ,ma_snapshot.SNAPSHOT_INFO snapInfo,
+    	ma_snapshot.update_time updateTime,ma_snapshot.SNAPSHOT_INFO snapInfo from ma_snapshot
+    	where ma_snapshot.id=#{value}
+    </select>
+    
+    <select id="getComponentSnapshot" parameterType="java.lang.String" resultType="java.util.Map">
+    	select * from ma_snapshot_application where id=#{snapshotId}
+    </select>
+    
+    <select id="getNodeIpByNodeId" parameterType="java.lang.String" resultType="java.lang.String">
+    	SELECT ma_node.`IP` FROM ma_node WHERE ma_node.`adapternodeid`=#{value}
+    </select>
+    
+    <select id = "getBluePrintId" parameterType="java.lang.String" resultType="java.lang.String">
+    	SELECT DISTINCT(bi.blueprint_template_id) FROM ma_blueprint_instance bi,ma_snapshot snap 
+		WHERE bi.id=snap.BLUE_INSTANCE_ID AND snap.BLUE_INSTANCE_ID=#{value}
+    </select>
+    <select id="findSnapshotOfAppByName" parameterType="java.util.Map" resultType="java.lang.Integer">
+    	SELECT COUNT(*) FROM ma_snapshot_application WHERE snapshot_name=#{snapshotName} and app_id=#{appId}
+    </select>
+    <select id= "getSnapShotInfoByBlueInstanceId" parameterType="java.lang.Integer" resultType="java.util.Map">
+    	select * from ma_snapshot_blueinstance where BLUE_INSTANCE_ID=#{value}
+    </select>
+    <delete id= "deleteSnapShotByBlueInstanceId" parameterType="java.lang.Integer">
+    	delete from ma_snapshot_blueinstance where BLUE_INSTANCE_ID=#{value}
+    </delete>
+    <delete id= "deleteAppSnapShotByBlueInstanceId" parameterType="java.lang.Integer">
+    	delete from ma_snapshot_application where BLUE_INSTANCE_ID=#{value}
+    </delete>
+</mapper>

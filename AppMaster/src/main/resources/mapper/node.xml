@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+
+<mapper namespace="node">
+
+	<resultMap id="resultMap_nodeBridgeMap" type="NodeBridge">
+
+		<result column="ID" property="id" javaType="java.lang.Long" />
+		<result column="NODE_ID" property="nodeId" javaType="java.lang.Long" />
+		<result column="BRIDGE_IP" property="bridgeIp" javaType="java.lang.String" />
+		<association column="BRIDGE_IP" property="containerIpList"
+			select="node.listContainerIps" />
+	</resultMap>
+
+	<resultMap id="resultMap_nodeContainerIpMap" type="ContainerIp">
+
+		<result column="ID" property="id" javaType="java.lang.Long" />
+		<result column="BRIDGE_ID" property="bridgeId" javaType="java.lang.Long" />
+		<result column="CONTAINERE_IP" property="containerIp" javaType="java.lang.String" />
+		<result column="APP_ID" property="appId" javaType="java.lang.String" />
+		<result column="USED" property="used" javaType="java.lang.Long" />
+	</resultMap>
+	<resultMap id="resultMap_nodeMap" type="node">
+		<result column="IP" property="ip" javaType="java.lang.String" />
+		<result column="DESCRIPTION" property="description" javaType="java.lang.String" />
+		<result column="NAME" property="name" javaType="java.lang.String" />
+		<result column="TCP_PORT" property="tcpPort" javaType="java.lang.Long" />
+		<result column="HOSTNAME" property="hostname" javaType="java.lang.String" />
+		<result column="DISKSIZE" property="disksize" javaType="java.lang.Long" />
+		<result column="MEMORYSIZE" property="memorysize" javaType="java.lang.Long" />
+		<result column="CPUCOUNT" property="cpucount" javaType="java.lang.Integer" />
+		<result column="ENNAME" property="enname" javaType="java.lang.String" />
+		<result column="STATUS" property="status" javaType="java.lang.String" />
+		<result column="ISOLATA_STATE" property="isolata" javaType="java.lang.String" />
+		<result column="NODE_GROUP" property="nodeGroup" javaType="java.lang.String" />
+		<result column="UPGRADING" property="upgrading" javaType="java.lang.Boolean" />
+		<result column="adapternodeid" property="adapterNodeId"
+			javaType="java.lang.String" />
+		<result column="cluster_id" property="clusterId" javaType="java.lang.String" />
+		<result column="USER_NAME" property="userName" javaType="java.lang.String" />
+		<result column="USER_PASSWORD" property="userPassword" javaType="java.lang.String" />
+
+	</resultMap>
+
+	<resultMap id="resultMap_nodeMap2" type="node">
+
+		<result column="IP" property="ip" javaType="java.lang.String" />
+		<result column="DESCRIPTION" property="description" javaType="java.lang.String" />
+		<result column="NAME" property="name" javaType="java.lang.String" />
+		<result column="TCP_PORT" property="tcpPort" javaType="java.lang.Long" />
+		<result column="USEDMEM" property="usedMem" javaType="java.lang.Integer" />
+		<result column="MEMORYSIZE" property="memorysize" javaType="java.lang.Long" />
+		<result column="INSTANCENUM" property="instanceNum" javaType="java.lang.Integer" />
+		<result column="DISKSIZE" property="disksize" javaType="java.lang.Long" />
+		<result column="ALONE" property="alone" javaType="java.lang.Boolean" />
+		<result column="CPUCOUNT" property="cpucount" javaType="java.lang.Integer" />
+		<result column="DISKSIZE" property="disksize" javaType="java.lang.Long" />
+		<result column="ENNAME" property="enname" javaType="java.lang.String" />
+		<result column="ISOLATA_STATE" property="isolata" javaType="java.lang.String" />
+		<result column="NODE_GROUP" property="nodeGroup" javaType="java.lang.String" />
+		<result column="USEDCPU" property="usedCpus" javaType="java.lang.String" />
+
+	</resultMap>
+
+	<resultMap id="resultMap_nodeMap3" type="node">
+
+		<result column="IP" property="ip" javaType="java.lang.String" />
+		<result column="DESCRIPTION" property="description" javaType="java.lang.String" />
+		<result column="NAME" property="name" javaType="java.lang.String" />
+		<result column="STATUS" property="status" javaType="java.lang.String" />
+		<result column="CPUCOUNT" property="cpucount" javaType="java.lang.Integer" />
+		<result column="DISKSIZE" property="disksize" javaType="java.lang.Long" />
+		<result column="MEMORYSIZE" property="memorysize" javaType="java.lang.Long" />
+
+	</resultMap>
+
+	
+
+	<!-- 通过name查询 -->
+	<select id="findByName" parameterType="String" resultMap="resultMap_nodeMap">
+		select
+		* from ma_node n where n.name=#{value}
+	</select>
+
+	<!-- 通过Ip查询 -->
+	<select id="findByIp" parameterType="String" resultMap="resultMap_nodeMap">
+		select *
+		from ma_node n where n.ip=#{value}
+	</select>
+
+	<!-- 通过状态查�? -->
+	<select id="findByStatus" parameterType="String" resultMap="resultMap_nodeMap">
+		select * from ma_node n where n.status = #{value}
+	</select>
+
+	<!-- 查询所有运行中的node -->
+	<select id="findAll" resultType="java.util.HashMap">
+		select n.ID, n.NAME, n.IP,
+		concat(n.ip , ':' , convert(n.tcp_port, char)) as ADDRESS,
+		n.NODE_GROUP
+		from ma_node n where n.status = 'RUNNING'
+	</select>
+
+	<!-- 通过主键查询 -->
+	<select id="findById" resultMap="resultMap_nodeMap">
+		select * from ma_node n where
+		n.adapternodeid = #{value}
+	</select>
+
+	<!-- 保存node -->
+	<insert id="saveNode" parameterType="java.util.Map">
+		insert into
+		ma_node(ip,name,tcp_port,status,cpucount,disksize,memorysize
+		,isolata_state,clusterId,adapternodeid,hostname)
+		values(#{ip},#{name},#{tcp_port},#{status},#{cpu},#{disk},#{memory}
+		,#{isolata},#{cluster_id},#{id},#{name})
+	</insert>
+
+	<!-- 更新node的状�? -->
+	<update id="updateStatus" parameterType="java.util.HashMap">
+		update ma_node n set
+		n.status=#{status} where n.name=#{nodeName}
+	</update>
+
+	<!-- 更新node -->
+	<update id="vmUpdate" parameterType="java.util.Map">
+		update ma_node n
+		<set>
+			<if test=" ip != null ">
+				ip = #{ip:VARCHAR},
+			</if>
+			<if test=" cpu != null ">
+				cpucount = #{cpu:NUMERIC},
+			</if>
+			<if test=" disk!= null ">
+				disksize = #{disk:NUMERIC},
+			</if>
+			<if test=" name != null ">
+				hostname = #{name:VARCHAR},
+			</if>
+			<if test=" memory != null ">
+				memorysize = #{memory:NUMERIC},
+			</if>
+			<if test=" name != null ">
+				name = #{name:VARCHAR},
+			</if>
+			<if test=" status != null ">
+				status = #{status:VARCHAR}
+			</if>
+		</set>
+
+		where name = #{name}
+	</update>
+
+	<!-- 查询实例所在的node -->
+	<select id="findNodeByInstance" resultMap="resultMap_nodeMap">
+		select tn.* from
+		ma_node tn,ma_instance ti where ti.node_id = tn.adapternodeid and ti.instance_id
+		= #{value}
+	</select>
+
+	<!-- 更新node上的所有实例的状�? --><!-- <update id="updateNodeInstance" parameterType="java.util.HashMap"> 
+		update ma_instance ti set ti.status = #{status} where ti.node_id = (select 
+		tn.id from ma_node tn where tn.name = #{nodeName}) </update> --><!-- 更新node的TCP端口和状�? -->
+	<update id="updateNode" parameterType="java.util.HashMap">
+		update ma_node n set
+		n.status=#{status},n.tcp_port = #{tcpPort} where n.name=#{nodeName}
+	</update>
+
+	<!-- 更新node的TCP端口和状态，通过Ip -->
+	<update id="updateNodeByIp" parameterType="java.util.HashMap">
+		update ma_node n set
+		n.status=#{status},n.tcp_port = #{tcpPort},n.name=#{nodeName} where
+		n.ip=#{ip}
+	</update>
+
+	<!-- 查询node的信息，包含node上运行的实例个数以及node的规划内�? -->
+	<select id="findUsedMem" resultType="java.util.HashMap">
+		select n.*,
+		IFNULL(sv.usedMem,0) as USEDMEM,
+		IFNULL(sv.instanceNum,0) as INSTANCENUM,
+		IFNULL(sv.alone,0) as ALONE,
+		IFNULL(sv.cpuNum,0) as CPUNUM,
+		IFNULL(sv.usedCpu,'') as USEDCPU
+		from ma_node n left join
+		(select count(1) as instanceNum,
+		i.node_id,
+		sum( case when s.XMX=0 or s.XMX is null then #{xmx} else s.XMX end ) as
+		usedMem,
+		CONVERT( avg( case when s.ALONE is null then 0 else s.ALONE end ), SIGNED ) as
+		alone,
+		sum(case when s.CPU_NUM=0 or s.CPU_NUM is null then #{cpu} else s.CPU_NUM end)
+		as cpuNum,
+		group_concat( i.used_cpu ) as usedCpu
+		from ma_instance i left join
+		(select t.app_id,
+		sum(case when t.code='ALONE' then case when t.value = 'false' or t.value is
+		null then 0 else 1 end else 0 end ) as ALONE,
+		sum(case when t.code='JVM_XMX' then case when t.value is null then 0 else
+		t.value end else 0 end) as XMX,
+		sum(case when t.code='CPU_NUMBER' then case when t.value is null then 0 else
+		cast(t.value as unsigned int) end else 0 end) as CPU_NUM
+		from (select ti.code,
+		tsi.value,
+		tas.strategy_type,
+		tas.app_id
+		from ma_application_strategy tas,
+		ma_item ti,
+		ma_strategy_item tsi
+		where tas.strategy_id = tsi.strategy_id
+		and ti.id = tsi.item_id
+		and ( ti.code = 'JVM_XMX' or ti.code = 'ALONE' or ti.code = 'CPU_NUMBER'
+		)
+		and tas.strategy_type = 'DEPLOY') t group by t.app_id) s
+		on i.app_id = s.app_id
+		group by i.node_id) sv
+		on n.adapternodeid = sv.node_id where n.status = 'RUNNING'
+	</select>
+
+	<!-- 查询node的信息，包含node上运行的实例个数以及node的规划内存，封装成node对象 -->
+	<select id="findNodeUsedMem" resultMap="resultMap_nodeMap2"
+		parameterType="java.util.HashMap">
+		select n.*,
+		IFNULL(sv.usedMem,0) as USEDMEM,
+		IFNULL(sv.instanceNum,0) as INSTANCENUM,
+		IFNULL(sv.alone,0) as ALONE,
+		IFNULL(sv.cpuNum,0) as CPUNUM,
+		IFNULL(sv.usedCpu,'') as USEDCPU
+		from ma_node n left join
+		(select count(1) as instanceNum,
+		i.node_id,
+		sum( case when s.XMX=0 or s.XMX is null then #{xmx} else s.XMX end ) as
+		usedMem,
+		CONVERT( avg( case when s.ALONE is null then 0 else s.ALONE end ), SIGNED ) as
+		alone,
+		sum(case when s.CPU_NUM=0 or s.CPU_NUM is null then #{cpu} else s.CPU_NUM end)
+		as cpuNum,
+		group_concat( i.used_cpu ) as usedCpu
+		from ma_instance i left join
+		(select t.app_id,
+		sum(case when t.code='ALONE' then case when t.value = 'false' or t.value is
+		null then 0 else 1 end else 0 end ) as ALONE,
+		sum(case when t.code='JVM_XMX' then case when t.value is null then 0 else
+		t.value end else 0 end) as XMX,
+		sum(case when t.code='CPU_NUMBER' then case when t.value is null then 0 else
+		cast(t.value as unsigned int) end else 0 end) as CPU_NUM
+		from (select ti.code,
+		tsi.value,
+		tas.strategy_type,
+		tas.app_id
+		from ma_application_strategy tas,
+		ma_item ti,
+		ma_strategy_item tsi
+		where tas.strategy_id = tsi.strategy_id
+		and ti.id = tsi.item_id
+		and (ti.code = 'JVM_XMX' or ti.code = 'ALONE' or ti.code = 'CPU_NUMBER' )
+		and tas.strategy_type = 'DEPLOY') t group by t.app_id) s
+		on i.app_id = s.app_id
+		group by i.node_id) sv
+		on n.adapternodeid = sv.node_id where n.status = 'RUNNING'
+		and n.name = #{name}
+	</select>
+
+	<!-- 查询物理机通过类型 -->
+	<select id="queryHostsByEnname" parameterType="String"
+		resultType="java.lang.String">
+		select n.HOSTNAME from ma_node where n.enname = #{enname}
+	</select>
+
+	<!-- 获取ready状态的node -->
+	<select id="getNewNode" resultMap="resultMap_nodeMap">
+		select n.* from ma_node n where n.status = 'READY' and n.enname = #{value}
+	</select>
+
+	<!-- 获取空闲的node -->
+	<select id="idNode" resultType="java.util.HashMap">
+		select distinct if( (
+		nr.node_group is null or nr.node_group = '' ), nr.name, nr.node_group)
+		AS NAME,
+		if( ( nr.node_group is null or nr.node_group = '' ), 'false', 'true') AS
+		ISCLUSTER,
+		nr.is_new AS NEW,nr.instance_num AS INSTANCENUM
+		from ma_node_resource nr where
+		nr.instance_num = 0 and nr.status = 'RUNNING'
+	</select>
+
+	<!-- 统计node的个�? -->
+	<sql id="CountNodeCondtion_name">
+		<if test="name != null">
+			and name like '%${name}%'
+		</if>
+	</sql>
+	<sql id="CountNodeCondtion_ip">
+		<if test="ip != null">
+			and ip like '%${ip}%'
+		</if>
+	</sql>
+	<sql id="CountNodeCondtion_status">
+		<if test="status != null">
+			and status = #{status}
+		</if>
+	</sql>
+	<select id="countNodes" resultType="java.lang.Integer">
+		select count(1) from ma_node t
+		<trim prefix="where" prefixOverrides="and">
+			<include refid="CountNodeCondtion_name" />
+			<include refid="CountNodeCondtion_ip" />
+			<include refid="CountNodeCondtion_status" />
+		</trim>
+	</select>
+
+	<!-- 分页查询node -->
+	<sql id="NodeCondtion_name">
+		<if
+			test="objCondition!=null and objCondition.name !=null and objCondition.name !=''">
+			and name like '%${objCondition.name}%'
+		</if>
+	</sql>
+	<sql id="NodeCondtion_ip">
+		<if
+			test="objCondition!=null and objCondition.ip !=null and objCondition.ip !=''">
+			and ip like '%${objCondition.ip}%'
+		</if>
+	</sql>
+	<sql id="NodeCondtion_status">
+		<if
+			test="objCondition!=null and objCondition.status !=null and objCondition.status !=''">
+			and status = #{objCondition.status}
+		</if>
+	</sql>
+	<select id="findAllNodes" parameterType="page" resultMap="resultMap_nodeMap3">
+		select t.ID,
+		t.IP,
+		t.DESCRIPTION,
+		t.NAME,
+		t.STATUS,
+		t.CPUCOUNT,
+		t.DISKSIZE,
+		t.MEMORYSIZE
+		from ma_node t
+		<trim prefix="where" prefixOverrides="and">
+			<include refid="NodeCondtion_name" />
+			<include refid="NodeCondtion_ip" />
+			<include refid="NodeCondtion_status" />
+		</trim>
+		order by t.adapternodeid
+		limit #{startRowNum},#{pageSize}
+	</select>
+
+	<!-- 统计node上的实例个数 -->
+	<select id="countInstances" parameterType="String" resultType="java.lang.Integer">
+		select count(1) from ma_instance t, ma_node n where t.node_id = n.adapternodeid
+		and n.name = #{value}
+	</select>
+
+	<!-- 分页查询条件 -->
+	<sql id="Condtion_nodeName">
+		<if
+			test="objCondition != null and objCondition.name != null and objCondition.name != '' ">
+			and n.name = #{objCondition.name}
+		</if>
+	</sql>
+
+	<!-- 通过nodename删除node -->
+	<delete id="deleteByName">
+		delete from ma_node where name = #{value}
+	</delete>
+
+	
+
+	<!-- node注册时，保存node资源 -->
+	<insert id="saveNodeResource" parameterType="node">
+		insert into
+		ma_node_resource(id,name,ip,memory,cpu_num,cpu_status,cpus,instance_num,host_name,disk
+		,isolate_state,node_type,node_group,used_lxc,version,is_new,alone,status)
+		values(#{adapterNodeId},#{name},#{ip},#{memorysize},#{cpucount},100,#{cpuStr},#{instanceNum},
+		#{hostname},#{disksize},0,#{enname},#{nodeGroup},#{isolata},0,1,#{alone},'RUNNING')
+		<!-- <selectKey resultType="long" keyProperty="id"> select LAST_INSERT_ID() 
+			</selectKey> -->
+	</insert>
+	<delete id="deleteNodeResource">
+		delete from ma_node_resource where name = #{value}
+	</delete>
+	<select id="findNameById" parameterType="String" resultType="String">
+		select t.name from ma_node t where t.adapternodeid = #{value}
+	</select>
+
+	<select id="findByCluster" resultMap="resultMap_nodeMap">
+		select * from ma_node n
+		where n.NODE_GROUP = #{value}
+	</select>
+
+	<insert id="saveNodeCpu" parameterType="java.util.Map">
+		insert into ma_node_cpus (node_id, cpu_index,used_count,max_count)
+		values (#{nodeId}, #{cpuIndex}
+		, #{usedCount}, #{maxCount})
+		<selectKey resultType="long" keyProperty="adapternodeid">
+			select
+			LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<delete id="deleteNodeCpus">
+		delete from ma_node_cpus where node_id in(
+		select id from ma_node_resource n where n.NAME=#{value}
+		)
+	</delete>
+
+	<update id="updateUpgradeStatus" parameterType="java.util.Map">
+		update ma_node set UPGRADING=#{upgrading}
+		where IP in
+		<foreach collection="nodes" index="index" item="nodeIp" open="("
+			separator="," close=")">
+			#{nodeIp}
+		</foreach>
+	</update>
+	<insert id="saveNodeBridges" parameterType="java.util.Map">
+		insert into ma_node_bridge (node_id,bridge_ip)
+		values(#{nodeId},#{bridgeIp})
+		<selectKey resultType="long" keyProperty="id">
+			select LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	<select id="findByNodeId" resultType="java.lang.String">
+		select id from ma_node
+		where adapternodeid =#{value}
+	</select>
+	<select id="findNodeBridge" resultMap="resultMap_nodeBridgeMap">
+		select * from
+		ma_node_bridge where node_id =#{value}
+	</select>
+	<select id="listContainerIps" resultMap="resultMap_nodeContainerIpMap">
+		select * from ma_container_ip where bridge_ip = #{value}
+	</select>
+	<select id="findByClusterId" parameterType="java.lang.String"
+		resultMap="resultMap_nodeMap">
+		select * from ma_node where cluster_id=#{value}
+	</select>
+	<select id="findAdapterNodes" resultType="java.util.Map">
+		select ip from ad_node
+		ad where status !='0'
+	</select>
+	<delete id="deleteNodeBridges">
+		delete from ma_node_bridge where node_id =#{value}
+	</delete>
+	<insert id="saveNodeLabels" parameterType="java.util.Map">
+		insert into ma_node_labels (node_id,label_key,label_value,label_type)
+		values(#{nodeId},#{key},#{value},#{type})
+		<selectKey resultType="long" keyProperty="id">
+			select LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	<delete id="deleteNodeLabels">
+		delete from ma_node_labels where node_id =#{value}
+	</delete>
+	<!-- 更新node cpu 最大共享次数 -->
+	<update id="updateNodeCpu" parameterType="java.util.HashMap">
+		update ma_node_cpus set
+		max_count=#{max_count} where node_id=#{node_id}
+	</update>
+	<select id="getAppsOnNode" resultType="java.util.Map">
+		select a.APP_ID as appId,
+		a.APP_NAME as appName, n.IP as ip
+		from ma_instance t, ma_node n, ma_application a
+		where t.node_id = n.adapternodeid and
+		t.app_id = a.id and n.ip=#{value}
+	</select>
+	<insert id="addLabels" parameterType="java.util.HashMap">
+		insert into ma_node_labels (node_id,label_key,label_value,label_type)
+		values
+		<foreach collection="nodes" index="index" item="node"
+			separator=",">
+		(#{node.id},#{key},#{value},#{type})
+		</foreach>
+	</insert>
+	<delete id="deleteLabels" parameterType="java.util.HashMap">
+		delete from ma_node_labels where label_key=#{key} and label_value=#{value} and label_type=#{type} 
+		and node_id in 
+		<foreach collection="nodes" index="index" item="node" open="(" close=")"
+			separator=",">
+		#{node.id}
+		</foreach>
+	</delete>
+	<!-- 通过cluster和Ip查询 -->
+	<select id="findByClusterAndIp" parameterType="java.util.HashMap" resultMap="resultMap_nodeMap">
+		select * from ma_node n where n.ip=#{ip} and n.CLUSTERID=#{clusterId}
+	</select>
+</mapper>

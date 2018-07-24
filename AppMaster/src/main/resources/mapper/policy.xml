@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+
+<mapper namespace="policy">
+
+	
+	<select id="getPolicyId" resultType="java.lang.Integer">
+		select page_id from policy_info where text=#{val}
+	</select>
+	
+	
+	<select id="getPageId" resultType="java.lang.Integer">
+		select page_id from role_policy_infomapping where role_id=#{roleId}
+	</select>
+	<select id="getRoleCountOfPolicy" resultType="java.lang.Integer">
+		select COUNT(role_id) from role_policy_infomapping where page_id=#{page_id}
+	</select>
+
+
+	<insert id="addPolicy">
+		insert into policy_info (text, icon, sref, title, type,serialNum) values
+		(#{text}, #{icon}, #{sref},  #{title}, #{type},#{serialNum})
+		<selectKey resultType="long" keyProperty="id">
+			select LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<insert id="addPolicyChild">
+		insert into policy_child_info (text, icon, sref, type,parent_id) values
+		(#{text}, #{icon}, #{sref}, #{type},#{pId})
+		<selectKey resultType="long" keyProperty="id">
+			select LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<delete id="deleteOneByPolicyText" >
+		delete from policy_info where page_id=#{val}
+	</delete>
+
+	<select id="selectAllPolicys" resultType="Policy" parameterType="java.util.List">
+		select * from policy_info  
+		where policy_info.page_id in
+		<foreach collection ="list" index="index" item="val" open="("  separator="," close=")" >
+                   #{val}
+       </foreach>
+       ORDER BY serialNum
+	</select>
+	
+	<select id="selectAllPolicys2" resultType="Policy">
+		select * from policy_info  ORDER BY serialNum
+	</select>	
+	
+	
+	
+	<!-- 更新 -->
+	<update id="updatePolicyInfo" parameterType="Policy">
+		update policy_info p
+		<set>
+			<if test="text !=null and text != ''">
+				p.text = #{text},
+			</if>
+			<if test="icon !=null and icon != ''">
+				p.icon = #{icon},
+			</if>
+			<if test="sref !=null and sref != ''">
+				p.sref = #{sref},
+			</if>
+			<if test="title !=null and title != ''">
+				p.title = #{title},
+			</if>
+			<if test="type !=null ">
+				p.type = #{type},
+			</if>
+			<if test="serialNum != ''">
+				p.serialNum = #{serialNum}
+			</if>
+		</set>
+		 where p.page_id = #{page_id} 
+	</update>
+
+	<select id="getPolicyIdByText" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select page_id from policy_info where text=#{value}
+	</select>
+
+	<select id="getRoleCountOfPolicyChild" resultType="java.lang.Integer">
+		select COUNT(role_id) from role_policy_child_mapping where policy_child_id=#{policyChildId}
+	</select>
+	
+	<delete id="deleteOneByPolicyChild">
+		delete from policy_child_info where id=#{val}
+	</delete>
+	
+	<update id="updatePolicyChildInfo" parameterType="com.dc.appengine.appmaster.entity.PolicyChild">
+		update policy_child_info p
+		<set>
+			<if test="text !=null and text != ''">
+				p.text = #{text},
+			</if>
+			<if test="icon !=null and icon != ''">
+				p.icon = #{icon},
+			</if>
+			<if test="sref !=null and sref != ''">
+				p.sref = #{sref},
+			</if>
+			<if test="type !=null ">
+				p.type = #{type},
+			</if>
+			<if test="parent_id != ''">
+				p.parent_id = #{parent_id}
+			</if>
+		</set>
+		 where p.id = #{id} 
+	</update>
+	
+	<select id="getChrildPolicyIdByText" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select id from policy_child_info where text=#{value}
+	</select>
+	
+	<select id="getPChildId" resultType="java.lang.Integer">
+		SELECT rp.policy_child_id FROM policy_child_info p , role_policy_child_mapping rp 
+		WHERE rp.role_id=#{roleId} AND rp.policy_child_id=p.`id`
+	</select>
+	
+	<select id="getMenuIdList" resultType="java.lang.String">
+		SELECT rm.menu_id FROM policy_menu m ,role_menu_mapping rm 
+		WHERE rm.role_id=#{roleId} AND m.id = rm.menu_id
+	</select>
+
+	<select id="getPolicyResourceList" resultType="java.lang.String" parameterType="java.util.List">
+		SELECT pr.`resource_url` FROM policy_info p ,policy_resource_mapping pr 
+		WHERE p.`page_id`=pr.`policy_id` AND pr.`policy_id` in
+		<foreach collection ="list" index="index" item="val" open="("  separator="," close=")" >
+                   #{val}
+       </foreach>
+	</select>
+	
+	<select id="getTextByPolicyChild" parameterType="java.lang.String" resultType="java.lang.String">
+		select text from policy_child_info where id=#{val}
+	</select>
+</mapper>

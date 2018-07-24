@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="application_release_strategy">
+	<insert id="save" parameterType="java.util.Map">
+		insert into `application_release_strategy` (`id`, `name`, `app_id`, `task_status`, `cron`, `user_id`)
+		values (#{id}, #{name}, #{app_id}, #{task_status}, #{cron}, #{user_id})
+	</insert>
+	<update id="update" parameterType="java.util.Map">
+		update application_release_strategy
+		<set>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="app_id != null">
+				app_id = #{app_id},
+			</if>
+			<if test="task_status != null">
+				task_status = #{task_status},
+			</if>
+			<if test="cron != null">
+				cron = #{cron}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	<delete id="delete" parameterType="java.lang.String">
+		delete from application_release_strategy
+		where id in
+		<foreach collection="array" index="index" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</delete>
+	<select id="page" parameterType="java.util.Map" resultType="java.util.Map">
+		select strategy.*, resource.RESOURCE_NAME app_name
+		from application_release_strategy strategy, sv_resource resource
+		<where>
+			strategy.app_id = resource.ID
+			and user_id = #{user_id}
+			<if test="name != null and name != ''">
+				and strategy.name like concat('%',#{name},'%')
+			</if>
+			<if test="app_name != null and app_name != ''">
+				and resource.RESOURCE_NAME like concat('%',#{app_name},'%')
+			</if>
+			<if test="task_status != null and task_status != ''">
+				and strategy.task_status = #{task_status}
+			</if>
+		</where>
+	</select>
+</mapper>

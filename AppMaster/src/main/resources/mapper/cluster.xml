@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cluster">
+	<insert id="insert" parameterType="java.util.Map">
+        insert into ad_cluster(id, name, user_id)
+        values (#{id},#{name},#{userId})
+    </insert>
+    <delete id="delete" parameterType="java.lang.String">
+    	delete from ad_cluster
+    	where id = #{clusterId}
+    </delete>
+    <update id="update" parameterType="java.util.Map">
+    	update ad_cluster
+    	set name = #{name}
+    	where id = #{id}
+    </update>
+    <select id="list" parameterType="java.util.Map" resultType="java.util.Map">
+    	select cluster.id as id, cluster.name as name, count(node.CLUSTERID) as hostNum
+        from ad_cluster cluster left join ma_node node
+        on cluster.id = node.CLUSTERID
+        <where>
+        	<if test="userId != null">
+        		cluster.user_id = #{userId}
+        	</if>
+        	<if test="name != null">
+        		and cluster.name like concat('%',#{name},'%')
+        	</if>
+        </where>
+        group by cluster.id
+        order by cluster.name
+    </select>
+    <select id="listAll" parameterType="java.lang.String" resultType="java.util.Map">
+    	select id, name
+    	from ad_cluster
+    	where user_id = #{userId}
+    </select>
+    <select id="check" parameterType="java.util.Map" resultType="java.lang.Integer">
+    	select count(*)
+    	from ad_cluster
+    	where name = #{name}
+    	and user_id = #{userId}
+    </select>
+    <select id="checkOther" parameterType="java.util.Map" resultType="java.lang.Integer">
+    	select count(*)
+    	from ad_cluster
+    	where name = #{name}
+    	and id != #{id}
+    	and user_id = #{userId}
+    </select>
+    <select id="one" parameterType="java.lang.String" resultType="java.util.Map">
+    	select cluster.id as id, cluster.name as name, count(node.CLUSTERID) as hostNum
+        from ad_cluster cluster left join ma_node node
+        on cluster.id = node.CLUSTERID
+    	where cluster.id = #{id}
+    	group by cluster.id
+    </select>
+    <select id="findClusterByName" parameterType="java.lang.String" resultType="java.util.Map">
+    	select * from ad_cluster where name = #{name}
+    </select>
+</mapper>

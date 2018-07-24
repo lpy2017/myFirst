@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="node_label">
+	<select id="findLabelsByCluster" parameterType="java.util.Map" resultType="java.util.HashMap">
+		select distinct label.label_key `key`, label.label_value `value`, label.label_type `type` 
+		from ma_node_labels label, ma_node node
+		where node.clusterid = #{cluster_id}
+		and label.node_id = node.adapternodeid
+		<if test="type != null">
+            and label.label_type = #{type}
+        </if>
+	</select>
+	<select id="findNodesByLabel" parameterType="java.util.Map" resultType="java.util.HashMap">
+		select node.*
+		from ma_node node, ma_node_labels label
+		where node.adapterNodeId = label.node_id
+		<if test="clusterId != null">
+			and node.clusterid = #{clusterId}
+		</if>
+		and label.label_key = #{key}
+		and label.label_value = #{value}
+		and label.label_type = #{type}
+	</select>
+	<insert id="insert" parameterType="java.util.Map">
+		insert into ma_node_labels(node_id, label_key, label_value, label_type)
+		values
+		<foreach collection="nodes" index="index" item="item" open="" separator="," close="">
+			(#{item},#{label.key},#{label.value},#{label.type})
+		</foreach>
+	</insert>
+	<delete id="delete" parameterType="java.util.Map">
+		delete from ma_node_labels
+		where label_key = #{key}
+		and label_value = #{value}
+		and label_type = #{type}
+		and node_id in (
+			select ADAPTERNODEID
+			from ma_node
+			where CLUSTERID = #{clusterId}
+		)
+	</delete>
+	<select id="check" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(*)
+		from ma_node_labels
+		where label_key = #{key}
+		and label_value = #{value}
+		and label_type = #{type}
+		and node_id in (
+			select ADAPTERNODEID
+			from ma_node
+			where CLUSTERID = #{clusterId}
+		)
+	</select>
+	<select id="nodes" parameterType="java.util.Map" resultType="java.util.HashMap">
+		select node.ip ip, node.adapterNodeId id, node.name name
+		from ma_node node, ma_node_labels label
+		where node.adapterNodeId = label.node_id
+		<if test="clusterId != null">
+			and node.clusterid = #{clusterId}
+		</if>
+		and label.label_key = #{key}
+		and label.label_value = #{value}
+		and label.label_type = #{type}
+	</select>
+</mapper>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dashboard">
+	<select id="getClusterNum" parameterType="java.lang.Long" resultType="java.lang.Integer">
+		select count(*)
+		from ad_cluster
+		where user_id = #{userId}
+	</select>
+	<select id="getBlueprintNum" resultType="java.lang.Integer">
+		select count(*)
+		from ma_blueprint_template
+		where USER_ID in
+		<foreach collection="array" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+	</select>
+	<select id="getBlueprintInstanceNum" resultType="java.lang.Integer">
+		select count(*)
+		from ma_blueprint_instance
+		where USERID in
+		<foreach collection="array" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+	</select>
+	<select id="getComponentNum" resultType="java.lang.Integer">
+		select count(*)
+		from sv_resource
+	</select>
+	<select id="getApplicationByCluster" parameterType="java.util.Map" resultType="java.util.HashMap">
+		select app.ID, app.APP_NAME, app.COMPONENT_NAME, app.NODE_NAME, instance.INSTANCE_NAME, node.IP, node.NAME HOSTNAME
+		from ma_application app, ma_blueprint_instance instance, ma_instance appIns, ma_node node
+		<where>
+			<if test="clusterId != null">
+				app.CLUSTER_ID = #{clusterId}
+			</if>
+			<if test="userId != null">
+				and app.USERID = #{userId}
+			</if>
+			<if test="nodeName != null">
+				and app.NODE_NAME like concat('%',#{nodeName},'%')
+			</if>
+			and app.BLUE_INSTANCE_ID = instance.ID
+			<if test="instanceName != null">
+				and instance.INSTANCE_NAME like concat('%',#{instanceName},'%')
+			</if>
+			<if test="componentName != null">
+				and app.COMPONENT_NAME like concat('%',#{componentName},'%')
+			</if>
+			and appIns.APP_ID = app.ID
+			and appIns.NODE_ID = node.ADAPTERNODEID
+			<if test="hostname != null">
+				and node.NAME like concat('%',#{hostname},'%')
+			</if>
+		</where>
+	</select>
+	<select id="getBlueprintInstanceByCluster" parameterType="java.util.Map" resultType="java.util.HashMap">
+		select distinct instance.INSTANCE_NAME, template.NAME, instance.INSTANCE_DESC, instance.ID, instance.INSTANCE_ID
+		from ma_blueprint_instance instance, ma_application app, ma_blueprint_template template
+		<where>
+			app.BLUE_INSTANCE_ID = instance.ID
+			and instance.TEMPLATE_ID = template.ID
+			<if test="userId != null">
+				and instance.USERID = #{userId}
+			</if>
+			<if test="clusterId != null">
+				and app.CLUSTER_ID = #{clusterId}
+			</if>
+			<if test="instanceName != null">
+				and instance.INSTANCE_NAME like concat('%',#{instanceName},'%')
+			</if>
+			<if test="blueprintName != null">
+				and template.NAME like concat('%',#{blueprintName},'%')
+			</if>
+		</where>
+	</select>
+	<select id="getFlowInstanceByIds" parameterType="java.util.Map" resultType="java.util.HashMap">
+		select distinct instance.INSTANCE_NAME blueprintInstanceName, f.FLOWNAME flowName, f.INSTANCEID flowInstanceId, cluster.name clusterName, userinfo.USERID userName, DATE_FORMAT(f.START_TIME, '%Y-%m-%d %H:%i:%S') startTime
+		from ma_flowinstance f, ma_blueprint_instance instance, ad_cluster cluster, accounts_info userinfo, ma_application app
+		<where>
+			<if test="flowInstanceIds != null and flowInstanceIds.length > 0">
+				f.INSTANCEID in
+				<foreach collection="flowInstanceIds" index="index" open="(" close=")" separator="," item="item">
+					#{item}
+				</foreach>
+			</if>
+			<if test="flowInstanceIds != null and flowInstanceIds.length == 0">
+				f.INSTANCEID = ''
+			</if>
+			and instance.INSTANCE_ID = f.ID
+			and instance.ID = app.BLUE_INSTANCE_ID
+			and app.CLUSTER_ID = cluster.id
+			and instance.USERID = userinfo.ID
+			and userinfo.ID = #{userId}
+		</where>
+	</select>
+</mapper>

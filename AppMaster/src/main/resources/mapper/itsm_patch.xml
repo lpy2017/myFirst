@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="itsmPatch">
+	<select id="getPatchList" parameterType="java.util.Map" resultType="java.util.Map">
+		select distinct version.ID id, version.VERSION_NAME name
+		from sv_version_audit audit, sv_version version
+		where audit.userId = #{userName}
+		and version.RESOURCE_ID = #{componentId}
+		and audit.resourceVersionId = version.ID
+	</select>
+	<select id="getPatchStatistics" parameterType="java.util.Map" resultType="java.util.Map">
+		select version.VERSION_NAME patchName, audit.opType opType, DATE_FORMAT(audit.updateTime, '%Y-%m-%d %H:%i:%S') updateTime, audit.`status` status, audit.description description, version.ID versionId, version.VERSIONNUM versionNum, audit.id id
+		from sv_version_audit audit, sv_version version
+		<where>
+			audit.userId = #{userName}
+			and audit.resourceVersionId = version.ID
+			<if test="patchName != null and patchName != '(全部)'">
+				and version.VERSION_NAME = #{patchName}
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				and audit.updateTime &gt;= #{beginTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and audit.updateTime &lt;= #{endTime}
+			</if>
+			<if test="opType != null and opType != '(全部)'">
+				and audit.opType = #{opType}
+			</if>
+			<if test="statusType != null and statusType !=''">
+				and audit.`status` = #{statusType}
+			</if>
+			<if test="componentId != null and componentId !=''">
+				and version.RESOURCE_ID = #{componentId}
+			</if>
+		</where>
+	</select>
+	<select id="export" parameterType="java.lang.String" resultType="java.util.Map">
+		select version.VERSION_NAME patchName, audit.opType opType, DATE_FORMAT(audit.updateTime, '%Y-%m-%d %H:%i:%S') updateTime, audit.`status` status, audit.description description, version.ID versionId, version.VERSIONNUM versionNum, audit.id id
+		from sv_version_audit audit, sv_version version
+		where audit.resourceVersionId = version.ID
+		and audit.id in
+		<foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+</mapper>

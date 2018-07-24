@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+
+<mapper namespace="component_update">
+	<select id="findInstancesByAppId" parameterType="java.lang.Long" resultType="java.lang.String">
+		select ID
+		from ma_instance
+		where APP_ID = #{appId}
+	</select>
+	<select id="findJsonByFlowId" parameterType="java.lang.String" resultType="java.lang.String">
+		select json
+		from ma_application_flow_op
+		where flow_id = #{flowId}
+	</select>
+	<select id="findKeyByAppId" parameterType="java.lang.Long" resultType="java.lang.Long">
+		select `KEY`
+		from ma_application
+		where ID = #{appId}
+	</select>
+	<update id="updateInputAndOutput" parameterType="java.util.Map">
+		update ma_instance
+		set COMPONENT_INPUT_TEMP = #{input},
+		COMPONENT_OUTPUT_TEMP = #{output},
+		RESOURCE_VERSION_ID = #{resourceVersionId}
+		where APP_ID = #{appId}
+	</update>
+</mapper>

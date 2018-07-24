@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+
+<mapper namespace="role">
+	
+	
+	<resultMap id="resultMap_role" type="com.dc.appengine.appmaster.entity.Role">
+
+		<result column="id" property="roleId" javaType="java.lang.String" />
+		<result column="name" property="name" javaType="java.lang.String" />
+
+	</resultMap>
+	<select id="getUserOfRole" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select COUNT(user_id) from user_role where role_id=#{roleId}
+	</select>
+	<select id="getNewRoleId" resultType="java.lang.Integer">
+		SELECT MAX(id) FROM role
+	</select>
+	
+	<select id="listRoles" resultMap="resultMap_role">
+		select * from role 
+	</select>	
+	
+	<select id="getRoleId" parameterType="java.lang.String" resultType="java.lang.Long">
+		select id from role where name=#{name}
+	</select>
+	
+	<insert id="addRole">
+		insert into role (id, name) values
+		(#{roleId}, #{name})
+	</insert>
+	
+	<insert id="addPolicyOfRole">
+		insert into role_policy_infomapping (role_id, page_id) values
+		(#{roleId}, #{pageId})
+	</insert>
+	<insert id="addPolicyChildOfRole">
+		insert into role_policy_child_mapping (role_id,policy_child_id) values
+		(#{roleId},#{pcId})
+	</insert>
+	
+	<delete id="deletePolicyOfRole" >
+		delete from role_policy_infomapping where role_id=#{roleId} and page_id=#{policy}
+		
+	</delete>
+	<delete id="deletePolicyChildOfRole">
+		delete from role_policy_child_mapping where role_id=#{roleId} and policy_child_id=#{policyChildId}
+	</delete>
+	<delete id="deletRole" parameterType="java.lang.Integer">
+		delete from role where id=#{id}
+	</delete>
+	
+	<select id="getPageId" resultType="java.lang.Integer">
+		select page_id from role_policy_infomapping where role_id=#{roleId}
+	</select>
+	
+	
+	<select id="listPolicysOfRole" resultType="Policy" parameterType="java.util.List">
+		select * from policy_info  
+		where policy_info.page_id in
+		<foreach collection ="list" index="index" item="val" open= "("  separator ="," close=")" >
+                   #{ val}
+       </foreach>
+	</select>
+	
+		<select id="getRoleName" parameterType="java.lang.Integer" resultType="java.lang.String">
+		select name from role where id=#{roleId}
+	</select>
+
+</mapper>

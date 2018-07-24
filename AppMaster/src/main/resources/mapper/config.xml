@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+<mapper namespace="configs">
+	<select id="getconfigIdByName" parameterType="java.lang.String" resultType="int">
+		select id from app_configs
+		where name=#{configName}
+	</select>
+	<select id="checkName" parameterType="java.util.Map" resultType="int">
+		select count(*) from app_configs
+		where name=#{configName}
+	</select>
+	<insert id="addNewConfig" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="id">
+		insert into app_configs ( `name`,description,userId) values
+		( #{configName},#{description},#{userId})
+	</insert>
+	<insert id="addComponnetConfigs" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="id">
+		insert into app_configs ( blueprintId,`name`,userId,bluekey,version) values
+		( #{blueprintId},#{configName},#{userId},#{bluekey},#{componentvision})
+	</insert>
+	<select id="checkVersion" parameterType="java.util.Map" resultType="int">
+		select count(*) from app_config_version 
+		where configId=#{configId}
+		and version=#{versionName}
+	</select>
+	<select id="getVersionList" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from app_config_version 
+		where configId=#{configId}
+	</select>
+	<select id="getVersionInfo" parameterType="int" resultType="java.util.Map">
+		select v.*,c.name from app_config_version v ,app_configs c
+		where c.id=v.configId
+		and v.id=#{versionId}
+	</select>
+	<select id="getVersionIdByName" parameterType="java.util.Map" resultType="int">
+		select id from app_config_version 
+		where configId=#{configId}
+		and version=#{versionName}
+	</select>
+	<insert id="addVersion" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="id">
+		insert into app_config_version 
+		(version,last_update_time ,configId)
+		VALUES
+		(#{versionName},now(),#{configId})
+	</insert>
+    <select id="getConfigList" parameterType="java.util.Map" resultType="java.util.Map">
+    	select instance.id ,instance.versionId as versionId ,instance.key,instance.value,instance.type,instance.description from app_configs_instance instance,app_config_version v
+		where instance.versionId=v.id
+		and v.id=#{versionId}
+		<if test=" keyword != null and keyword != '' ">
+			and  ( `key` like '%${keyword}%'  or `value` like '%${keyword}%')
+		</if>
+    </select>
+    <select id="checkPair" parameterType="int" resultType="java.util.Map">
+    	select * from app_configs
+		where app_version=#{versionId}
+		
+    </select>
+     <select id="checkVersionId" parameterType="int" resultType="int">
+    	select app_version from app_configs
+		where id=#{configId}
+		
+    </select>
+    <insert id="addPair" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="id">
+    	insert into app_configs (app_version,last_update_time ) values(#{versionId},now())
+    </insert>
+    <delete id="clearConfig" parameterType="int">
+    	delete from app_configs_instance where
+		versionId=#{versionId}
+    </delete>
+    <delete id="delConfig" parameterType="int">
+    	delete from app_configs
+    	where id=#{configId}
+    </delete>
+    <delete id="deleteVersion" parameterType="int">
+    	delete from app_config_version where id=#{versionId}
+    </delete>
+    <delete id="clearClient" parameterType="int">
+    	delete from app_configs_client where configId=#{configId}
+    </delete>
+    <select id="checkKey" parameterType="java.util.Map" resultType="java.util.Map" >
+    	 select instance.* from app_configs_instance instance,app_config_version v
+		where instance.versionId=v.id
+		and v.id=#{versionId}
+		and `key`=#{key}
+    </select>
+    <select id="checkUpdateKey" parameterType="java.util.Map" resultType="java.util.Map" >
+    select instance.* from app_configs_instance instance,app_config_version v
+		where instance.versionId=v.id
+		and v.id=#{versionId}
+		and `key`=#{key}
+		and instance.id != #{id}
+    </select>
+    <select id="getValue" parameterType="java.util.Map" resultType="java.lang.String">
+    	select value from  app_configs_instance 
+		where versionId=#{versionId}
+		and `key`=#{key}
+    
+    </select>
+    <insert id="addLine" parameterType="java.util.Map">
+    	insert into app_configs_instance 
+		(versionId,`key`,`value`,`type`,description) values
+		 (#{versionId},#{key},#{value},#{type},#{description})
+    </insert>
+   <update id="updateLine" parameterType="java.util.Map">
+   		update app_configs_instance 
+		set `key` =#{key},`value`=#{value},`type`=#{type},description =#{description}
+		where id=#{id}
+   </update>
+    <update id="setValue" parameterType="java.util.Map">
+   		update app_configs_instance 
+		set `value`=#{value}
+		where`key` =#{key} and versionId=#{versionId}
+   </update>
+   <delete id="delLine" parameterType="long">
+   		delete from app_configs_instance 
+   		where id=#{id}
+   </delete>
+   <update id="updateOpTime" parameterType="int" >
+   	update app_config_version set last_update_time =now()
+	where id=#{versionId}
+   </update>
+   <insert id="addClient" parameterType="java.util.Map">
+   insert into app_configs_client (clientUrl,configId) values(#{clientUrl},#{configId})
+   </insert>
+   <select id="getClients" parameterType="int" resultType="java.lang.String">
+   		select clientUrl from app_configs_client 
+		where configId=#{configId}
+   </select>
+   <select id="getApps" parameterType="java.lang.String"  resultType="java.util.Map">
+   select ID as id,APP_ID as appId,APP_NAME as appName from ma_application app
+	where app.APP_TYPE='app' 
+	and app.USERID in
+	<foreach collection="userId" index="index" item="userId" open="("  separator="," close=")">
+			#{userId}
+	</foreach>
+   </select>
+   <select id="getVersions" parameterType="java.lang.String"  resultType="java.util.Map">
+   	select v.id,version,last_update_time,c.name from app_config_version v,app_configs c
+	where c.id=v.configId
+	and c.name=#{configName}
+
+   </select>
+  
+   <select id="checkInit" parameterType="java.util.Map" resultType="int">
+   	select count(*) from app_configs_instance
+   	where versionId=#{versionId}
+   </select>
+   <insert id="clone" parameterType="java.util.Map">
+   		insert into app_configs_instance (versionId,`key`,`value`,`type`,description)
+		select #{toId},`key`,`value`,`type`,description from app_configs_instance
+		where versionId=#{fromId}
+   </insert>
+   <!-- 获取配置详细信息 name description  userId configId versionNum lastTime lastVersion -->
+   <select id="getConfigInfo" parameterType="int" resultType="java.util.Map">
+   	select c.*,v.* from app_configs c ,(
+	select configId,count(id) as versionNum ,max(last_update_time) as lastTime, max(version) as lastVersion
+	from app_config_version  
+	group by configId
+	) v
+	where v.configId=c.id
+	and id=#{configId}
+   </select>
+   <select id="getConfigsByPage" parameterType="java.util.Map" resultType="java.util.Map">
+		select c.*,v.* from app_configs c ,(
+		select configId,count(id) as versionNum ,max(last_update_time) as lastTime, max(version) as lastVersion
+		from app_config_version  
+		group by configId
+		) v
+		where v.configId=c.id
+		<if test=" keyword != null and keyword != '' ">
+			and c.name like '%${keyword}%'
+		</if>
+		limit #{start},#{pageSize}
+	</select>
+	<select id="getConfigsNum" parameterType="java.util.Map" resultType="int">
+		select count(*) from app_configs  c
+		<if test=" keyword != null and keyword != '' ">
+			where c.name like '%${keyword}%'
+		</if>
+	</select>
+	<select id="getConfigIdByVersion" parameterType="int" resultType="int">
+		select configId from app_config_version
+ 		where id=#{versionId}
+	</select>
+	<select id="getConfigIdByKey" parameterType="long" resultType="int">
+		select v.configId from app_config_version v,app_configs_instance i
+		where i.versionId=v.id
+		and i.id=#{keyId}
+	</select>
+	
+	<select id="findValue" parameterType="java.util.Map" resultType="java.lang.String">
+		select aci.`value` from app_configs ac,app_config_version acv,app_configs_instance aci 
+		where ac.id=acv.configId and acv.id=aci.versionId
+		and ac.blueprintId=#{blueprintId} and ac.bluekey=#{bluekey} and ac.`name`=#{componentName} and ac.version=#{componnetVision}
+		and aci.`key`=#{key}
+	</select>
+	<select id="getkeyValue" parameterType="java.util.Map" resultType="java.lang.String">
+		select aci.`value` from app_configs_instance aci 
+		where aci.versionId=#{versionId} and aci.`key`=#{key}
+	</select>
+	<update id="updateConfigs" parameterType="java.util.Map">
+		update app_configs_instance 
+		set svalue=#{svalue}
+		where versionId=#{versionId} and `key`=#{key}
+   </update>
+   <select id="getNum" parameterType="java.util.Map" resultType="int">
+		select COUNT(DISTINCT APP_ID) as count from ma_application app,ma_instance ins
+		WHERE app.ID = ins.APP_ID  
+		<if test=" keyword != null and keyword != '' ">
+			and app.APP_NAME like '%${keyword}%'
+		</if>
+		<if test=" userId != null and userId != '' ">
+			and app.userid= ${userId}
+		</if>
+	</select>
+	
+	<select id="getConfigs" parameterType="java.util.Map" resultType="java.util.HashMap">
+		select DISTINCT app.id as appId,app.APP_NAME as appName,ins.COMPONENT_INPUT_TEMP as componentinput from ma_application app,ma_instance ins 
+		WHERE app.ID = ins.APP_ID 
+		<if test=" keyword != null and keyword != '' ">
+			and app.APP_NAME like '%${keyword}%'
+		</if>
+		<if test=" userId != null and userId != '' ">
+			and app.userid= ${userId}
+		</if>
+		ORDER BY appId
+	</select>
+	
+	<select id="configinfos" parameterType="java.util.Map" resultType="java.util.HashMap">
+		select DISTINCT app.id as appId,app.APP_NAME as appName,ins.COMPONENT_INPUT_TEMP as componentinput from ma_application app,ma_instance ins 
+		WHERE app.ID = ins.APP_ID 
+		<if test=" userId != null and userId != '' ">
+			and app.userid= ${userId}
+		</if>
+		 and app.id = ${appId}
+		ORDER BY appId
+	</select>
+	
+	<select id="findFlowId" parameterType="java.util.Map" resultType="java.util.HashMap">
+		select * from ma_blueprint_instance ins,ma_blueprint_type type
+         where ins.INSTANCE_ID=type.BLUEPRINT_INSTANCE_ID
+           and ins.id=${blueInstanceId}
+            and type.FLOW_TYPE like '%${op}%'
+	</select>
+	
+	<select id="findNewFlowId" parameterType="java.util.Map" resultType="java.util.HashMap">
+		select a.FLOWID,multi.version_name,b.FLOW_NAME from sv_version_flow a,(select sv.version_name,sv.id from sv_version sv where sv.id in (select ins.RESOURCE_VERSION_ID from ma_instance ins where ins.app_id 
+			in (select app.id from ma_application app where app.app_name='${appName}' and app.blue_instance_id=${blueInstanceId}))) multi,ma_blueprint_type b
+			where a.VERSIONID = multi.id and a.FLOWTYPE like '%${op}%' and a.FLOWID = b.FLOW_ID
+	</select>
+</mapper>

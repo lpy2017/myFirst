@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="node_new">
+	<insert id="insert" parameterType="java.util.Map">
+		insert into ma_node(`IP`,`NAME`,`CLUSTERID`,`ADAPTERNODEID`,`USER_NAME`,`USER_PASSWORD`,`DESCRIPTION`,`OS_TYPE`)
+		values(#{ip},#{name},#{clusterId},#{id},#{userName},#{userPassword},#{description},#{osType})
+	</insert>
+	<delete id="delete" parameterType="java.lang.String">
+		delete from ma_node
+		where ADAPTERNODEID = #{id}
+	</delete>
+	<update id="update" parameterType="java.util.Map">
+		update ma_node
+		set NAME = #{name},
+			IP = #{ip},
+			USER_NAME = #{userName},
+			USER_PASSWORD = #{userPassword},
+			DESCRIPTION = #{description},
+			OS_TYPE = #{osType}
+		where ADAPTERNODEID = #{id}
+	</update>
+	<select id="list" parameterType="java.util.Map" resultType="java.util.Map">
+		select ADAPTERNODEID id, NAME name, IP ip, DESCRIPTION description, OS_TYPE os
+		from ma_node
+		where CLUSTERID = #{clusterId}
+	</select>
+	<select id="listAll" parameterType="java.lang.String" resultType="java.util.Map">
+		select ADAPTERNODEID id, NAME name, IP ip, DESCRIPTION description
+		from ma_node
+		where CLUSTERID = #{clusterId}
+	</select>
+	<select id="one" parameterType="java.lang.String" resultType="java.util.Map">
+		select ADAPTERNODEID id, IP ip, NAME name, DESCRIPTION description, OS_TYPE osType,CLUSTERID clusterId
+		from ma_node
+		where ADAPTERNODEID = #{id}
+	</select>
+	<delete id="multiDelete" parameterType="java.lang.String">
+		delete from ma_node
+		where ADAPTERNODEID in
+		<foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	<select id="deleteCheck" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(*)
+		from ma_instance
+		where node_id = #{nodeId}
+	</select>
+	<select id="checkIP" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(*)
+		from ma_node
+		where IP = #{ip}
+	</select>
+	<select id="checkOtherIP" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(*)
+		from ma_node
+		where IP = #{ip}
+		and ADAPTERNODEID != #{id}
+	</select>
+</mapper>

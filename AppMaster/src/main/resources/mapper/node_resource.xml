@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+    
+<mapper namespace="nodeResource">
+    <resultMap id="resultMap_nodeMap" type="com.dc.appengine.appmaster.message.bean.MVNode">
+        <result column="name" property="name" javaType="java.lang.String"/>
+        <result column="memory" property="memory" javaType="java.lang.Double"/>
+        <result column="disk" property="disk" javaType="java.lang.Integer"/>
+        <result column="cpu_num" property="cpuNum" javaType="java.lang.Integer"/>
+        <result column="cpu_status" property="cpuStatus" javaType="java.lang.Double"/>
+        <result column="cpus" property="cpuStr" javaType="java.lang.String"/>
+        <result column="instance_num" property="instanceNum" javaType="java.lang.Integer"/>
+        <result column="host_name" property="hostName" javaType="java.lang.String"/>
+        <result column="isolate_state" property="isolateState" javaType="java.lang.Byte"/>
+        <result column="node_type" property="nodeType" javaType="java.lang.String"/>
+        <result column="node_group" property="nodeGroup" javaType="java.lang.String"/>
+        <result column="used_lxc" property="usedLxc" javaType="java.lang.Boolean"/>
+        <result column="version" property="version" javaType="java.lang.Long"/>
+        <result column="alone" property="alone" javaType="java.lang.Boolean"/>
+        <result column="status" property="status" javaType="java.lang.String"/>
+        <result column="is_new" property="newNode" javaType="java.lang.Boolean"/>
+        <result column="adapternodeid" property="adapterNodeId" javaType="java.lang.String"/>
+        <result column="cluster_id" property="clusterId" javaType="java.lang.String"/>
+        <association column="id" property="cpuList" select="nodeResource.listCpus"/>
+        <association column="id" property="labelList" select="nodeResource.listLabels"/>
+    </resultMap>
+    <resultMap id="cpuMap" type="cpu">
+        <result column="id" property="id" javaType="java.lang.Long"/>
+        <result column="node_id" property="nodeId" javaType="java.lang.Long"/>
+        <result column="cpu_index" property="cpuIndex" javaType="java.lang.Integer"/>
+        <result column="shared" property="shared" javaType="java.lang.Boolean"/>
+        <result column="max_count" property="maxCount" javaType="java.lang.Integer"/>
+        <result column="used_count" property="usedCount" javaType="java.lang.Integer"/>
+    </resultMap>
+    
+    <!-- 查询出所有的节点 -->
+	<select id="findAllRunning" resultMap="resultMap_nodeMap">
+		select nr.* from ma_node_resource nr, ma_node n where nr.status='RUNNING' and n.name=nr.name and n.upgrading=0
+	</select>
+	
+	<!-- 查询节点cpu情况 -->
+	<select id="listCpus" resultMap="cpuMap">
+		select * from ma_node_cpus where node_id=#{value} order by id
+	</select>
+	
+	<!-- 更新节点cpu共享状态 -->
+	<update id="updateCpuShared" parameterType="java.util.Map">
+		update ma_node_cpus set shared=#{shared},used_count = #{usedCount} where id=#{id}
+	</update>
+	
+	<update id="returnCpu">
+		update ma_node_cpus set shared=null where id=#{value} and (shared=0 or not exists (select * from ma_instance_cpus c where c.cpu_id=#{value}))
+	</update>
+	
+	<!-- 查询出所有的节点 -->
+	<select id="findAllCluster" resultMap="resultMap_nodeMap">
+		select * from ma_node_resource where node_group in(select distinct n.node_group from ma_node_resource n 
+		where n.node_group is not null and n.node_group!='' and n.status='RUNNING')
+	</select>
+	
+	<!-- 更新节点 -->
+	<update id="update" parameterType="com.dc.appengine.appmaster.message.bean.MVNode">
+		update ma_node_resource n set
+			n.memory=#{memory}, 
+			n.disk=#{disk},
+			n.cpu_num=#{cpuNum}, 
+			n.cpus=#{cpuStr}, 
+			n.instance_num=#{instanceNum}, 
+			n.version=#{version}, 
+			n.alone=#{alone}, 
+			n.status=#{status}, 
+			n.isolate_state=#{isolateState},
+			n.is_new=0 
+			where n.name=#{name} 
+	</update>
+	
+	<!-- 根据node名称查询node -->
+	<select id="findByName" parameterType="java.lang.String" resultMap="resultMap_nodeMap">
+		select * from ma_node_resource r where r.name=#{value}
+	</select>
+	
+	<update id="deleteByName" parameterType="java.lang.String">
+		delete from ma_node_resource where name=#{value}
+	</update>
+	
+	<update id="deleteAll">
+		delete from ma_node_resource
+	</update>
+	
+		<!-- 获取空闲的node -->
+	<select id="idNode" resultType="java.util.HashMap">
+		select distinct if( ( nr.node_group is null or nr.node_group = '' ), nr.name, nr.node_group) AS NAME,
+			if( ( nr.node_group is null or nr.node_group = '' ), 'false', 'true') AS ISCLUSTER, 
+			nr.is_new AS NEW,nr.instance_num AS INSTANCENUM
+		from ma_node_resource nr join ma_node mn on nr.ip=mn.IP
+		 where nr.instance_num = 0 and nr.status = 'RUNNING'
+	</select>
+	
+	<!-- 查询相应名称的node在ma_node_resource表对应的id -->
+	<select id="findIdByName" parameterType="java.lang.String" resultType="java.lang.Long">
+		select r.id from ma_node_resource r where r.name=#{value}
+	</select>
+	
+	<!-- 查询node上相应cpu被多少实例使用 -->
+	<select id="findCpuUsageCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		select count(1) from ma_node_cpus nc, ma_instance_cpus ic
+		where nc.id=ic.cpu_id
+		and nc.cpu_index=#{index}
+		and nc.node_id=#{nodeId}
+	</select>
+	 <!-- 查询指定nodeId的节点 -->
+	<select id="findRunningNodeByNodeId" resultMap="resultMap_nodeMap">
+		select nr.* from ma_node_resource nr, ma_node n where nr.status='RUNNING' and n.name=nr.name and n.upgrading=0 and n.adapternodeid = #{value}
+	</select>
+	  <!-- 查询出集群下的所有节点 -->
+	<select id="findAllRunningByClusterId" resultMap="resultMap_nodeMap">
+		select nr.* from ma_node_resource nr, ma_node n 
+		where nr.status='RUNNING' and n.name=nr.name and n.upgrading=0 and n.cluster_id = #{value}
+	</select>
+	
+	<select id="findByNodeIds" resultMap="resultMap_nodeMap">
+		select * from ma_node_resource nr where nr.id in 
+		<foreach collection="nodeIds" index="index" item="nodeId" open="("  separator="," close=")">
+			#{nodeId}
+		</foreach>
+	</select>
+	
+	<select id="findCpusInfoByNodeName" resultType="java.util.Map">
+		SELECT mn.name,mn.cpucount,mnc.cpu_index,mi.instance_id 
+		FROM ma_node_cpus mnc,ma_instance_cpus mic,ma_instance mi,ma_node mn
+		WHERE mnc.id=mic.cpu_id 
+		AND mic.instance_id = mi.id 
+		AND mnc.node_id=mn.id
+		AND mn.name=#{nodeName}
+	</select>
+	
+	<select id="findCpuStrategyByAppVersionStrategyIds" resultType="java.util.Map">
+		SELECT mavs.id,mi.code,msi.value FROM  	ma_app_version_strategy mavs,
+		ma_strategy_item msi,
+		ma_item mi
+		WHERE mavs.strategy_id=msi.strategy_id
+		AND msi.item_id=mi.id
+		AND mi.code = 'SHARED_CPU' AND mavs.id IN
+		<foreach collection="avsIds" index="index" item="avsId" open="("  separator="," close=")">
+			#{avsId}
+		</foreach>
+	</select>
+
+	<!-- 更新节点 -->
+	<update id="updateNodeResouce" parameterType="java.util.Map">
+		update ma_node_resource n set
+			n.memory=#{memory}, 
+			n.disk=#{disk},
+			n.cpu_num=#{cpuNum}, 
+			n.cpus=#{cpuStr} 
+			where n.name=#{name}
+	</update>
+	<!-- 查询节点cpu情况 -->
+	<select id="listLabels" resultType="java.util.Map">
+		select * from ma_node_labels where node_id=#{value} order by id
+	</select>
+	
+	<select id="loadUsedCpu" resultType="java.util.Map">
+		SELECT mnr.name AS NODE_NAME,mi.USED_CPU AS USED_CPU FROM ma_instance mi 
+		LEFT JOIN ma_application ma ON mi.APP_ID = ma.ID 
+		LEFT JOIN ma_node_resource mnr ON mnr.id = mi.NODE_ID   
+		WHERE ma.USERID = #{userId} 
+	</select>
+</mapper>

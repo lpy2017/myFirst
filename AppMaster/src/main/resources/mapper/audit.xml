@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="audit">
+
+	<resultMap id="resultMap_auditEntity" type="com.dc.appengine.appmaster.entity.AuditEntity">
+		<result column="ID" property="id" javaType="java.lang.Long" />
+		<result column="USERID" property="userId" javaType="java.lang.String" />
+		<result column="RESOURCETYPE" property="resourceType" javaType="java.lang.String" />
+		<result column="RESOURCENAME" property="resourceName" javaType="java.lang.String" />
+		<result column="OPERATETYPE" property="operateType" javaType="java.lang.String" />
+		<result column="OPERATERESULT" property="operateResult" javaType="java.lang.Integer" />
+		<result column="OPERATETIME" property="operateTime" javaType="java.util.Date" />
+		<result column="DETAIL" property="detail" javaType="java.lang.String" />
+	</resultMap>
+	
+	<insert id="save" parameterType="java.util.Map">
+	    INSERT INTO
+	    	MA_AUDIT(USERID,RESOURCENAME,RESOURCETYPE,OPERATETYPE,OPERATERESULT,OPERATETIME,DETAIL) 
+	    VALUES(#{userId},#{resourceName},#{resourceType},#{operateType},#{operateResult},now(),#{detail}) 
+	</insert>
+	
+	<select id="listAudit" parameterType="java.util.Map" 
+		resultMap="resultMap_auditEntity">
+		SELECT * FROM MA_AUDIT mb WHERE 1=1
+		<if test="resourceType != null and resourceType != '' ">
+			and mb.RESOURCETYPE = #{resourceType}
+		</if>
+		<if test=" userId != null and userId != '' ">
+			and mb.USERID = #{userId}
+		</if>
+		<if test=" operateType != null and operateType != '' ">
+			and mb.OPERATETYPE = #{operateType}
+		</if>
+		<if test=" operateResult != null and operateResult != '' ">
+			and mb.OPERATERESULT = #{operateResult}
+		</if>
+		<if test=" startDate != null and startDate != '' ">
+			and mb.OPERATETIME &gt;= #{startDate}
+		</if>
+		<if test=" endDate != null and endDate != '' ">
+			and mb.OPERATETIME &lt;= #{endDate}
+		</if>
+		order by mb.OPERATETIME DESC
+	</select>
+
+	<select id="exportAudit" parameterType="java.util.List" resultMap="resultMap_auditEntity">
+		select * from 
+			MA_AUDIT ma
+		WHERE 1=1
+			and ma.ID in
+		<foreach collection ="list" index="index" item="val" open="("  separator="," close=")" >
+                   #{val}
+        </foreach>
+	</select>
+	
+	<select id="listAll" parameterType="int" resultType="java.util.Map">
+		SELECT  `id`,  `userId`,  `resourceType`,  `resourceName`,  `operateType`,  `operateResult`,  DATE_FORMAT(`operateTime`, '%Y-%m-%d %H:%i:%S') `operateTime`,  `detail`
+		from ma_audit
+		order by `operateTime` desc
+		limit #{total}
+	</select>
+	
+</mapper>

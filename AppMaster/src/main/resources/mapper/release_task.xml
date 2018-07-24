@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+
+<mapper namespace="releaseTask">
+	<resultMap id="releaseTaskBean" type="com.dc.appengine.appmaster.entity.ReleaseTaskBean">
+		<result column="ID" property="id" javaType="java.lang.Integer" />
+		<result column="NAME" property="name" javaType="java.lang.String" />
+		<result column="TYPE" property="type" javaType="java.lang.String" />
+		<result column="LEVEL" property="level" javaType="java.lang.String" />
+		<result column="STATUS" property="status" javaType="java.lang.String" />
+		<result column="LABEL" property="label" javaType="java.lang.String" />
+		<result column="DEPEND_ID" property="dependId" javaType="java.lang.String" />
+		<result column="PARENT_ID" property="parentId" javaType="java.lang.Integer" />
+		<result column="SYSTEM_ID" property="systemId" javaType="java.lang.String" />
+		<result column="SYSTEM_NAME" property="systemName" javaType="java.lang.String" />
+		<result column="CREATER" property="creater" javaType="java.lang.String" />
+		<result column="PRINCIPAL" property="principal" javaType="java.lang.String" />
+		<result column="CREATE_TIME" property="createTime" javaType="java.util.Date" />
+		<result column="UPDATE_TIME" property="updateTime" javaType="java.util.Date" />
+		<result column="EXPECT_TIME" property="expectTime" javaType="java.util.Date" />
+		<result column="AUTO_EXECUTE" property="autoExecute" javaType="java.lang.Boolean" />
+		<result column="CRONEXPRESSION" property="cronExpression" javaType="java.lang.String" />
+		<result column="DESCRIPTION" property="description" javaType="java.lang.String" />
+		<result column="REMARK" property="remark" javaType="java.lang.String" />
+		<result column="SOURCE" property="source" javaType="java.lang.String" />
+		<result column="INTEGRATION_ID" property="integrationId" javaType="java.lang.Integer" />
+		<result column="ATTACHMENT" property="attachment" javaType="java.lang.String" />
+		<result column="INVENTORY_ID" property="inventoryId" javaType="java.lang.String" />
+		<result column="RELEASE_ID" property="releaseId" javaType="java.lang.String" />
+		<result column="RELEASE_PHASE_ID" property="releasePhaseId" javaType="java.lang.String" />
+		<result column="ENVIRONMENT_ID" property="environmentId" javaType="java.lang.String" />
+		<result column="ENVIRONMENT_NAME" property="environmentName" javaType="java.lang.String" />
+		<result column="SYSTEM_REQUIRE_ID" property="systemRequireId" javaType="java.lang.String" />
+		<result column="SYSTEM_REQUIRE_NAME" property="systemRequireName" javaType="java.lang.String" />
+		<result column="BUSINESS_REQUIRE_ID" property="businessRequireId" javaType="java.lang.String" />
+		<result column="BUSINESS_REQUIRE_NAME" property="businessRequireName" javaType="java.lang.String" />
+		<result column="CODE_BRANCH_NAME" property="codeBranchName" javaType="java.lang.String" />
+		<result column="CODE_BASELINE_NAME" property="codeBaselineName" javaType="java.lang.String" />
+		<result column="BLUEPRINT_FLOW_INSTANCE" property="blueprintFlowInstance" javaType="java.lang.String" />
+	</resultMap>
+	
+	<resultMap id="releaseInventory" type="com.dc.appengine.appmaster.entity.ReleaseInventory">
+		<result column="ID" property="id" javaType="java.lang.Integer" />
+		<result column="NAME" property="name" javaType="java.lang.String" />
+		<result column="DESCRIPTION" property="description" javaType="java.lang.String" />
+		<result column="CREATER" property="creater" javaType="java.lang.String" />
+		<result column="PRINCIPAL" property="principal" javaType="java.lang.String" />
+		<result column="CREATE_TIME" property="createTime" javaType="java.util.Date" />
+		<result column="UPDATE_TIME" property="updateTime" javaType="java.util.Date" />
+		<result column="EXPECT_TIME" property="expectTime" javaType="java.util.Date" />
+	</resultMap>
+	
+	<select id="listReleaseTaskOrders" resultMap="releaseTaskBean" parameterType="java.util.Map">
+		SELECT rbo.* FROM release_task_order rbo WHERE 1 = 1 
+		<if test="id != null and id != -1 ">
+			and rbo.ID = #{id}
+		</if>
+		<if test="name != null and name != '' ">
+			and rbo.NAME like '%${name}%'
+		</if>
+		<if test="type != null and type != '00' ">
+			and rbo.TYPE = #{type}
+		</if>
+		<if test="level != null and level != '00' ">
+			and rbo.LEVEL = #{level}
+		</if>
+		<if test="status != null and status != '00' ">
+			and rbo.STATUS = #{status}
+		</if>
+		<if test="label != null and label != '' ">
+			and rbo.LABEL like '%${label}%'
+		</if>
+		<if test="parentId != null and parentId != -1 ">
+			and instr(rbo.PARENT_ID, parentId) > 0
+		</if>
+		<if test="dependId != null and dependId != -1 ">
+			and rbo.DEPEND_ID = #{dependId}
+		</if>
+		<if test="systemId != null and systemId != '' ">
+			and rbo.SYSTEM_ID = #{systemId}
+		</if>
+		<if test="creater != null and creater != '' ">
+			and rbo.CREATER like '%${creater}%'
+		</if>
+		<if test="principal != null and principal != '' ">
+			and rbo.PRINCIPAL like '%${principal}%'
+		</if>
+		<if test="startTime != null">
+			and rbo.CREATE_TIME &gt; #{startTime}
+		</if>
+		<if test="stopTime != null">
+			and rbo.EXPECT_TIME &lt; #{stopTime}
+		</if>
+		<if test="source != null and source != '00' ">
+			and rbo.SOURCE = #{source}
+		</if>
+		 order by rbo.SYSTEM_ID
+	</select>
+	
+	<select id="getReleaseTaskOrderById" resultMap="releaseTaskBean" parameterType="java.lang.Integer">
+		SELECT rto.* FROM release_task_order rto where id = #{taskId}
+	</select>
+	
+	<select id="getReleaseTaskOrderByName" resultMap="releaseTaskBean" parameterType="java.lang.String">
+		SELECT * FROM release_task_order WHERE NAME = #{taskName}
+	</select>
+	
+	<insert id = "saveReleaseTaskOrder" parameterType="com.dc.appengine.appmaster.entity.ReleaseTaskBean" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+    	INSERT INTO release_task_order(NAME, TYPE, LEVEL, STATUS, LABEL, DEPEND_ID, PARENT_ID, SYSTEM_ID, SYSTEM_NAME, SYSTEM_REQUIRE_ID,
+    	 SYSTEM_REQUIRE_NAME, BUSINESS_REQUIRE_ID, BUSINESS_REQUIRE_NAME, CODE_BRANCH_NAME, CODE_BASELINE_NAME, CREATER,
+    	 PRINCIPAL, CREATE_TIME, EXPECT_TIME, AUTO_EXECUTE, CRONEXPRESSION, DESCRIPTION, REMARK, SOURCE, ATTACHMENT) 
+    	 VALUES(#{name}, #{type}, #{level}, '01', #{label}, #{dependId}, #{parentId},
+    	 #{systemId}, #{systemName}, #{systemRequireId}, #{systemRequireName}, #{businessRequireId}, #{businessRequireName}, 
+    	 #{codeBranchName}, #{codeBaselineName}, #{creater}, #{principal}, now(), #{expectTime,jdbcType=TIMESTAMP}, #{autoExecute}, 
+    	 #{cronExpression}, #{description}, #{remark}, #{source}, #{attachment,jdbcType=VARCHAR})
+    </insert>
+    
+    <update id="updateReleaseTaskOrder" parameterType="com.dc.appengine.appmaster.entity.ReleaseTask">
+		update release_task_order
+		<trim prefix="SET" suffixOverrides="," suffix=" where id = #{id} ">
+			<if test="name != null and name != '' ">
+				NAME = #{name},
+			</if>
+			<if test="type != null and type != '' ">
+				TYPE = #{type},
+			</if>
+			<if test="level != null and level != '' ">
+				LEVEL = #{level},
+			</if>
+			STATUS = '02',
+			<if test="label != null and label != '' ">
+				LABEL = #{label},
+			</if>
+			<if test="dependId != null and dependId != '[]' ">
+				DEPEND_ID = #{dependId},
+			</if>
+			<if test="parentId != null and parentId != -1 ">
+				PARENT_ID = #{parentId},
+			</if>
+			<if test="systemId != null and systemId != '' ">
+				SYSTEM_ID = #{systemId},
+			</if>
+			<if test="systemName != null and systemName != '' ">
+				SYSTEM_NAME = #{systemName},
+			</if>
+			<if test="systemRequireId != null and systemRequireId != '' ">
+				SYSTEM_REQUIRE_ID = #{systemRequireId},
+			</if>
+			<if test="systemRequireName != null and systemRequireName != '' ">
+				SYSTEM_REQUIRE_NAME = #{systemRequireName},
+			</if>
+			<if test="businessRequireId !=null and businessRequireId != '' ">
+				BUSINESS_REQUIRE_ID = #{businessRequireId},
+			</if>
+			<if test="businessRequireName != null and businessRequireName != '' ">
+				BUSINESS_REQUIRE_NAME = #{businessRequireName},
+			</if>
+			<if test="codeBranchName != null and codeBranchName != '' ">
+				CODE_BRANCH_NAME = #{codeBranchName},
+			</if>
+			<if test="codeBaselineName != null and codeBaselineName != '' ">
+				CODE_BASELINE_NAME = #{codeBaselineName},
+			</if>
+			<if test="creater != null and creater != '' ">
+				CREATER = #{creater},
+			</if>
+			<if test="principal != null and principal != '' ">
+				PRINCIPAL = #{principal},
+			</if>
+			UPDATE_TIME = now(),
+			<if test="expectTime != null">
+				EXPECT_TIME = #{expectTime},
+			</if>
+			<if test="autoExecute != null">
+				AUTO_EXECUTE = #{autoExecute},
+			</if>
+			<if test="cronExpression != null and cronExpression != '' ">
+				CRONEXPRESSION = #{cronExpression},
+			</if>
+			<if test="description != null and description != '' ">
+				DESCRIPTION = #{description},
+			</if>
+			<if test="remark != null and remark != '' ">
+				REMARK = #{remark},
+			</if>
+			<if test="source != null and source != '' ">
+				SOURCE = #{source},
+			</if>
+			<if test="attachment != null and attachment != '' ">
+				ATTACHMENT = #{attachment},
+			</if>
+		</trim>
+	</update>
+	
+	<delete id="deleteReleaseTaskOrder">
+		DELETE FROM release_task_order WHERE ID = #{taskId}
+	</delete>
+	
+	<select id="countReleaseTaskOrderByFlowInstanceId" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT count(ID) FROM release_task_order where BLUEPRINT_FLOW_INSTANCE = #{flowInstanceId}
+	</select>
+	
+	<update id="updateReleaseTaskOrderStatus" parameterType="java.util.Map">
+		update release_task_order set STATUS = #{status}, UPDATE_TIME = now() where BLUEPRINT_FLOW_INSTANCE = #{flowInstanceId}
+	</update>
+	
+	<select id="listReleaseDependTaskOrders" resultMap="releaseTaskBean" parameterType="java.util.Map">
+		SELECT rto.* FROM release_task_order rto where 1 = 1
+		<if test="systemId != null and systemId != '' ">
+			and rto.SYSTEM_ID = #{systemId}
+		</if>
+		order by rto.ID
+	</select>
+	
+	<select id="listReleaseParentTaskOrders" resultMap="releaseTaskBean" parameterType="java.util.Map">
+		SELECT rto.* FROM release_task_order rto where rto.PARENT_ID = -1
+		<if test="systemId != null and systemId != '' ">
+			and rto.SYSTEM_ID = #{systemId}
+		</if>
+		order by rto.ID
+	</select>
+	
+	<update id="updateReleaseTaskOrderExecute" parameterType="java.util.Map">
+		update release_task_order set STATUS = #{status}, BLUEPRINT_FLOW_INSTANCE = #{blueprintFlowInstance} where id = #{id}
+	</update>
+	
+	<select id="listReleasesBySystem" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT mr.* FROM release_apps ra, ma_release mr where ra.resource_id = #{systemId} and ra.release_id = mr.id
+	</select>
+	
+	<select id="listPhasesByRelease" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT rse.id as id, rls.name as name, rls.description as description FROM release_lifecycle_stage rls, release_stage_env rse 
+		where rse.release_id = #{releaseId} and rse.resource_id=#{systemId} and rse.lifecycle_stage_id = rls.id
+	</select>
+	
+	<update id="updateTaskOrderRelease" parameterType="java.util.Map">
+		update release_task_order set RELEASE_ID = #{releaseId}, RELEASE_PHASE_ID = #{releasePhaseId} where id = #{id}
+	</update>
+	
+	<select id="getReleasePhaseById" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT rse.*, rls.name as name, rls.description as description FROM release_stage_env rse, release_lifecycle_stage rls where rse.id = #{releasePhaseId} and rse.lifecycle_stage_id = rls.id
+	</select>
+	
+	<select id="getReleaseById" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT * FROM ma_release where id = #{releaseId}
+	</select>
+	
+	<select id="getReleaseTasksByParentId" resultType="java.util.Map" parameterType="java.lang.Integer">
+		SELECT * FROM release_task_order where PARENT_ID = #{parentId}
+	</select>
+	
+	<select id="getReleaseTasksByDependId" resultType="java.util.Map" parameterType="java.lang.Integer">
+		SELECT * FROM release_task_order where instr(DEPEND_ID, #{dependId}) > 0
+	</select>
+	
+	<insert id = "addCRRealeaseTask" parameterType="com.dc.appengine.appmaster.entity.ReleaseTaskBean" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+    	INSERT INTO release_task_order(NAME, TYPE, LEVEL, STATUS, LABEL, DEPEND_ID, PARENT_ID, SYSTEM_ID, SYSTEM_NAME,
+    	 RELEASE_PHASE_ID, CREATER, PRINCIPAL, CREATE_TIME, EXPECT_TIME, 
+    	 DESCRIPTION, REMARK, SOURCE, ATTACHMENT, 
+    	 SYSTEM_REQUIRE_ID, SYSTEM_REQUIRE_NAME, BUSINESS_REQUIRE_ID, BUSINESS_REQUIRE_NAME, CODE_BRANCH_NAME, CODE_BASELINE_NAME) 
+    	 VALUES(#{name}, #{type}, #{level}, #{status}, #{label,jdbcType=VARCHAR}, #{dependId}, #{parentId},
+    	 #{systemId}, #{systemName}, #{releasePhaseId}, #{creater}, #{principal}, 
+    	 now(), #{expectTime,jdbcType=TIMESTAMP}, #{description}, #{remark}, #{source}, #{attachment,jdbcType=VARCHAR}, 
+    	 #{systemRequireId}, #{systemRequireName}, #{businessRequireId}, #{businessRequireName}, #{codeBranchName}, #{codeBaselineName})
+    </insert>
+    
+    <select id="listPhasesBySystemName" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT rse.id as id, rls.name as name FROM release_lifecycle_stage rls, release_stage_env rse, sv_resource sr 
+			where rse.resource_id=sr.ID and rse.lifecycle_stage_id = rls.id and sr.RESOURCE_NAME=#{systemName} and
+			rse.blueprint_ins_id is not null and rse.flow_id is not null
+	</select>
+	
+	<update id="updateReleaseTaskOrderBatchExecute" parameterType="java.util.Map">
+		update release_task_order set STATUS = #{status}, BLUEPRINT_FLOW_INSTANCE = #{blueprintFlowInstance} where id in
+		<foreach collection="ids" index="index" item="taskId" open="(" separator="," close=")">
+				#{taskId}
+		</foreach>
+	</update>
+	
+	<select id="getReleasePhaseByName" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT rse.* FROM release_stage_env rse, release_lifecycle_stage rls, sv_resource sr 
+			where rls.name = #{releasePhaseName} and rse.lifecycle_stage_id = rls.id and sv.RESOURCE_NAME=#{systemName} and sr.ID=rse.resource_id
+	</select>
+	
+	<delete id="deleteReleaseTasksByIntegrationId">
+		DELETE FROM release_task_order WHERE INTEGRATION_ID = #{integrationId}
+	</delete>
+	
+	<insert id = "synReleaseIntegration" parameterType="com.dc.appengine.appmaster.entity.ReleaseTaskBean">
+    	INSERT INTO release_task_order(NAME, TYPE, LEVEL, STATUS, LABEL, SYSTEM_ID, SYSTEM_NAME, RELEASE_PHASE_ID, CREATER, PRINCIPAL, 
+    	CREATE_TIME, UPDATE_TIME, EXPECT_TIME, DESCRIPTION, REMARK, SOURCE, INTEGRATION_ID) 
+    	VALUES
+	   	<foreach collection="list" item="item" index="index" separator=",">
+		   	 (#{item.name}, #{item.type}, #{item.level}, #{item.status}, #{item.label}, #{item.systemId}, 
+		   	 #{item.systemName}, #{item.releasePhaseId}, #{item.creater}, #{item.principal}, #{item.createTime},
+		   	 #{item.updateTime,jdbcType=TIMESTAMP}, #{item.expectTime,jdbcType=TIMESTAMP},
+		   	 #{item.description,jdbcType=VARCHAR}, #{item.remark}, #{item.source}, #{item.integrationId})
+	   	</foreach>
+    </insert>
+	
+</mapper>

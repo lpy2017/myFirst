@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+<mapper namespace="strategy">
+	<resultMap id="resultMap_strategy2" type="strategy">
+        <result column="ID" property="id" javaType="java.lang.Long"/>
+		<result column="NAME" property="name" javaType="java.lang.String"/>
+        <result column="DESCRIPTION" property="description" javaType="java.lang.String"/>
+        <result column="USER_ID" property="userId" javaType="java.lang.Long"/>
+        <result column="TYPE" property="type" javaType="java.lang.String"/>
+       <!-- <result column="ID" property="list" select="strategy.findStrategyItems"/>
+		<collection property="supStudents" column="ID" ofType="Student" select="strategy.findStrategyItems"/>-->
+		<association column="ID" property="list" select="strategy.findStrategyItems"/>
+    </resultMap>
+    <resultMap id="resultMap_strategyItem" type="strategyItem">
+        <result column="ID" property="id" javaType="java.lang.Long"/>
+		<result column="ITEM_ID" property="itemId" javaType="java.lang.Long"/>
+        <result column="STRATEGY_ID" property="strategyId" javaType="java.lang.Long"/>
+        <result column="OPERATOR" property="operator" javaType="java.lang.String"/>
+        <result column="VALUE" property="value" javaType="java.lang.String"/>
+        <result column="WEIGHT" property="weight" javaType="java.lang.Integer"/>
+        <result column="CODE" property="itemCode" javaType="java.lang.String"/>
+    </resultMap>
+    <!-- 保存策略详细内容 -->
+	<insert id="saveStrategy" parameterType="strategyItem">
+		insert into ma_strategy_item(item_id,strategy_id,value,weight,operator)
+		values (#{itemId},#{strategyId},#{value},#{weight},#{operator})
+		<selectKey resultType="long" keyProperty="id">
+			select LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	<select id="findById" resultMap="resultMap_strategy2">
+		select * from ma_strategy s where s.id=#{value}
+	</select>
+	<!-- 查询策略的详细内容 -->
+	<select id="findStrategyItems" resultMap="resultMap_strategyItem">
+		select tsi.*,ti.NAME,ti.CODE from ma_strategy_item tsi,ma_item ti where tsi.item_id = ti.id and tsi.strategy_id=#{value}
+	</select>
+</mapper>

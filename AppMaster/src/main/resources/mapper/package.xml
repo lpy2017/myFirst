@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+<mapper namespace="package">
+
+	<insert id="savePackage" parameterType="java.util.Map">
+		INSERT INTO
+		sv_package(ID,RESOURCE_NAME,RESOURCE_DESC,RESOURCE_PATH,UPDATE_TIME,RESOURCE_SIZE)
+		VALUES(#{id},#{resourceName},#{resourceDesc},#{resourcePath},now(),#{resourceSize})
+	</insert>
+
+	<select id="findPackageById" resultType="java.util.Map">
+		SELECT * FROM sv_package WHERE ID = #{value}
+	</select>
+
+	<delete id="deletePackage">
+		DELETE FROM sv_package WHERE id=#{value}
+	</delete>
+
+	<select id="listPackagesByPage" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		SELECT mrs.RESOURCE_NAME AS resourceName,mrs.RESOURCE_DESC AS resourceDesc,
+		mrs.ID AS id,mrs.RESOURCE_PATH AS resourcePath,mrs.UPDATE_TIME AS updateTime,
+		mrs.RESOURCE_SIZE AS resourceSize
+		FROM sv_package mrs
+		WHERE 1=1
+		<if test="resourceName != null and resourceName != '' ">
+			and mrs.RESOURCE_NAME like '%${resourceName}%'
+		</if>
+	</select>
+
+	<select id="findPackageByPath" resultType="java.util.Map">
+		SELECT * FROM sv_package WHERE RESOURCE_PATH = #{value}
+	</select>
+	
+	<select id="exportPackage" parameterType="java.util.List" resultType="java.util.Map">
+		SELECT *
+		FROM sv_package sp
+		WHERE 1=1
+		and sp.ID in
+		<foreach collection ="list" index="index" item="val" open="("  separator="," close=")" >
+                   #{val}
+        </foreach>
+	</select>
+
+	<select id="findPackageByName" resultType="java.util.Map">
+		SELECT * FROM sv_package WHERE RESOURCE_NAME = #{name}
+	</select>
+</mapper>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+<mapper namespace="envParams">	
+    <insert id="saveEnvVar" parameterType="java.util.Map">
+		insert into ma_env_var
+		(obj_id, var_key, var_value, obj_type, description, value_from_type,
+		value_from_id, version_uuid, value_from_version_uuid)
+		values
+		(#{objId},#{varKey},#{varValue},#{objType},#{description},
+		#{valueFromType},#{valueFromId},#{versionId},#{fromVersionId})
+	</insert>
+</mapper>

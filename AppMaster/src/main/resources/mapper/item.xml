@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+<mapper namespace="item">    
+    <resultMap id="resultMap_item" type="item">
+        <result column="ID" property="id" javaType="java.lang.Long"/>
+		<result column="NAME" property="name" javaType="java.lang.String"/>
+		<result column="CODE" property="code" javaType="java.lang.String"/>
+        <result column="DESCRIPTION" property="description" javaType="java.lang.String"/>
+        <result column="TYPE" property="type" javaType="java.lang.String"/>
+        <result column="NULLABLE" property="nullable" javaType="java.lang.String"/>
+    </resultMap>
+    
+    <!-- 查询所有的item -->
+	<select id="findAll" resultMap="resultMap_item">
+		select * from ma_item
+	</select>
+	
+    <!-- 按照类型查询item -->
+	<select id="findByType" resultMap="resultMap_item">
+		select * from ma_item where type=#{value}
+	</select>
+	
+	<!-- 新增 -->
+   <insert id="save" parameterType="item">
+		insert into ma_item
+		  (id,name, code, description, type)
+		values
+		  (#{id},#{name}, #{code}, #{description}, #{type})
+		<selectKey resultType="java.lang.Long" keyProperty="id">
+			select LAST_INSERT_ID()	
+		</selectKey>
+	</insert>
+	<!-- 根据code和type查询id -->
+	<select id="findIdByCode" parameterType="java.util.Map" resultType="java.lang.Long">
+		select i.id from ma_item i where i.code=#{code} and i.type=#{type}
+	</select>
+</mapper>

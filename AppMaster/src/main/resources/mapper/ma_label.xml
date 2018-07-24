@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ma_label">
+	<insert id="saveLabelType" parameterType="java.util.Map">
+		insert into ma_label_type(ID, NAME) values (#{id},#{name})
+	</insert>
+	<delete id="deleteLabelType">
+		delete from ma_label_type where ID=#{id}
+	</delete>
+	<update id="updateLabelType" parameterType="java.util.Map">
+		update ma_label_type set NAME=#{name} where ID=#{id}
+	</update>
+	
+	
+	<select id="listLabelTypes" parameterType="java.util.Map" resultType="java.util.Map">
+		select CODE as code,NAME as name from ma_label_type where 1=1
+		<if test="name !=null and name !=''">
+			and name=#{name}
+		</if>
+	</select>
+	
+	<insert id="saveLabel" parameterType="java.util.Map">
+		insert into ma_label(ID, NAME,DESCRIPTION,UPDATE_TIME,TYPE_CODE) 
+		values (#{id},#{name},#{description},now(),#{code})
+	</insert>
+	<delete id="deleteLabel">
+		delete from ma_label where ID=#{id}
+	</delete>
+	<update id="updateLabel" parameterType="java.util.Map">
+		update ma_label set NAME=#{name} ,DESCRIPTION=#{description}, UPDATE_TIME=now() where ID=#{id}
+	</update>
+	<select id="listLabels" parameterType="java.util.Map" resultType="java.util.Map">
+		select ml.ID as id,ml.NAME as name,ml.DESCRIPTION as description,ml.UPDATE_TIME as updateTime,
+		mlt.name as type ,ml.TYPE_CODE as code from ma_label ml,ma_label_type mlt 
+		where mlt.CODE=ml.TYPE_CODE
+		<if test="name !=null and name !=''">
+			and ml.NAME like '%${name}%'
+		</if>
+		<if test="labelCode !=null">
+			and ml.TYPE_CODE=#{labelCode}
+		</if>
+		<if test="labelIds !=null">
+			and ml.ID in 
+			<foreach collection="labelIds" index="index" item="labelId" open="(" separator="," close=")" >
+				#{labelId}
+			</foreach>
+		</if>
+	</select>
+	
+	<delete id="deleteLabelResMap">
+		delete from ma_resource_label where LABEL_ID=#{id}
+	</delete>
+	<select id="checkLabel" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from ma_label where NAME=#{name} and TYPE_CODE=#{code} 
+		<if test="id !=null and id !=''">
+			and ID !=#{id}
+		</if>
+	</select>
+	<insert id="saveLabelResMap" parameterType="java.util.Map">
+		insert into ma_resource_label(LABEL_ID,RESOURCE_ID) values
+		<foreach collection="labelIds" index="index" item="item" open="" separator="," close="">
+		    (#{item},#{resourceId})
+		</foreach>
+	</insert>
+	<delete id="deleteLabelResMapByParams" parameterType="java.util.Map">
+		delete from ma_resource_label where RESOURCE_ID=#{resourceId} 
+		<if test="labelIds !=null">
+		  and LABEL_ID in
+		   <foreach collection="labelIds" index="index" item="item" open="(" separator="," close=")">
+		    #{item}
+		   </foreach>
+		</if>
+	</delete>
+	
+	<select id="findLabelsByResourceId" parameterType="java.util.Map" resultType="java.util.Map">
+		select ml.TYPE_CODE as code,ml.NAME as name,mrl.LABEL_ID as labelId,mrl.RESOURCE_ID as resourceId from ma_resource_label mrl, ma_label ml where mrl.LABEL_ID=ml.ID
+		<if test="resourceId !=null and resourceId !=''">
+			and RESOURCE_ID=#{resourceId}
+		</if>
+		<if test="labelId !=null and labelId !=''">
+			and LABEL_ID=#{labelId}
+		</if>
+		<if test="code !=null">
+			and TYPE_CODE=#{code}
+		</if>
+	</select>
+	<select id="getLabels4Group" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT * from ma_label ml left join  ma_resource_label mrl on ml.ID = mrl.Label_ID
+		<if test="labelCode !=null">
+			where ml.TYPE_CODE=#{labelCode}
+		</if>
+	</select>
+	
+	<select id="findComResourceById" resultType="java.util.Map">
+		select * from sv_resource where sv_resource.ID=#{value}
+	</select>
+	
+</mapper>

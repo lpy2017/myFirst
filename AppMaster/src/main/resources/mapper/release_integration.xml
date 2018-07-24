@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+
+<mapper namespace="releaseIntegration">
+	<resultMap id="releaseIntegration" type="com.dc.appengine.appmaster.entity.ReleaseIntegration">
+		<result column="ID" property="id" javaType="java.lang.Integer" />
+		<result column="TYPE" property="type" javaType="java.lang.String" />
+		<result column="NAME" property="name" javaType="java.lang.String" />
+		<result column="SYSTEM_ID" property="systemId" javaType="java.lang.String" />
+		<result column="DESCRIPTION" property="description" javaType="java.lang.String" />
+		<result column="URL" property="url" javaType="java.lang.String" />
+		<result column="USER" property="user" javaType="java.lang.String" />
+		<result column="PASSWORD" property="password" javaType="java.lang.String" />
+		<result column="CREATER" property="creater" javaType="java.lang.String" />
+		<result column="CREATE_TIME" property="createTime" javaType="java.util.Date" />
+		<result column="UPDATE_TIME" property="updateTime" javaType="java.util.Date" />
+		<result column="SYN_TIME" property="synTime" javaType="java.util.Date" />
+		<result column="SYSTEM_NAME" property="systemName" javaType="java.lang.String" />
+	</resultMap>
+	
+	<select id="listReleaseIntegrations" resultMap="releaseIntegration" parameterType="java.util.Map">
+		SELECT ri.*, sr.RESOURCE_NAME as systemName FROM release_integration ri, sv_resource sr where ri.SYSTEM_ID = sr.ID 
+			order by ri.TYPE, ri.SYSTEM_ID, ri.SYN_TIME
+	</select>
+	
+	<select id="getReleaseIntegrationById" resultMap="releaseIntegration" parameterType="java.lang.Integer">
+		SELECT ri.*, sr.RESOURCE_NAME as systemName FROM release_integration ri, sv_resource sr where ri.ID = #{integrationId} and ri.SYSTEM_ID = sr.ID
+	</select>
+	
+	<select id="getReleaseIntegrationByName" resultMap="releaseIntegration" parameterType="java.lang.String">
+		SELECT * FROM release_integration WHERE NAME = #{integrationName}
+	</select>
+	
+	<insert id = "saveReleaseIntegration" parameterType="com.dc.appengine.appmaster.entity.ReleaseIntegration" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+    	INSERT INTO release_integration(NAME, TYPE, SYSTEM_ID, DESCRIPTION, URL, USER, PASSWORD, CREATER, CREATE_TIME) 
+    	 VALUES(#{name}, #{type}, #{systemId}, #{description}, #{url}, #{user}, #{password,jdbcType=VARCHAR}, #{creater}, now())
+    </insert>
+    
+    <update id="updateReleaseIntegration" parameterType="com.dc.appengine.appmaster.entity.ReleaseIntegration">
+		update release_integration
+		<trim prefix="SET" suffixOverrides="," suffix=" where id = #{id} ">
+			<if test="name != null and name != '' ">
+				NAME = #{name},
+			</if>
+			<if test="type != null and type != '' ">
+				TYPE = #{type},
+			</if>
+			<if test="systemId != null and systemId != '' ">
+				SYSTEM_ID = #{systemId},
+			</if>
+			<if test="description != null and description != '' ">
+				DESCRIPTION = #{description},
+			</if>
+			<if test="url != null and url != '' ">
+				URL = #{url},
+			</if>
+			<if test="user != null and user != '' ">
+				USER = #{user},
+			</if>
+			<if test="password != null and password != '' ">
+				PASSWORD = #{password},
+			</if>
+			UPDATE_TIME = now(),
+		</trim>
+	</update>
+	
+	<delete id="deleteReleaseIntegration">
+		DELETE FROM release_integration WHERE ID = #{integrationId}
+	</delete>
+	
+	<update id="synReleaseIntegration" parameterType="java.lang.Integer">
+		update release_integration set SYN_TIME = now() where id = #{integrationId}
+	</update>
+	
+</mapper>

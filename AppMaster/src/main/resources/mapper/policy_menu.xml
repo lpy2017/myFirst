@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "ibatis-3-mapper.dtd">
+
+<mapper namespace="policyMenu">
+
+		
+	<select id="getMenuId" resultType="java.lang.String">
+		select menu_id from role_menu_mapping where role_id=#{roleId}
+	</select>
+
+	<select id = "getPolicyMenu"  resultType="policyMenu">
+		select * from policy_menu where id=#{menuId}
+	</select>
+	
+	<select id = "getAllPolicyMenu" resultType = "policyMenu">
+		select * from policy_menu
+	</select>
+	
+	<delete id = "deletPolicyMenuByRoleId" >
+		delete from role_menu_mapping where role_id=#{roleId}
+	</delete>
+
+	<insert id = "addPolicyMenu">
+		insert into policy_menu values(#{id},#{title},#{sref})
+	</insert>
+	
+	<select id = "getCount" resultType = "java.lang.Integer">
+		select count(id) from policy_menu 
+	</select>
+	
+	<select id = "findMenuByPage" resultType = "policyMenu">
+		select * from policy_menu LIMIT #{startRowNum},#{pageSize}
+	</select>
+</mapper>
