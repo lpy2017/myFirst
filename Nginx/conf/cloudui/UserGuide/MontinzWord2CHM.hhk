@@ -1,0 +1,341 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+
+<UL>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="Node安装过程">
+     <param name="Local" value="62.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="版本克隆">
+     <param name="Local" value="17.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="并发场景">
+     <param name="Local" value="63.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="菜单管理">
+     <param name="Local" value="47.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="操作管理">
+     <param name="Local" value="48.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="查看/编辑/删除">
+     <param name="Local" value="28.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="查看过程">
+     <param name="Local" value="22.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="创建通用组件">
+     <param name="Local" value="13.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="导入/导出蓝图">
+     <param name="Local" value="30.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="典型场景的组件过程及蓝图过程示例">
+     <param name="Local" value="61.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="封面">
+     <param name="Local" value="1.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="附录">
+     <param name="Local" value="51.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="改变网络">
+     <param name="Local" value="5.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="更新版本">
+     <param name="Local" value="16.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="工件管理">
+     <param name="Local" value="49.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="环境管理">
+     <param name="Local" value="6.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="环境详情">
+     <param name="Local" value="8.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="角色管理">
+     <param name="Local" value="46.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="脚本管理">
+     <param name="Local" value="50.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="快照">
+     <param name="Local" value="37.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="快照/回滚场景">
+     <param name="Local" value="66.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="蓝图管理">
+     <param name="Local" value="24.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="蓝图管理">
+     <param name="Local" value="25.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="蓝图过程设计器操作示例">
+     <param name="Local" value="60.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="蓝图过程设计器介绍">
+     <param name="Local" value="59.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="蓝图设计器操作示例">
+     <param name="Local" value="57.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="蓝图设计器操作指南">
+     <param name="Local" value="55.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="蓝图设计器操作指南">
+     <param name="Local" value="58.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="蓝图设计器介绍">
+     <param name="Local" value="56.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="蓝图实例">
+     <param name="Local" value="31.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="蓝图实例展示">
+     <param name="Local" value="32.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="轮循场景">
+     <param name="Local" value="64.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="配置">
+     <param name="Local" value="35.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="配置比对">
+     <param name="Local" value="40.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="配置模板映射">
+     <param name="Local" value="18.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="权限管理">
+     <param name="Local" value="44.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="日志管理">
+     <param name="Local" value="36.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="删除">
+     <param name="Local" value="15.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="删除">
+     <param name="Local" value="33.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="删除环境">
+     <param name="Local" value="11.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="设置状态（暂未实现）">
+     <param name="Local" value="19.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="伸缩场景">
+     <param name="Local" value="65.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="添加版本">
+     <param name="Local" value="14.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="添加过程">
+     <param name="Local" value="21.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="添加过程/查看过程">
+     <param name="Local" value="29.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="添加主机">
+     <param name="Local" value="9.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="系统登录">
+     <param name="Local" value="2.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="系统登录和退出">
+     <param name="Local" value="3.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="系统配置">
+     <param name="Local" value="43.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="新建环境">
+     <param name="Local" value="7.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="新建蓝图">
+     <param name="Local" value="26.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="新建蓝图实例">
+     <param name="Local" value="27.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="仪表盘">
+     <param name="Local" value="42.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="已支持的组件对应的蓝图">
+     <param name="Local" value="41.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="已支持的组件列表">
+     <param name="Local" value="23.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="用户管理">
+     <param name="Local" value="45.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="用户手册">
+     <param name="Local" value="4.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="执行过程">
+     <param name="Local" value="39.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="主机列表">
+     <param name="Local" value="10.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="资源映射">
+     <param name="Local" value="38.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="组件">
+     <param name="Local" value="34.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="组件管理">
+     <param name="Local" value="12.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="组件过程">
+     <param name="Local" value="20.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="组件过程设计器操作示例">
+     <param name="Local" value="54.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="组件过程设计器操作指南">
+     <param name="Local" value="52.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+     <LI><OBJECT type="text/sitemap">
+     <param name="Name" value="组件过程设计器介绍">
+     <param name="Local" value="53.html">
+     <param name="ImageNumber" value="11">
+     </OBJECT></LI>
+</UL>
+</BODY></HTML>

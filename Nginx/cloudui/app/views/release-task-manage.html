@@ -1,0 +1,202 @@
+<div class="row clearfix cont-header">
+   <div class="col-sm-6">
+        <a ui-sref="app.release_task_add" class="btn-cd-icon"><span class="cd-ic_adduser">
+                <span class="path1"></span><span class="path2"></span><span class="path3"></span>
+                </span> 新建任务</a>
+		<a ui-sref="app.release_integration_manage" class="btn-cd-icon"><span class="cd-ic_adduser">
+                    <span class="path1"></span><span class="path2"></span><span class="path3"></span>
+                    </span> 同步任务</a> 
+   </div>
+</div>
+<div class="cont-body cont_sta">
+  <div class="panel mt20">
+    <div class="panel-body">
+<form role="form" class="form-horizontal clearfix form-log">
+ <div class="col-sm-4">
+     <div class="form-group"> 
+         <label class="col-sm-4 control-label">ID：</label> 
+         <div class="col-sm-8"> 
+           <input type="text" ng-model="taskId" class="form-control">
+         </div>
+     </div>
+  </div>
+  <div class="col-sm-4">
+     <div class="form-group"> 
+         <label class="col-sm-4 control-label">名称：</label> 
+         <div class="col-sm-8">
+           <input type="text" ng-model="taskName" class="form-control">        
+         </div>
+     </div>
+  </div>
+  <div class="col-sm-4">
+     <div class="form-group"> 
+         <label class="col-sm-4 control-label">类型：</label> 
+         <div class="col-sm-8">
+           <select ng-model="taskType" class="form-control" ng-options="item.value as item.text for item in typeList">   
+           </select>     
+         </div>
+     </div>
+  </div>
+  <div class="col-sm-4">
+     <div class="form-group"> 
+         <label class="col-sm-4 control-label">优先级：</label> 
+         <div class="col-sm-8">
+           <select ng-model="taskLevel" class="form-control" ng-options="item.value as item.text for item in levelList">   
+		   </select>     
+         </div>
+     </div>
+  </div>
+  <div class="col-sm-4">
+     <div class="form-group"> 
+         <label class="col-sm-4 control-label">状态：</label> 
+         <div class="col-sm-8">
+           <select ng-model="taskStatus" class="form-control" ng-options="item.value as item.text for item in statusList">
+		   </select>
+         </div>
+     </div>
+  </div>
+  <div class="col-sm-4">
+     <div class="form-group"> 
+         <label class="col-sm-4 control-label">标签：</label> 
+         <div class="col-sm-8">
+           <input type="text" class="form-control" ng-model="taskLabel">
+         </div>
+     </div>
+  </div>
+    <div class="col-sm-4">
+     <div class="form-group"> 
+         <label class="col-sm-4 control-label">系统名称：</label>  
+         <div class="col-sm-8">
+             <select ng-model="taskSystem" class="form-control" ng-options="item.id as item.resourceName for item in systemList">
+            </select>
+         </div>
+     </div>
+  </div>
+  <div class="col-sm-4">
+     <div class="form-group"> 
+         <label class="col-sm-4 control-label">父任务：</label>  
+         <div class="col-sm-8">
+             <select ng-model="parentTask" class="form-control" ng-options="item.id as item.name for item in parentList">
+       </select>
+         </div>
+     </div>
+  </div>
+  <div class="col-sm-4">
+     <div class="form-group"> 
+         <label class="col-sm-4 control-label">依赖任务：</label>  
+         <div class="col-sm-8">
+             <select ng-model="taskDepended" class="form-control" ng-options="item.id as item.name for item in dependedList">
+			 </select>
+         </div>
+     </div>
+  </div>
+  <div class="col-sm-4">
+     <div class="form-group"> 
+         <label class="col-sm-4 control-label">创建人：</label>  
+         <div class="col-sm-8">
+             <select ng-model="taskCreater"  class="form-control" ng-options="item.ID as item.userName for item in userList">
+			 </select>
+         </div>
+     </div>
+  </div>
+  <div class="col-sm-4">
+     <div class="form-group"> 
+         <label class="col-sm-4 control-label">负责人：</label>  
+         <div class="col-sm-8">
+             <select ng-model="taskPrincipal"  class="form-control" ng-options="item.ID as item.userName for item in userList">
+			 </select>
+         </div>
+     </div>
+  </div>
+  <div class="col-sm-4">
+     <div class="form-group"> 
+         <label class="col-sm-4 control-label">来源：</label> 
+         <div class="col-sm-8">
+           <select ng-model="source" class="form-control" ng-options="item.value as item.text for item in sourceList">
+       </select>
+         </div>
+     </div>
+  </div>
+  <div class="col-sm-4">
+     <div class="form-group"> 
+         <label class="col-sm-4 control-label">时间：</label>  
+         <div class="col-sm-8">
+             <input type="text" ruledate ng-model="taskTime"  class="form-control daterange" data-time-picker="true" data-time-picker-increment="1" data-time-picker-hour="false" data-format="YYYY-MM-DD HH:mm:ss" />
+         </div>
+     </div>
+  </div>
+  <div class="col-sm-4">
+      <button type="button" class="btn btn-info" ng-click="querylog()"><em class="fa fa-search"></em> 查询</button>
+  </div>   
+ </form>
+   </div>
+    </div>
+
+<table class="table table_title">
+    <thead>
+      <tr sort>
+        <th base="1" class="text_overflow" ng-click="fnSort('taskID')">任务ID</th>
+        <th base="1" class="text_overflow" ng-click="fnSort('taskType')">任务类型</th>
+        <th base="1" class="text_overflow" ng-click="fnSort('taskName')">任务名称</th> 
+        <th base="1" class="text_overflow" ng-click="fnSort('taskStatus')">任务状态</th>
+        <th base="1" class="text_overflow" ng-click="fnSort('taskLevel')">优先级</th>
+        <th base="1" class="text_overflow" ng-click="fnSort('taskSystem')">应用系统</th>
+		<th base="1" class="text_overflow" ng-click="fnSort('taskCreater')">创建人</th>
+		<th base="1" class="text_overflow" ng-click="fnSort('taskPrincipal')">负责人</th>
+		<th base="1" class="text_overflow" ng-click="fnSort('taskCreateTime')">开始时间</th>
+		<th base="1" class="text_overflow" ng-click="fnSort('taskUpdateTime')">更新时间</th>
+		<th base="1" class="text_overflow" ng-click="fnSort('source')">任务来源</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr ng-if="!listoff">
+            <td colspan="12"> 
+                <p class="noresult"><em class="icon-info"></em>{{warninginfo}}</p>
+            </td>
+          </tr>
+          <tr ng-repeat="item in taskList">
+             <td ng-bind="item.id"></td>
+			 <td ng-bind="(typeList|filter:item.type)[0].text"></td> 
+             <td><a ui-sref="app.release_task_detail({id:item.id})" ng-bind="item.name"></a></td> 
+             <td>
+                <span ng-bind="(statusList|filter:item.status)[0].text" class="label" ng-class="[getStatusColorFn(item.status)]"></span>
+             </td>
+			 <td ng-bind="(levelList|filter:item.level)[0].text"></td>
+			 <td ng-bind="item.systemName"></td>
+			 <td ng-bind="item.creater"></td>
+			 <td ng-bind="item.principal"></td>
+             <td ng-bind="item.createTime||'无'"></td> 
+             <td ng-bind="item.updateTime||'无'"></td> 
+			 <td ng-bind="(sourceList|filter:item.source)[0].text"></td>
+			 <td>
+          <div dropdown="dropdown" class="btn-group">
+                <button dropdown-toggle="" class="btn btn-cd-default">操作 <em class="fa fa-caret-down"></em>
+                </button>
+                <ul role="menu" class="dropdown-menu btnlist-dropdown-menu" ng-class="{'dropdown-last':listIndex>4}">
+                      <li> 
+                          <a ng-click="releaseFn(item.id,item.systemId,item.releaseId,item.releasePhaseId);setPageNumCookie();"><em class="icon-rocket"></em> 发布</a>
+                      </li>
+                      <li> 
+                          <a ng-click="setPageNumCookie()" ui-sref="app.release_task_detail({id:item.id})"><em class="fa fa-file-text-o"></em> 详情</a>
+                      </li>
+                      <li> 
+                         <a ng-click="setPageNumCookie()" ui-sref="app.release_task_edit({id:item.id})"><em class="fa fa-edit"></em> 修改</a>
+                      </li>
+                      <li>
+                          <a ng-click="delTaskFn($index,item.id)"><em class="fa fa-trash"></em> 删除</a>
+                      </li>
+              </ul>
+          </div> 
+             </td>
+          </tr>
+          <tr ng-show="listoff">
+              <td colspan="12"> 
+                 <page page-count="pageCount" page-num="pageNum" on-page-change="onPageChange()"></page>
+              </td>
+          </tr>
+   </tbody>
+</table> 
+</div>
+
+

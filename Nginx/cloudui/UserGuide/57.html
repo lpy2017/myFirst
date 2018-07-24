@@ -1,0 +1,55 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<meta name="Generator" content="Montinz Word-2-CHM 1.1.7.0 Free">
+<title>5.2.6 配置</title>
+<link href="document.css" type="text/css" rel="stylesheet" />
+<link href="images/montinz_style.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="jscript/montinz_jscript.js"></script>
+<script src="jscript/DD_belatedPNG.js"></script>
+<!--[if IE 6]>
+<script>
+DD_belatedPNG.fix('img,.ie6png');
+</script>
+<![endif]-->
+</head>
+
+<body lang=ZH-CN link=blue vlink=purple style='tab-interval:21.0pt;text-justify-trim: punctuation'>
+<div class="sys_PrevUpNext"><div style="width:40px;float:right"><a href="58.html"><img src="images/next.gif" style="border:0px" /></a></div><div style="width:40px;float:right"><a href="51.html"><img src="images/up.gif" style="border:0px" /></a></div><div style="width:40px;float:right"><a href="56.html"><img src="images/prev.gif" style="border:0px" /></a></div><div style="clear:both; height:0px; font-size:0px"></div></div>
+<div class=WordSection1 style='layout-grid:15.6pt'>
+
+<h3><a name="_Toc512504959"><!----numberstart----><span lang=EN-US style='font-size: 15.0pt;line-height:150%;'>5.2.6<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span><!----numberend----><span style='font-family:宋体;'>配置</span></a></h3>
+
+<p class=MsoListParagraph style='margin-left:33.0pt;text-indent:0cm;'><span style='font-size:14.0pt; line-height:150%;font-family:宋体;'>点击蓝图实例列表页的操作按钮，选择配置，可以进入到蓝图实例的配置页面</span></p>
+<p class=MsoNormal><span lang=EN-US><img border=0 width=816 height=400 src="doc.files/image212.jpg" ></span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>先选择组件</span></p>
+<p class=MsoNormal><span lang=EN-US><img border=0 width=815 height=377 src="doc.files/image214.jpg" ></span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>再选择目标版本和当前版本的组件版本</span></p>
+<p class=MsoNormal><span lang=EN-US><img border=0 width=815 height=380 src="doc.files/image216.jpg" ></span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>选择完版本之后编辑输入参数和输出参数：</span></p>
+<p class=MsoNormal style='text-indent:6.0pt;'><span lang=EN-US><img border=0 width=815 height=379 src="doc.files/image218.jpg" ></span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>输入参数和输出参数支持字符串和变量表达式，蓝图实例内组件输入</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>/</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>输出参数中动态变量配置规则分为如下三种：</span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span lang=EN-US style='font-size:14.0pt; line-height:150%'>${blueprint#key}</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>、</span><span lang=EN-US style='font-size:14.0pt;line-height:150%'>${component#current#key}</span><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>、</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>${key}</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>。</span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>（</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>1</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>）</span><span lang=EN-US style='font-size:14.0pt;line-height:150%'>${blueprint#key}</span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>组件引用当前蓝图实例变量，填写规则为</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>blueprint+</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>变量名，以</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>#</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>分隔，其中</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>”blueprint”</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>是固定字符串，意思是当前蓝图；</span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>例如引用当前蓝图实例的</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>port</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>变量，写为</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>${blueprint#port}</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体; '>；</span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>注意：组件配置不支持跨蓝图引用变量，只能引用当前蓝图实例变量。</span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>（</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>2</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>）</span><span lang=EN-US style='font-size:14.0pt;line-height:150%'>${component#current#key}</span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>跨组件引用其他组件的变量，填写规则为目标组件名</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>(</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>其在蓝图实例的配置界面可查到，例如</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>tomcat_-2)+</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>版本</span><span lang=EN-US style='font-size:14.0pt;line-height:150%'>(current</span><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>或者</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>target)+</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>变量名，以</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>#</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>分隔；</span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>例如：</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>rent</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>组件当前版本选择</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>v1</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>版本，</span><span lang=EN-US style='font-size:14.0pt;line-height:150%'>input</span><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>中的</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>deployPath</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>引用</span><span lang=EN-US style='font-size:14.0pt;line-height:150%'>tomcat</span><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>组件</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>target</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>版本的</span><span lang=EN-US style='font-size:14.0pt;line-height:150%'>deployPath</span><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>且加上了</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'> webapps </span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>路径，</span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>最终写法为：</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>${tomcat_-2#target#deployPath}/webapps</span><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>。</span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>（</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>3</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>）</span><span lang=EN-US style='font-size:14.0pt;line-height:150%'>${key}</span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>引用当前组件的当前版本的变量，填写规则为变量名</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>;</span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>例如：</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>war</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>组件当前版本的某个变量需要引用</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>deployPath</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>，则写法为</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>${deployPath}/upload</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体; '>。</span></p>
+<p class=MsoNormal style='text-indent:28.0pt;'><span style='font-size:14.0pt;line-height: 150%;font-family:宋体;'>点击保存配置按钮会根据填写的组件配置中</span><span lang=EN-US style='font-size:14.0pt; line-height:150%'>${blueprint#key}</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>配置项生成蓝图变量，每保存一次组件的配置都会更新蓝图变量，最后在蓝图配置中填写蓝图变量的最终值，点击保存变量按钮保存蓝图变量。如下图所示。</span></p>
+<p class=MsoNormal><span lang=EN-US><img border=0 width=815 height=380 src="doc.files/image220.jpg" ></span></p>
+
+
+
+
+
+</div>
+<div class="sys_PrevUpNext"><div style="width:40px;float:right"><a href="58.html"><img src="images/next.gif" style="border:0px" /></a></div><div style="width:40px;float:right"><a href="51.html"><img src="images/up.gif" style="border:0px" /></a></div><div style="width:40px;float:right"><a href="56.html"><img src="images/prev.gif" style="border:0px" /></a></div><div style="clear:both; height:0px; font-size:0px"></div></div>
+</body>
+</html>
+<!--  Generator:Montinz Word-2-CHM 1.1.7.0 Free (word2chm.com)  -->

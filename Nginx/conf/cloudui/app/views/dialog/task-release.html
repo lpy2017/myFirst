@@ -1,0 +1,24 @@
+<div class="dialog-header">
+ <h4>发布</h4>
+</div>
+<div class="dialog-body">
+ <form name="form" class="form-horizontal"> 
+    <div class="form-group">
+     <label class="col-lg-3 control-label text-right"><span class="text-danger">*</span> 发布</label>
+     <div class="col-lg-8">
+         <select class="form-control" required ng-model="release" ng-options="item.id as item.name for item in releaseList"></select>
+     </div>
+    </div>
+    <div class="form-group">
+     <label class="col-lg-3 control-label text-right"><span class="text-danger">*</span> 阶段</label>
+     <div class="col-lg-8">
+         <select class="form-control" required ng-model="stage" ng-options="item.id as item.name for item in stageList"></select>
+     </div>
+    </div>
+ </form>
+</div>
+<div class="dialog-footer">
+   <a class="btn btn-default btn-close" ng-click="closeThisDialog(0)"><em class="fa fa-close"></em> 取 消</a>
+   <button class="btn btn-primary" ng-disabled="!form.$valid" ng-class="{'btn-default':!form.$valid,'btn-primary':form.$valid}" ng-click="releaseFn()"><em class="fa fa-check"></em> 确定</button> 
+</div>
+ 

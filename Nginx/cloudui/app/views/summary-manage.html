@@ -1,0 +1,113 @@
+<div class="cont-body">
+    <div class="s-tablist clearfix mt20">
+        <a ui-sref="app.cluster_manage" class="clearfix">
+	  		<span>环境数</span>
+	  		<span ng-bind="envNum"></span>
+	  		<em class="icon-grid iconPosition"></em>
+	  	</a>
+        <a ui-sref="app.blueprint_manage" class="clearfix">
+  			<span>蓝图数</span>
+  			<span ng-bind="blueprintNum"></span>
+  			<em class="icon-drawer iconPosition"></em>
+  		</a>
+        <a ui-sref="app.blueprint_ins_manage" class="clearfix">
+  			<span>蓝图实例数</span>
+  			<span ng-bind="blueprintInstanceNum"></span>
+  			<em class="fa fa-list-alt iconPosition"></em>
+  		</a>
+        <a ui-sref="app.component_manage" class="clearfix">
+  			<span>组件数</span>
+  			<span ng-bind="componentNum"></span>
+  			<em class="fa fa-cube iconPosition"></em>
+  		</a>
+    </div>
+    <!-- <div ui-view="" autoscroll="false" class="g-wrapper ng-fadeInLeftBig"></div> -->
+
+    <!-- 图表 -->
+    <div class="clearfix new-header mt20" style="padding:0;">
+     <div class="col-sm-6">
+       监控图 <a href="javascript:;" ng-click="monitorConfig()"><em class="cd-ic_set2"></em></a>
+     </div>
+      
+    </div>
+
+    <div class="panel">
+    <div class="panel-body">
+    <div class="charts">
+       <div class="row">
+          <div class="col-sm-3">
+              <p>构建次数</p> 
+              <div id="structure_frequency"></div>
+          </div>
+          <div class="col-sm-3">
+              <p>构建成功次数</p>
+              <div id="structure_success_frequency"></div>
+          </div>
+          <div class="col-sm-3">
+              <p>构建平均时长</p>
+              <div id="structure_average_time"></div>
+          </div>
+          <div class="col-sm-3">
+              <p>构建实际时长</p>
+              <div id="structure_actual_time"></div>
+          </div>
+          <div class="col-sm-3">
+              <p>部署次数</p>
+              <div id="deploy_frequency"></div>
+          </div>
+          <div class="col-sm-3">
+              <p>部署成功次数</p>
+              <div id="deploy_success_frequency"></div>
+          </div>
+          <div class="col-sm-3">
+              <p>部署平均时长</p>
+              <div id="deploy_average_time"></div>
+          </div>
+          <div class="col-sm-3">
+              <p>部署实际时长</p>
+              <div id="deploy_actual_time"></div>
+          </div>
+       </div>
+     </div>
+     </div>
+     </div>
+     <!-- 图表 -->
+     
+     
+    <div class="clearfix new-header mt20" style="padding:0;">
+     <div class="col-sm-6">
+       当前正在执行的流程
+     </div>
+     <div class="col-sm-6"></div>
+    </div>
+    <table class="table table_title table-striped cd-table new_Tables">
+      <thead>
+        <tr sort>
+          <th base="1" ng-click="fnSort('blueprintInstanceName')">蓝图实例</th>
+          <th base="1" ng-click="fnSort('flowName')">蓝图流程</th>
+          <th base="1" ng-click="fnSort('clusterName')">环境</th>
+          <th base="1" ng-click="fnSort('startTime')">开始时间</th>
+          <th base="1" ng-click="fnSort('userName')">执行人</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-if="activities.length == 0">
+         <td colspan="8">
+           <p class="noresult"><em class="icon-info"></em>暂无数据</p>
+         </td>
+       </tr>
+       <tr ng-repeat="item in activities">
+        <td class="text_overflow" title="{{item.blueprintInstanceName}}">{{item.blueprintInstanceName}}</td>
+        <td class="text_overflow" title="{{item.flowName}}">{{item.flowName}}</td>
+        <td class="text_overflow" title="{{item.clusterName}}">{{item.clusterName}}</td>
+        <td class="text_overflow" title="{{item.startTime}}">{{item.startTime}}</td>
+        <td class="text_overflow" title="{{item.userName}}">{{item.userName}}</td>
+      </tr>
+      <tr ng-show="activities.length > 0">
+       <td colspan="8">
+        <page page-count="totalPageNum" page-num="pageNum" on-page-change="activityFun()"></page>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>

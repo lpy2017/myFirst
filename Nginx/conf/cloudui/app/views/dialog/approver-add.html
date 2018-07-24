@@ -1,0 +1,32 @@
+<div class="dialog-header">
+    <h4>添加审批人</h4>
+</div>
+<div class="dialog-body">
+   <div class="form-horizontal">  
+      <form name="updateLabelForm" novalidate="" class="form-validate form-horizontal">
+	        <fieldset>
+	           <div class="form-group">
+	              <label class="col-sm-3 control-label">审批人：</label>
+	              <div class="col-sm-9"> 
+	                <select class="form-control" ng-model="approver" ng-options="item.userName as item.userName for item in userList">
+               
+                   </select>
+	              </div>
+	           </div>
+	        </fieldset>
+          <!-- <fieldset>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">审批时间：</label>
+                <div class="col-sm-9"> 
+                   <input type="text" ruledate ng-model="approveTime"  class="form-control daterange" data-time-picker="true" data-time-picker-increment="1" data-format="YYYY-MM-DD hh:mm A" />
+                </div>
+             </div>
+          </fieldset> -->
+      </form>
+   </div>
+</div>
+<div class="dialog-footer">
+   <a href="" class="btn btn-default btn-close" ng-click="closeThisDialog(0)"><em class="fa fa-close"></em> 取 消</a> 
+   <button class="btn btn-primary" ng-click="saveFn(closeThisDialog)"><em class="fa fa-check"></em> 提 交</button>
+</div>
+ 

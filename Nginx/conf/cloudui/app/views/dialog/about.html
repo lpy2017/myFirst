@@ -1,0 +1,16 @@
+<div class="dialog-header">
+    <h4>关于</h4>
+</div>
+<div class="dialog-body">
+   <div class="product-logo text-center">
+      <img src="app/images/product-logo.png">
+   </div>
+   <div ng-bind-html="cdVersionInfo">
+   </div>
+   <div style="margin-left:auto;margin-right:2px;width:200px;">  
+      {{cdVersion}}
+   </div>
+</div>
+<div class="dialog-footer">
+   <button class="btn btn-info" ng-click="closeThisDialog(0)"><em class="fa fa-close"></em> 关 闭</button>
+</div>

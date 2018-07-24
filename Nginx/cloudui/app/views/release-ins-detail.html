@@ -1,0 +1,66 @@
+<body>
+	<div class="breadcont clearfix">
+	   <ol class="breadcrumb pull-left">
+	      <li><a ui-sref="app.release_ins">发布列表</a>
+	      </li>
+	      <li class="active">
+	      	发布详情
+	      </li>
+	   </ol>
+	</div>
+	<div class="cont-body">
+		<div><h4>发布: {{releaseInfo.releaseName}}</h1></div> 
+		<div class="panel">
+		    <div class="panel-body">
+		        <div class="title-line">
+		        	<a href="javascript:;" ng-click="linkComponent()" class="pull-right btn-cd-icon"><span class="cd-ic_adduser">
+	                <span class="path1"></span><span class="path2"></span><span class="path3"></span>
+	                </span> 添加应用</a>
+		            <p>关联应用</p>
+		        </div>
+		        <div class="table-responsive table-bordered mb-lg mt20">
+			        <table class="table">
+			        	<tr>
+			        		<th>应用名称</th>
+			        		<th>操作</th>
+			        	</tr>
+			        	<tr ng-repeat="item in appList">
+			        		<td>{{item.resourceName}}</td>
+			        		<td>
+			        			<button class="btn btn-cd-default btn-cd-default-del" ng-click="delAppFn($index,item)"><em class="fa fa-trash"></em> 删除</button>
+			        		</td>
+			        	</tr>
+			        </table>
+		        </div>
+				<div class="title-line clearfix">
+		            <p class="form-inline">发布管道(生命周期 {{releaseInfo.lifecycleName}})  
+		               <span style="padding-left:20px;" ng-if="dataObj.curApp">当前应用：
+		                   <select class="form-control" ng-model="dataObj.curApp" ng-options="item.resourceName as item.resourceName for item in appList"></select>
+                       </span>
+		             </p>
+		        </div>
+		        <div class="table-responsive table-bordered mb-lg mt20">
+			        <table class="table">
+			        	<tr>
+			        		<th>阶段</th>
+			        		<th>环境</th>
+			        		<th>操作</th>
+			        	</tr>
+			        	<tr ng-repeat="item in stageList">
+			        		<td>{{item.name}}<br>{{item.description}}</td>
+			        		<td>应用环境：{{item.envInfo.blueInstanceName||'无'}}<br> 蓝图过程：{{item.envInfo.flowName||'无'}}</td>
+			        		<td>
+			        			<button ng-disabled="!dataObj.curApp" class="btn btn-cd-default" ng-click="linkRealseEnv(releaseInfo.releaseName,item,dataObj.curApp)"><em class="fa fa-link"></em> 关联应用环境</button>
+			        			<button ng-disabled="!dataObj.curApp" class="btn btn-cd-default" ng-click="editPhaseFlow(releaseInfo.releaseName,item)"><em class="fa fa-edit"></em> 变更过程</button>
+			        			<button ng-disabled="!dataObj.curApp" class="btn btn-cd-default" ng-click="untieEnvFn(releaseInfo.releaseName,item,dataObj.curApp)"><em class="icon-cursor-move"></em> 解绑应用环境</button>
+			        			<button ng-disabled="!dataObj.curApp" class="btn btn-cd-default" ng-click="configEnvFn(item,app)"><em class="fa fa-cog"></em> 配置应用环境</button>
+			        			<button ng-disabled="!dataObj.curApp" class="btn btn-cd-default" ng-click="logFn(item,app)"><em class="fa fa-cog"></em> 发布日志</button>
+			        		</td>
+			        	</tr>
+			        </table>
+		        </div>
+        	</div>
+		</div>
+	</div>
+</body>
+</html>

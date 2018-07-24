@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>发布任务详情</title>
+</head>
+<body>
+    <div class="breadcont clearfix">
+	   <ol class="breadcrumb pull-left">
+	      <li><a ui-sref="app.release_task_manage">任务列表</a>
+	      </li>
+	      <li class="active">
+	      	 任务详情
+	      </li>
+	   </ol>
+	</div>
+    <form class="form-horizontal">
+	<div class="cont-body">
+		<div class="panel">
+		    <div class="panel-body">
+		        <div class="title-line">
+		            <p>任务信息</p>
+		        </div>
+		        <div class="row">
+					 <div class="col-sm-6">
+		        	      任务ID：{{taskInfo.id}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      名称：{{taskInfo.name}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      类型：{{(typeList|filter:taskInfo.type)[0].text}}
+		        	 </div>
+					 <div class="col-sm-6">
+		        	      优先级：{{(levelList|filter:taskInfo.level)[0].text}}
+		        	 </div>
+					 <div class="col-sm-6">
+		        	      状态：{{(statusList|filter:taskInfo.status)[0].text}}
+		        	 </div>
+					 <div class="col-sm-6">
+		        	      标签：{{taskInfo.label}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      依赖任务：{{taskInfo.dependId!='[]'?taskInfo.dependId:'无'}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      父任务：{{taskInfo.parentId!=-1?taskInfo.parentId:'无'}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      应用系统：{{taskInfo.systemName}}
+		        	 </div>
+					 <div class="col-sm-6">
+		        	      创建人：{{taskInfo.creater}}
+		        	 </div>
+					 <div class="col-sm-6">
+		        	      创建时间：{{taskInfo.createTime}}
+		        	 </div>
+					 <div class="col-sm-6">
+		        	      更新时间：{{taskInfo.updateTime||'无'}}
+		        	 </div>
+					 <div class="col-sm-6">
+		        	      计划完成时间：{{taskInfo.expectTime||'无'}}
+		        	 </div>
+					 <div class="col-sm-6">
+		        	      责任人：{{taskInfo.principal}}
+		        	 </div>
+					 <div class="col-sm-6">
+		        	      是否自动：{{taskInfo.autoExecute?"自动":"手动"}}
+		        	 </div>
+					 <div class="col-sm-6">
+		        	      cron表达式：{{taskInfo.autoExecute?taskInfo.cron:"无"}}
+		        	 </div>
+					 <div class="col-sm-6">
+		        	      描述：{{taskInfo.description||'无'}}
+		        	 </div>
+					 <div class="col-sm-6">
+		        	      备注：{{taskInfo.remark||'无'}}
+		        	 </div>
+					 <div class="col-sm-6">
+		        	      来源：{{(sourceList|filter:taskInfo.source)[0].text}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      附件：{{taskInfo.attachment||'无'}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      所属清单：{{taskInfo.inventoryId!='[]'?taskInfo.inventoryId:'无'}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      发布名称：{{taskInfo.releaseName||'无'}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      发布阶段名称：{{taskInfo.releasePhaseName||'无'}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      环境名称：{{taskInfo.environmentName||'无'}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      系统需求ID：{{taskInfo.systemRequireId||'无'}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      系统需求名称：{{taskInfo.systemRequireName||'无'}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      业务需求ID：{{taskInfo.businessRequireId||'无'}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      业务需求名称：{{taskInfo.businessRequireName||'无'}}
+		        	 </div>
+		        	 <!-- <div class="col-sm-6">
+		        	      分支名称：{{taskInfo.codeBranchName||'无'}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      基线名称：{{taskInfo.codeBaselineName||'无'}}
+		        	 </div> -->
+		        </div>
+		        <div class="title-line">
+		            <p>任务流程状态</p>  
+		           <!--  <a href="javascript:;" ng-if="isAction" ng-click="actionTaskFn()" class="pull-right btn btn-info">手动执行任务</a> -->
+		        </div>
+                <div class="mt20">
+                     <tabset justified="false">
+						<tab ng-repeat="flowItem in flowList" ng-click="doHistoryListFn($index,flowItem.FLOW_NAME,flowItem.FLOW_ID)">
+							<tab-heading>{{flowItem.FLOW_NAME}}</tab-heading>
+							<div>
+								<table class="table table_title table-striped cd-table new_Tables">
+									<thead>
+										<tr sort>
+								            <th>实例Id</th>
+											<th>过程状态</th>
+								            <th>操作时间</th>
+											<th>结束时间</th>
+								            <th>操作时长(s)</th>
+								            <th>组件版本详情</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-if="flowItem.off" ng-repeat="insItem in doData[flowItem.FLOW_NAME]">
+											<td>{{insItem.instanceId}}</td>
+											<td> 
+											  <em class="fa" ng-class="{'text-success fa-check':insItem.state=='2','text-danger fa-times':insItem.state=='7'}"></em>
+											  <span style="display:inline-block;" class="sk-spinner sk-spinner-fading-circle" ng-if="insItem.state=='0'">
+								               <span class="sk-circle1 sk-circle"></span>
+								               <span class="sk-circle2 sk-circle"></span>
+								               <span class="sk-circle3 sk-circle"></span>
+								               <span class="sk-circle4 sk-circle"></span>
+								               <span class="sk-circle5 sk-circle"></span>
+								               <span class="sk-circle6 sk-circle"></span>
+								               <span class="sk-circle7 sk-circle"></span>
+								               <span class="sk-circle8 sk-circle"></span>
+								               <span class="sk-circle9 sk-circle"></span>
+								               <span class="sk-circle10 sk-circle"></span>
+								               <span class="sk-circle11 sk-circle"></span>
+								               <span class="sk-circle12 sk-circle"></span>
+								            </span>
+											<span ng-class="{'text-success':insItem.state=='2','text-danger':insItem.state=='7','text-custom-yellow':insItem.state=='0'}">{{insItem.flowState}}</span>
+											</td>
+								            <td>{{insItem.startTime}}</td>
+								            <td>{{insItem.endTime}}</td>
+								            <td>{{insItem.opTime}}</td>
+								            <td><a tooltip-placement="left"
+					                             tooltip="{{insItem.componentDetail}}" ng-click="detailFn(insItem.componentDetail)">详情</a></td>
+											<td> 
+											    <a target="_blank" ui-sref="app.blueprint_ins_flow_monitor({insName:taskInfo.blueprintInstanceName,INSTANCE_ID:taskInfo.blueprintInstance,flowMonitorInsId:insItem.instanceId,flowName:flowItem.FLOW_NAME,flowId:flowItem.FLOW_ID})" class="btn btn-cd-default btn-cd-default-info"><em class="icon-graph"></em> 监控</a>
+											    <a href="javascript:;" ng-click="overFn(insItem.instanceId)" class="btn btn-cd-default btn-cd-default-del"><em class="icon-power"></em> 结束</a>
+											</td>
+										</tr>
+										<tr>
+								            <td colspan="7"> 
+								                <page ng-if="flowItem.off" page-count="pageCount" page-num="pageNum" on-page-change="onPageChange(pageNum,flowItem.FLOW_NAME,flowItem.FLOW_ID)"></page>
+								            </td>
+					                    </tr>
+									</tbody>
+								</table>
+							</div>
+						</tab>
+					</tabset>
+                </div>
+	        </div>
+        </div>
+	</div>
+	</form>
+</body>
+</html>

@@ -1,0 +1,32 @@
+@font-face {
+  font-family: 'indent';
+  src:  url('../fonts/indent.eot?w6i026');
+  src:  url('../fonts/indent.eot?w6i026#iefix') format('embedded-opentype'),
+  url('../fonts/indent.ttf?w6i026') format('truetype'),
+  url('../fonts/indent.woff?w6i026') format('woff'),
+  url('../fonts/indent.svg?w6i026#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon_indent-"], [class*=" icon_indent-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'indent' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon_indent-indent-increase:before {
+  content: "\ea7b";
+}
+.icon_indent-indent-decrease:before {
+  content: "\ea7c";
+}

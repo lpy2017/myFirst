@@ -1,0 +1,82 @@
+	<div class="cont-header clearfix">
+	   <ol class="breadcrumb pull-left">
+	      <li><a ui-sref="app.cluster_manage">环境列表</a>
+	      </li>
+	      <li class="active" >
+	        <a href="" ng-click="openchangeCluster(clusterDetail.name)" class="btn-cd-icon">
+	        	{{clusterDetail.name}}
+	        	<span class="cd-ic_border_color_24px">
+	                <span class="path1"></span><span class="path2"></span>
+	            </span>
+	        </a>
+	      </li>
+	   </ol>
+	   <div class="pull-right"> 
+		   <a class="btn-cd-icon" ng-click="openDelCluster(clusterDetail)"><span class="cd-ic_delete">
+	                
+	                </span> 删除环境</a>
+		   <a href="#" ui-sref="app.node_add({clustername:clusterDetail.name,clusterid:clusterDetail.id})" class="btn-cd-icon"><span class="cd-ic_adduser">
+	                <span class="path1"></span><span class="path2"></span><span class="path3"></span>
+	                </span> 添加主机</a>
+		   <a type="button" class="btn-cd-icon" ng-click="openDelNodeFn(params,index)"><span class="cd-ic_delete">
+		                  
+		                  </span> 批量删除主机</a>
+	   </div>
+	</div>
+	 
+		<table class="table table_title table-striped cd-table new_Tables">
+		    <thead>
+		    <tr sort>
+		        <th check-all="check-all">
+		            <div data-toggle="tooltip" data-title="Check All" class="checkbox c-checkbox">
+		                <label>
+		                    <input type="checkbox" />
+		                    <span class="fa fa-check"></span>
+		                </label>
+		            </div>
+		        </th>
+		        <th base="1" ng-click="fnSort('name')">名称</th>
+		        <th base="1" ng-click="fnSort('description')">描述</th>
+		        <th base="1" ng-click="fnSort('ip')">IP地址</th>
+		        <th base="1" ng-click="fnSort('isConnected')">连接状态</th>
+		        <th base="1" ng-click="fnSort('os')">系统类型</th>
+		        <th >操作</th>
+		    </tr>
+		    </thead>
+		    <tbody>
+		    <tr ng-if="!listoff">
+		        <td colspan="6">
+		            <p class="noresult"><em class="icon-info"></em> {{warninginfo}}</p>
+		        </td>
+		    </tr>
+		    <tr ng-repeat="item in nodesList">
+		        <td>
+		            <div class="checkbox c-checkbox">
+		                <label>
+		                    <input type="checkbox" id="{{item.id}}" save-id="{{item.id}}" checkapp-id="checkappId" ng-checked="{{item.ischecked}}" />
+		                    <span class="fa fa-check"></span>
+		                </label>
+		            </div>
+		        </td>
+		        <td class="text_overflow" title="{{item.name}}">{{item.name}}</td>
+		        <td class="text_overflow" title="{{item.description}}">{{item.description}}</td>
+		        <td class="text_overflow" title="{{item.ip}}">{{item.ip}}</td>
+		        <td>
+		        	
+		            <span ng-class="{'text-success':item.isConnected=='已连接','text-danger':item.isConnected=='未连接'}"><span class="circle circle-success circle-lg text-left" ng-class="{'circle-success':item.isConnected=='已连接','circle-danger':item.isConnected=='未连接'}"></span>{{item.isConnected}}</span>
+		        </td>
+		         <td class="text_overflow" title="{{item.os}}">{{item.os}}</td>
+		        <td>
+		        	<button ui-sref="app.node_edit({clusterid:clusterDetail.id,nodeid:item.id})" class="btn btn-cd-default"><em class="fa fa-edit"></em> 修改</button>
+		            <button class="btn btn-cd-default btn-cd-default-del" ng-click="openDelNodeFn(item.id,$index)"><em class="fa fa-trash"> 删除</em> 
+		            </button>
+		            
+		        </td>
+		    </tr>
+		    <tr ng-show="listoff">
+		        <td colspan="7">
+		            <page page-count="pageCount" page-num="pageNum" on-page-change="onPageChange()"></page>
+		        </td>
+		    </tr>
+		    </tbody>
+	</table>

@@ -1,0 +1,233 @@
+<div class="breadcont clearfix">
+   <ol class="breadcrumb pull-left">
+      <li><a ui-sref="app.release_task_manage">任务列表</a>
+      </li>
+      <li class="active">
+         修改任务
+      </li>
+   </ol>
+</div>
+<form class="form-horizontal" novalidate="" name="form">
+<div class="cont-body">
+  <div class="panel">
+      <div class="panel-body">
+          <div class="title-line">
+              <p>任务信息</p>
+          </div>
+            <div class="mt20">
+        <div class="form-group">
+                  <label class="col-lg-2 control-label"><span class="text-danger">*</span> 名称：</label>
+                  <div class="col-lg-5">
+                     <input type="text" required class="form-control" ng-model="formData.taskName" name="taskName">
+                     <span ng-show="validateInput(form,'taskName','required')" class="text-danger">任务名称不能为空！</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-lg-2 control-label"><span class="text-danger">*</span> 类型：</label>
+                  <div class="col-lg-5">
+                     <select class="form-control" required ng-model="formData.taskType" name="taskType" ng-options="item.value as item.text for item in typeList">
+                     </select>
+                      <span ng-show="validateInput(form,'taskType','required')" class="text-danger">任务类型不能为空！</span> 
+                  </div>
+                </div>
+        <div class="form-group">
+                  <label class="col-lg-2 control-label"><span class="text-danger">*</span> 优先级：</label>
+                  <div class="col-lg-5">
+                     <select class="form-control" required ng-model="formData.taskLevel" name="taskLevel" ng-options="item.value as item.text for item in levelList">
+                     </select>
+                     <span ng-show="validateInput(form,'taskLevel','required')" class="text-danger">任务优先级不能为空！</span>
+                  </div>
+                </div>
+        <div class="form-group">
+                  <label class="col-lg-2 control-label">标签：</label>
+                  <div class="col-lg-5">
+                     <input type="text" class="form-control" ng-model="formData.taskLabel" name="taskLabel">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-lg-2 control-label"><span class="text-danger">*</span> 系统名称：</label>
+                  <div class="col-lg-5">
+                     <select class="form-control" required name="taskSystem" ng-model="formData.taskSystem" ng-options="item as item.resourceName for item in systemList">
+                     </select>
+                     <span ng-show="validateInput(form,'taskSystem','required')" class="text-danger">系统名称不能为空！</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">父任务</label>
+                  <div class="col-lg-5">
+                     <select class="form-control" ng-model="formData.parentTask" name="formData.parentTask"  ng-options="item.id as item.name for item in parentTasksList">
+                     </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">依赖任务：</label>
+                  <div class="col-lg-5"> 
+                     <select id="task" data-placeholder="--请选择依赖任务--" multiple="multiple" class="form-control" name="taskDepended" ng-model="formData.taskDepended" >
+                         
+                     </select>
+                  </div>
+                </div>
+        <!-- <div class="form-group">
+                  <label class="col-lg-2 control-label">自动执行：</label>
+                  <div class="col-lg-5">
+                        <div class="checkbox c-checkbox">
+                           <label style="margin:0;">
+                              <input type="checkbox" name="taskAuto" ng-model="formData.taskAuto" />
+                              <span class="fa fa-check"></span>
+                           </label>
+                        </div>
+                  </div>
+                </div> -->
+                <div class="form-group" ng-if="formData.taskAuto">
+                  <label class="col-lg-2 control-label"><span class="text-danger">*</span>cron表达式：</label>
+                  <div class="col-lg-5">
+                     <input type="text" name="taskCron" required validcron class="form-control" ng-model="formData.cron" />
+                     <span ng-show="validateInput(form,'taskCron','required')" class="text-danger">cron表达式不能为空！</span>
+                     <span ng-show="validateInput(form,'taskCron','cron')" class="text-danger">表达式格式错误，请重新输入！</span> 
+                  </div>
+                  <div class="col-lg-5">
+                      <div class="notice-cont" style="posion:relative;" ng-mouseover="isNotice=true" ng-mouseout="isNotice=false">
+                         <a href="javascript:;">查看cron参考</a>
+                       <div class="notices mt20" ng-show="isNotice" style="position:absolute;top:0px; left:15px;">
+                       <h4>
+                  <em class="fa fa-exclamation-circle"></em>
+                  cron参考：
+                </h4>
+                <p>
+                  0 0 10,14,16 * * ? 每天上午10点，下午2点，4点<br/>
+                  0 0/30 9-17 * * ? 朝九晚五工作时间内每半小时<br/>
+                  0 0 12 ? * WED 表示每个星期三中午12点 <br/>
+                  0 0 12 * * ? 每天中午12点触发<br/>
+                  0 15 10 * * ? 2005 2005年的每天上午10:15触发<br/>
+                  0 * 14 * * ? 在每天下午2点到下午2:59期间的每1分钟触发
+                </p>   
+                  </div>
+                </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-lg-2 control-label"> 描述：</label>
+                  <div class="col-lg-5">
+                     <textarea class="form-control" name="taskDescription" ng-model="formData.taskDescription"></textarea>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-lg-2 control-label"> 备注：</label>
+                  <div class="col-lg-5">
+                     <textarea class="form-control" name="taskRemark" ng-model="formData.taskRemark">
+                     </textarea>
+                  </div>
+                </div>
+        <div class="form-group">
+                  <label class="col-lg-2 control-label"><span class="text-danger">*</span> 负责人：</label>
+                  <div class="col-lg-5">
+                     <select class="form-control" required name="taskPrincipal" ng-model="formData.taskPrincipal" ng-options="item.userName as item.userName for item in userList">
+                     </select>
+                     <span ng-show="validateInput(form,'taskPrincipal','required')" class="text-danger">负责人不能为空！</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-lg-2 control-label"><span class="text-danger"></span>  计划完成时间：</label>
+                  <div class="col-lg-5">
+                      <input type="text" ng-model="formData.time" ruledate data-single-date-picker="true" class="form-control daterange" data-time-picker="true" data-time-picker-increment="1" data-time-picker-hour="false" data-single-date-picker="true" data-format="YYYY-MM-DD HH:mm:ss" />
+                  </div>
+                </div>
+   <div class="form-group">
+          <label class="col-sm-2 control-label">附件</label>
+          <div class="col-sm-2" ng-if="formData.attachment">
+               <p class="form-control-static">{{formData.attachment}}</p>
+          </div>
+          <div class="col-sm-4">
+            <div ng-if="isloading&&formData.attachment" nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter">
+               <input filestyle="" type="file" data-button-text="上传新的附件" data-class-button="btn btn-info" data-classinput="form-control inline" nv-file-select="" uploader="uploader" class="form-control" ng-click="addfile()" />
+            </div> 
+            <div ng-if="isloading&&(!formData.attachment)" nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter">
+               <input filestyle="" type="file" data-button-text="上传附件" data-class-button="btn btn-info" data-classinput="form-control inline" nv-file-select="" uploader="uploader" class="form-control" ng-click="addfile()" />
+            </div>             
+          </div>
+          <div class="col-sm-10 col-sm-offset-2">
+          <table ng-if="uploader.queue.length" class="table">
+                <thead>
+                   <tr>
+                    <th>名称</th>
+                    <th ng-show="uploader.isHTML5">大小</th>
+                    <th ng-show="uploader.isHTML5">进度</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                   </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="item in uploader.queue">
+                    <td class="text_overflow" title="{{ item.file.name }}"><strong>{{ item.file.name }}</strong></td>
+                    <td ng-show="uploader.isHTML5" nowrap="">{{ item.file.size/1024|number:2 }} kB</td>
+                    <td ng-show="uploader.isHTML5">
+                     <div style="margin-bottom: 0;" class="progress progress-xs">
+                      <div role="progressbar" ng-style="{ 'width': item.progress + '%' }" class="progress-bar"></div>
+                     </div>
+                    </td>
+                    <td class="text-center">
+                     <span ng-show="item.isSuccess">
+                      <em class="fa fa-check fa-fw"></em>
+                     </span>
+                     <span ng-show="item.isCancel">
+                      <em class="fa fa-ban-circle fa-fw"></em>
+                     </span>
+                     <span ng-show="item.isError">
+                      <em class="fa fa-times fa-fw"></em>
+                     </span>
+                    </td>
+                    <td nowrap="">
+                     <button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs">
+                      <span class="icon-trash"></span>
+                     </button>
+                    </td>
+                  </tr>
+                </tbody>
+               </table>
+               </div>
+        </div>
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">系统需求ID：</label>
+                  <div class="col-lg-5">
+                     <input type="text" class="form-control" ng-model="formData.sysDemandId" name="sysDemandId">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">系统需求名称：</label>
+                  <div class="col-lg-5">
+                     <input type="text" class="form-control" ng-model="formData.sysDemandName" name="sysDemandName">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">业务需求ID：</label>
+                  <div class="col-lg-5">
+                     <input type="text" class="form-control" ng-model="formData.businessDemandId" name="businessDemandId">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">业务需求名称：</label>
+                  <div class="col-lg-5">
+                     <input type="text" class="form-control" ng-model="formData.businessDemandName" name="businessDemandName">
+                  </div>
+                </div>
+                <!-- <div class="form-group">
+                  <label class="col-lg-2 control-label">分支名称：</label>
+                  <div class="col-lg-5">
+                     <input type="text" class="form-control" ng-model="formData.branchName" name="branchName">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">基线名称：</label>
+                  <div class="col-lg-5">
+                     <input type="text" class="form-control" ng-model="formData.baselineName" name="baselineName">
+                  </div>
+                </div> -->
+            </div>
+        </div> 
+        <div class="panel-footer text-center">
+          <a href="javascript:;" class="btn" ng-disabled="!form.$valid" ng-class="{'btn-default':!form.$valid,'btn-info':form.$valid}" ng-click="updateTaskFn()">更新</a>
+          <a ui-sref="app.release_task_manage" class="btn btn-default">取消</a>
+        </div>
+    </div>
+</div>
+</form>

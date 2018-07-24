@@ -1,0 +1,35 @@
+<div class="dialog-header">
+    <h4>编辑发布</h4>
+</div>
+<div class="dialog-body">
+   <div class="form-horizontal">  
+      <form name="updateReleaseForm" novalidate="" class="form-validate form-horizontal">
+           <div class="form-group">
+              <label class="col-sm-3 control-label "><span style="font-size:20px;text-align:center; vertical-align: middle;" class="text-danger">*</span>发布名称：</label>
+              <div class="col-sm-9"> 
+                 <input type="text" name="name" ng-model="name" ng-pattern="/^[\u4e00-\u9fa5a-zA-Z0-9_-]{1,16}$/" class="form-control" required=""/>
+				 <div><small>名字可以包含字母，数字，中文，_，-，1-16个字符</small></div>
+				 <span ng-show="validateInput(updateReleaseForm,'name','required')" class="text-danger">请输入用发布名称！</span>
+				 <span ng-show="validateInput(updateReleaseForm,'name','pattern')" class="text-danger">发布名称不符合规则！</span>
+              </div>
+           </div>
+           <div class="form-group">
+              <label class="col-sm-3 control-label">描述：</label>
+              <div class="col-sm-9"> 
+                 <textarea name="description" ng-model="description" class="form-control" />
+              </div>
+           </div>
+           <div class="form-group">
+              <label class="col-sm-3 control-label"><span style="font-size:20px;text-align:center; vertical-align: middle;" class="text-danger">*</span>生命周期：</label>
+              <div class="col-sm-9"> 
+		
+                 <select class="form-control"  ng-model="selectedLifecycle" ng-options="x.name for x in lifecycles" required=""/>
+              </div>
+           </div>
+      </form>
+   </div>
+</div>
+<div class="dialog-footer">
+   <a href="" class="btn btn-default btn-close" ng-click="closeThisDialog(0)"><em class="fa fa-close"></em> 取 消</a> 
+   <button class="btn" ng-disabled="!updateReleaseForm.$valid" ng-class="{'btn-primary':updateReleaseForm.$valid,'btn-default':!updateReleaseForm.$valid}" ng-click="saveFn()"><em class="fa fa-check"></em> 提 交</button>
+</div>

@@ -1,0 +1,69 @@
+<div class="row clearfix cont-header">
+   <div class="col-sm-6">
+        <a ui-sref="app.workpiece_package_add" class="btn-cd-icon"><span class="cd-ic_adduser">
+                <span class="path1"></span><span class="path2"></span><span class="path3"></span>
+                </span>  添加</a>
+        <a class="btn-cd-icon" ng-click="exportWorkpiecePackage()"><span class="cd-ic_derive">
+                <span class="path1"></span><span class="path2"></span>
+                </span> 导出工件</a>
+        <a class="btn-cd-icon" ng-click="importWorkpiecePackage()"><span class="cd-ic_lead">
+                <span class="path1"></span><span class="path2"></span>
+                </span> 导入工件</a>
+   </div>
+   <div class="col-sm-6">
+      <div class="search">
+        <input type="text" ng-keyup="search()" class="form-control" placeholder="按工件包名搜索" ng-model="searchval" />
+        <em class="icon-magnifier"></em>
+      </div>
+   </div>
+</div>
+
+<div class="cont-body">
+  <table class="table table_title table-striped cd-table new_Tables mt20">
+   <thead>
+      <tr sort>
+         <th base="1" ng-click="fnSort('resourceName')" width="15%">工件包名称</th>
+         <th base="1" ng-click="fnSort('resourceDesc')" width="15%">描述</th>
+         <th base="1" ng-click="fnSort('resourcePath')" width="40%">上传路径</th>
+		 <th base="1" ng-click="fnSort('resourceSize')" width="10%">文件大小</th>
+         <th base="1" ng-click="fnSort('updateTime')" width="10%">更新时间</th>
+         <th width="10%">操作</th>
+      </tr>
+   </thead>
+   <tbody>
+      <tr ng-if="!listoff">
+         <td colspan="6">
+           <p class="noresult"><em class="icon-info"></em> {{warninginfo}}</p>
+         </td>
+      </tr>
+      <tr ng-repeat="item in workpiecePackageList" ng-init="listIndex=$index">
+         <td class="text_overflow" title="{{item.resourceName}}">{{item.resourceName}}</td>
+         <td class="text_overflow" title="{{item.resourceDesc}}">{{item.resourceDesc}}</td>
+         <td class="text_overflow" title="{{item.resourcePath}}">{{item.resourcePath}}</td>
+		     <td class="text_overflow" title="{{item.resourceSize}}">{{item.resourceSize}}</td>
+         <td class="text_overflow" title="{{item.updateTime}}">{{item.updateTime}}</td>
+         <td>
+             <div dropdown="dropdown" class="btn-group">
+                <button dropdown-toggle="" class="btn btn-cd-default">操作 <em class="fa fa-caret-down"></em>
+                </button>
+                <ul role="menu" class="dropdown-menu btnlist-dropdown-menu" ng-class="{'dropdown-last':listIndex>4}">
+                   <li>
+                       <a href="javascript:;" ng-click="downFtpFn(item.id)"><em class="icon-cloud-download"></em> 下载</a>
+                   </li>
+                   <li>
+                       <a href="javascript:;" ng-click="delFn(item.id,$index)">
+                           <em class="fa fa-trash-o"></em> 删除
+                       </a> 
+                   </li>
+                </ul>
+             </div>
+         </td>
+      </tr>
+      <tr ng-show="listoff">
+         <td colspan="6">
+            <page page-count="pageCount" page-num="pageNum" on-page-change="onPageChange()"></page>
+         </td>
+      </tr>
+   </tbody>
+</table>
+</div>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>发布任务详情</title>
+</head>
+<body>
+    <div class="breadcont clearfix">
+	   <ol class="breadcrumb pull-left">
+	      <li><a ui-sref="app.release_manage">任务列表</a>
+	      </li>
+	      <li class="active">
+	      	 任务详情
+	      </li>
+	   </ol>
+	</div>
+    <form class="form-horizontal">
+	<div class="cont-body">
+		<div class="panel">
+		    <div class="panel-body">
+		        <div class="title-line">
+		            <p>任务信息</p>
+		        </div>
+		        <div class="row">
+		        	 <div class="col-sm-6">
+		        	      任务名称：{{taskInfo.name}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      发布班车：{{taskInfo.busName}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      依赖任务：{{taskInfo.dependName||'无'}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      系统名称：{{taskInfo.system||'无'}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      模块名称：{{taskInfo.module||'无'}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      任务时间：{{taskInfo.startTime||'无'}}-{{taskInfo.stopTime||'无'}}
+		        	 </div>
+		        	 <div class="col-sm-12">
+		        	      功能描述：{{taskInfo.description||'无'}}
+		        	 </div>
+		        </div>
+		        <div class="title-line">
+		            <p>蓝图信息</p>
+		        </div>
+		        <div class="row">
+		        	 <div class="col-sm-6">
+		                  蓝图：{{taskInfo.blueprintName}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      蓝图实例：{{taskInfo.blueprintInstanceName}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      任务流程：{{taskInfo.blueprintFlowName}}
+		        	 </div>
+		        	 <div class="col-sm-6">
+		        	      是否自动：{{taskInfo.autoExecute?"自动":"手动"}}
+		        	 </div>
+		        </div>
+                <div class="title-line">
+		            <p>审批状态</p>
+		        </div>
+		        <div class="table-responsive table-bordered mb-lg mt20">
+			        <table class="table">
+			        	<tr>
+			        		<th>待审批人</th>
+			        		<th>执行审批人</th>
+			        		<th>审批时间</th>
+			        		<th>审批状态</th>
+			        	</tr> 
+			        	<tr ng-repeat="item in approverList">
+			        		<td>{{item.approver}}</td>
+			        		<td>{{item.performer||'无'}}</td>
+			        		<td>{{item.approveTime||'无'}}</td>
+			        		<td>
+			        			{{(stateList|filter:item.status)[0].text}}
+			        		</td>
+			        	</tr>
+			        </table>
+		        </div>
+		        <div class="title-line">
+		            <p>任务流程状态</p>  
+		            <a href="javascript:;" ng-if="isAction" ng-click="actionTaskFn()" class="pull-right btn btn-info">手动执行任务</a>
+		        </div>
+                <div class="mt20">
+                     <tabset justified="false">
+						<tab ng-repeat="flowItem in flowList" ng-click="doHistoryListFn($index,flowItem.FLOW_NAME,flowItem.FLOW_ID)">
+							<tab-heading>{{flowItem.FLOW_NAME}}</tab-heading>
+							<div>
+								<table class="table table_title table-striped cd-table new_Tables">
+									<thead>
+										<tr sort>
+								            <th>实例Id</th>
+											<th>过程状态</th>
+								            <th>操作时间</th>
+											<th>结束时间</th>
+								            <th>操作时长(s)</th>
+								            <th>组件版本详情</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-if="flowItem.off" ng-repeat="insItem in doData[flowItem.FLOW_NAME]">
+											<td>{{insItem.instanceId}}</td>
+											<td> 
+											  <em class="fa" ng-class="{'text-success fa-check':insItem.state=='2','text-danger fa-times':insItem.state=='7'}"></em>
+											  <span style="display:inline-block;" class="sk-spinner sk-spinner-fading-circle" ng-if="insItem.state=='0'">
+								               <span class="sk-circle1 sk-circle"></span>
+								               <span class="sk-circle2 sk-circle"></span>
+								               <span class="sk-circle3 sk-circle"></span>
+								               <span class="sk-circle4 sk-circle"></span>
+								               <span class="sk-circle5 sk-circle"></span>
+								               <span class="sk-circle6 sk-circle"></span>
+								               <span class="sk-circle7 sk-circle"></span>
+								               <span class="sk-circle8 sk-circle"></span>
+								               <span class="sk-circle9 sk-circle"></span>
+								               <span class="sk-circle10 sk-circle"></span>
+								               <span class="sk-circle11 sk-circle"></span>
+								               <span class="sk-circle12 sk-circle"></span>
+								            </span>
+											<span ng-class="{'text-success':insItem.state=='2','text-danger':insItem.state=='7','text-custom-yellow':insItem.state=='0'}">{{insItem.flowState}}</span>
+											</td>
+								            <td>{{insItem.startTime}}</td>
+								            <td>{{insItem.endTime}}</td>
+								            <td>{{insItem.opTime}}</td>
+								            <td><a tooltip-placement="left"
+					                             tooltip="{{insItem.componentDetail}}" ng-click="detailFn(insItem.componentDetail)">详情</a></td>
+											<td> 
+											    <a target="_blank" ui-sref="app.blueprint_ins_flow_monitor({insName:taskInfo.blueprintInstanceName,INSTANCE_ID:taskInfo.blueprintInstance,flowMonitorInsId:insItem.instanceId,flowName:flowItem.FLOW_NAME,flowId:flowItem.FLOW_ID})" class="btn btn-cd-default btn-cd-default-info"><em class="icon-graph"></em> 监控</a>
+											    <a href="javascript:;" ng-click="overFn(insItem.instanceId)" class="btn btn-cd-default btn-cd-default-del"><em class="icon-power"></em> 结束</a>
+											</td>
+										</tr>
+										<tr>
+								            <td colspan="7"> 
+								                <page ng-if="flowItem.off" page-count="pageCount" page-num="pageNum" on-page-change="onPageChange(pageNum,flowItem.FLOW_NAME,flowItem.FLOW_ID)"></page>
+								            </td>
+					                    </tr>
+									</tbody>
+								</table>
+							</div>
+						</tab>
+					</tabset>
+                </div>
+	        </div>
+        </div>
+	</div>
+	</form>
+</body>
+</html>

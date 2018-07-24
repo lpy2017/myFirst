@@ -1,0 +1,81 @@
+<div class="row clearfix cont-header">
+    <div class="col-sm-6">
+        <h4>我的审批</h4>
+    </div>
+    <!-- <div class="col-sm-6">
+        <div class="search">
+            <input type="text" ng-keyup="search()" ng-model="searchval" placeholder="按申请名搜索" class="form-control" />
+            <em class="icon-magnifier"></em>
+        </div>
+    </div> -->
+</div>
+<div class="cont-body">
+	  <ul class="nav nav-tabs" style="margin-top: 10px">
+            <li class="active" id="tab1">
+                <a href="#myApprove" data-toggle="tab"
+                   ng-click="myApprove('Wait')"><span class="numColor"></span>待审批任务</a>
+            </li>
+            <li id="tab2">
+                <a href="#myApprove" data-toggle="tab" ng-click="myApprove('Approve')"><span class="numColor"></span>审批过的任务</a>
+            </li>
+        </ul>
+        <table class="table table_title mt20">
+		   <thead>
+		      <tr sort>
+		         <th base="1" ng-click="fnSort('taskName')">任务名称</th>
+		         <th>待审批人</th>
+                 <th>执行审批人</th>
+		         <th base="1" ng-click="fnSort('startTime')">发起时间</th>
+		         <th>审批时间</th>
+		         <th base="1" ng-click="fnSort('status')">状态</th>
+		         <th>操作</th>
+		      </tr>
+		   </thead>
+		   <tbody>
+		      <tr ng-if="!listoff">
+		         <td colspan="7">
+		           <p class="noresult"><em class="icon-default"></em> {{warninginfo}}</p>
+		         </td>
+		      </tr>
+		      <tr ng-repeat="item in approveList">
+		         <td class="text_overflow" title="{{item.taskName}}">{{item.taskName}}</td>
+                 <td>{{item.approver}}</td>
+                 <td>{{item.performer||'无'}}</td>
+		         <td class="text_overflow" title="{{item.taskStartTime}}">{{item.taskStartTime}}</td>
+		         <td>{{item.approveTime||'无'}}</td>
+		         <td class="text_overflow">
+                        <span class="label" ng-class="{'bg-gray':item.status=='01','bg-success':item.status=='02','bg-danger':item.status=='03'}" ng-bind="(statuses|filter:item.status)[0].key||'无'" title="(statuses|filter:item.status)[0].key||'无'">{{item.status}}</span>      
+                 </td>
+		         <td>
+		             <div dropdown="dropdown" class="btn-group">
+		                <button dropdown-toggle="" class="btn btn-cd-default">操作 <em class="fa fa-caret-down"></em>
+		                </button>
+		                <ul role="menu" class="dropdown-menu btnlist-dropdown-menu" ng-class="{'dropdown-last':listIndex>4}">
+		                    <li ng-if="item.status=='01'"> 
+                         		 <a href="javascript:;" ng-click="approve(item.id,'02')">
+                           			 <em class="fa fa-check"></em> 批准
+                         		</a>
+                    		</li>
+                    		<li ng-if="item.status=='01'"> 
+                         		 <a href="javascript:;" ng-click="approve(item.id,'03')">
+                           			 <em class="fa fa-times"></em> 拒绝
+                         		</a>
+                    		</li>
+                    		<li> 
+                         		 <a ui-sref="app.release_detail({id:item.taskId})">
+                           			 <em class="fa fa-file-text-o"></em> 详情
+                         		</a>
+                    		</li>
+                    		
+                </ul>
+		             </div>
+		         </td>
+		      </tr>
+		      <tr ng-show="listoff">
+		         <td colspan="7">
+		            <page page-count="pageCount" page-num="pageNum" on-page-change="onPageChange()"></page>
+		         </td>
+		      </tr>
+		   </tbody>
+   	 </table>
+</div>

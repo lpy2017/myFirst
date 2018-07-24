@@ -1,0 +1,54 @@
+<div class="breadcont clearfix">
+   <ol class="breadcrumb pull-left">
+      <li><a ui-sref="app.blueprint_ins_manage">蓝图实例列表</a>
+      </li>
+      <li>
+      	{{$stateParams.insName}}
+      </li>
+      <li>
+      	<a ui-sref="app.blueprint_ins_components({insName:$stateParams.insName,insId:$stateParams.insId})">组件列表</a>
+      </li>
+      <li>
+      	{{$stateParams.componentName}}
+      </li>
+      <li class="active">
+      	实例列表
+      </li>
+   </ol>
+</div>
+<div class="cont-body">
+   
+
+<table class="table table_title table-striped cd-table new_Tables">
+   <thead>
+      <tr sort>
+         <th base="1" ng-click="fnSort('id')">实例名称</th>
+         <th base="1" ng-click="fnSort('status')">状态</th>
+         <th base="1" ng-click="fnSort('nodeIp')">主机IP</th>
+         <th base="1" ng-click="fnSort('deployTime')">更新时间</th>
+         <th>操作</th>
+      </tr>
+   </thead>
+   <tbody> 
+      <tr ng-if="!listoff">
+         <td colspan="5">
+           <p class="noresult"><em class="icon-info"></em> {{warninginfo}}</p>
+         </td>
+      </tr>
+	  <tr ng-repeat="item in insList">
+ 	    <td ng-bind="item.id"></td>
+       <td><span class="label" ng-class="{'label-default':item.status=='UNDEPLOYED','label-success':item.status=='DEPLOYED','label-warning':item.status=='RUNNING','label-primary':item.status=='PADD','label-purple':item.status=='PDELETE'}" ng-bind="getChineseStatus(item.status)"></span></td>
+        <td ng-bind="item.nodeIp"></td>
+ 	    <td ng-bind="item.deployTime"></td>
+ 	    <td>
+			<a href="javascript:;" class="btn btn-cd-default" ng-click="configInstanceParams(item)"><em class="icon-settings"></em> 参数配置</a>
+		</td>
+	  </tr>
+      <tr>
+         <td colspan="5" ng-show="listoff">
+            <page page-count="pageCount" page-num="pageNum" on-page-change="onPageChange()"></page> 
+         </td>
+      </tr>
+	</tbody>
+</table>
+</div>

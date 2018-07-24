@@ -1,0 +1,72 @@
+<div class="row clearfix cont-header">
+   <div class="col-sm-6">
+        <a ng-click="clearCookie()" ui-sref="app.plugin_add" class="btn-cd-icon"><span class="cd-ic_adduser">
+                <span class="path1"></span><span class="path2"></span><span class="path3"></span>
+                </span> 添加</a>
+   </div>
+   <div class="col-sm-6">
+      <div class="search">
+        <input type="text" ng-keyup="search()" class="form-control" placeholder="按插件名搜索" ng-model="searchval" />
+        <em class="icon-magnifier"></em>
+      </div>
+   </div>
+</div>
+
+<div class="cont-body">
+  <table class="table table_title mt20">
+   <thead>
+      <tr sort>
+         <th base="1" ng-click="fnSort('pluginName')">插件名称</th>
+         <th base="1" ng-click="fnSort('description')">描述</th>
+         <th base="1" ng-click="fnSort('createTime')">创建时间</th>
+         <th>操作</th>
+      </tr>
+   </thead>
+   <tbody>
+      <tr ng-if="!listoff">
+         <td colspan="4">
+           <p class="noresult"><em class="icon-default"></em> {{warningdefault}}</p>
+         </td>
+      </tr>
+      <tr ng-repeat="item in pluginList">
+         <td class="text_overflow" title="{{item.pluginName}}">{{item.pluginName}}</td>
+         <td class="text_overflow" title="{{item.description}}">{{item.description}}</td>
+         <td class="text_overflow" title="{{item.createTime}}">{{item.createTime}}</td>
+         
+         <td>
+         <!-- <a ng-click="setCookie()" ui-sref="app.plugin_detail({pluginName:item.pluginName})" class="btn btn-default btn-sm">详情</a>
+         <a ng-click="setCookie()" ui-sref="app.plugin_update({pluginName:item.pluginName})" class="btn btn-default btn-sm">更新</a>
+             <button class="btn btn-default con_trash btn-sm" ng-click="delPlugin($index,item.pluginName)">
+                <em class="fa fa-trash-o"></em>
+             </button>
+         <button class="btn btn-default btn-sm" ng-click="openUpdateLabel(item)"> 更新标签</button> -->
+             <div dropdown="dropdown" class="btn-group">
+                <button dropdown-toggle="" class="btn btn-cd-default">操作 <em class="fa fa-caret-down"></em>
+                </button>
+                <ul role="menu" class="dropdown-menu btnlist-dropdown-menu" ng-class="{'dropdown-last':listIndex>4}">
+                   <li>
+                        <a ng-click="setCookie()" ui-sref="app.plugin_detail({pluginName:item.pluginName})"><em class="fa fa-file-text-o"></em> 详情</a>
+                    </li>
+                    <li>
+                        <a ng-click="setCookie()" ui-sref="app.plugin_update({pluginName:item.pluginName})"><em class="fa fa-edit"></em> 修改</a>
+                    </li>
+                    <li>
+                       <a href="javascript:;" ng-click="openUpdateLabel(item)"><em class="fa fa-tags"></em> 更新标签</a>
+                    </li>
+                    <li> 
+                          <a href="javascript:;" ng-click="delPlugin($index,item.pluginName)">
+                            <em class="fa fa-trash-o"></em> 删除
+                         </a>
+                    </li>
+                </ul>
+             </div>
+         </td>
+      </tr>
+      <tr ng-show="listoff">
+         <td colspan="4">
+            <page page-count="pageCount" page-num="pageNum" on-page-change="onPageChange()"></page>
+         </td>
+      </tr>
+   </tbody>
+</table>
+</div>

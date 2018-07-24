@@ -1,0 +1,99 @@
+<div class="row clearfix cont-header">
+   <div class="col-sm-6">
+        <a href="javascript:;" ng-click="lifecycleFn()" class="btn-cd-icon"><span class="cd-ic_adduser">
+                <span class="path1"></span><span class="path2"></span><span class="path3"></span>
+                </span> 添加生命周期</a>
+   </div>
+   <div class="col-sm-6">
+
+      <div class="search-group">
+      <div class="input-group"> 
+         <input type="text" placeholder="按生命周期名称搜索" ng-keyup="search()" ng-model="searchval" class="form-control" />
+         <em class="icon-magnifier"></em>
+      </div>
+      </div>
+   </div>
+</div>
+
+<div class="cont-body">
+  <div class="row">
+    <div ng-class="{'col-sm-12':!stageShow,'col-sm-5':stageShow}">
+        <table class="table table_title table-striped cd-table new_Tables mt20">
+          <thead>
+            <tr>
+               <th>名称</th>
+               <th>描述</th>
+               <th>操作</th> 
+            </tr>
+          </thead>
+          <tbody>
+             <tr ng-if="!listoff">
+                 <td colspan="3">
+                   <p class="noresult"><em class="icon-info"></em> {{warninginfo}}</p>
+                 </td>
+              </tr>
+              <tr ng-repeat="item in lifecycleList track by $index">
+                <td class="text_overflow">
+                   <a href="javascript:;" ng-click="stageFn(item)" title="{{item.name}}">{{item.name}}</a>
+                </td>
+                <td class="text_overflow" title="{{item.description }}">{{item.description}}</td>
+                <td>
+                     <button class="btn btn-cd-default" ng-click="lifecycleFn(item)"><em class="fa fa-edit"></em> 修改</button>
+                     <button class="btn btn-cd-default btn-cd-default-del" ng-click="delLifecycleFn($index,item.id)"><em class="fa fa-trash"></em> 删除</button>
+                </td>
+                </tr>
+          </tbody>
+      </table>
+    </div>
+    <div ng-class="{'':!stageShow,'col-sm-7':stageShow}" ng-if="stageShow"> 
+        <div class="clearfix life-head">
+           <h3 class="pull-left">{{curLife.name}}</h3>
+           <a href="javascript:;" ng-click="addStageCont()" class="btn-cd-icon pull-right"><span class="cd-ic_adduser">
+                <span class="path1"></span><span class="path2"></span><span class="path3"></span>
+                </span> 添加阶段</a>
+        </div>
+
+        <div  class="panel" ng-if="noStage">
+          <div class="panel-body">
+            <p>还没有阶段项，请点击添加阶段！</p>
+            <a class="btn btn-cd-default" ng-click="addStageCont()"><em class="fa fa-plus"></em> 添加阶段</a>
+          </div>
+        </div>
+        
+        <div class="stagecont">
+        <div id="stagelist">
+        <ul class="stage" ng-if="!noStage"> 
+           <li dropmove stage-fn="stageFn(curLife)" stage-data="item" ng-drop="true" ng-drop-success="dropComplete($index,$data)" ng-repeat="item in lifeData track by $index">
+
+           </li>
+        </ul>
+        <div class="stage-edit mt20" ng-if="stage.isAddStage">
+              <form name="form" class="form-horizontal"> 
+                 <div class="form-group margin-no-l-r">
+                    <label class="col-sm-3 control-label text-right"><span class="text-danger">*</span>名称：</label>
+                    <div class="col-sm-8">
+                      <input type="text" required class="form-control" ng-model="stage.name">
+                    </div>
+                 </div>
+         
+            
+                 <div class="form-group margin-no-l-r">
+                    <label class="col-sm-3 control-label text-right">描述：</label>
+                    <div class="col-sm-8">
+                      <textarea class="form-control" rows="4" ng-model="stage.description">
+                      </textarea>
+                    </div>
+                 </div>
+              </form>
+              <div class="edit-btns">
+                 <a href="javascript:;" class="btn btn-default btn-close" ng-click="stage.isAddStage=false"><em class="fa fa-close"></em> 取 消</a>
+                 <button type="submit" class="btn" ng-disabled="!form.$valid" ng-class="{'btn-primary':form.$valid,'btn-default':!form.$valid}" ng-click="addStageFn(lifeData)"><em class="fa fa-check"></em> 提 交</button>
+              </div>
+          </div>
+          </div>
+        </div>
+    </div>
+  </div>
+  
+</div>
+ 

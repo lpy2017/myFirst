@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>修改发布任务</title>
+</head>
+<body>
+    <div class="breadcont clearfix">
+	   <ol class="breadcrumb pull-left">
+	      <li><a ui-sref="app.release_manage">任务列表</a>
+	      </li>
+	      <li class="active">
+	      	 修改任务
+	      </li>
+	   </ol>
+	</div>
+    <form class="form-horizontal" name="form">
+	<div class="cont-body">
+		<div class="panel">
+		    <div class="panel-body">
+		        <div class="title-line">
+		        	<a href="javascript:;" ng-click="approverAddFn()" class="pull-right btn-cd-icon"><span class="cd-ic_adduser">
+	                <span class="path1"></span><span class="path2"></span><span class="path3"></span>
+	                </span> 添加审批人</a>
+		            <p>审批人</p>
+		        </div>
+		        <div class="table-responsive table-bordered mb-lg mt20">
+			        <table class="table">
+			        	<tr>
+			        		<th>审批人</th>
+			        		<!-- <th>审批时间</th> -->
+			        		<th>操作</th>
+			        	</tr>
+			        	<tr ng-repeat="item in approverList">
+			        		<td>{{item.approver}}</td>
+			        		<!-- <td>{{item.applyTime}}</td> -->
+			        		<td>
+			        			<button class="btn btn-cd-default btn-cd-default-del" ng-click="delApproverFn($index)"><em class="fa fa-trash"></em> 删除</button>
+			        		</td>
+			        	</tr>
+			        </table>
+		        </div>
+		        <div class="title-line">
+		            <p>蓝图过程</p>
+		        </div>
+		        <div class="mt20">
+		        	<div class="form-group">
+	                  <label class="col-lg-2 control-label"><span class="text-danger">*</span> 蓝图：</label>
+	                  <div class="col-lg-5">
+	                     <select class="form-control" required ng-model="blueprint" ng-options="item as item.NAME for item in blueprintList">
+               
+                         </select>
+	                  </div>
+	                </div>
+	                <div class="form-group">
+	                  <label class="col-lg-2 control-label"><span class="text-danger">*</span> 蓝图实例：</label>
+	                  <div class="col-lg-5">
+	                     <select class="form-control" required ng-model="blueprintIns" ng-options="item as item.INSTANCE_NAME for item in blueprintInstancesList">
+               
+                         </select>
+	                  </div>
+	                </div>
+	                <div class="form-group">
+	                  <label class="col-lg-2 control-label"><span class="text-danger">*</span> 任务流程：</label>
+	                  <div class="col-lg-5">
+	                     <select class="form-control" required ng-model="flow" ng-options="item as item.FLOW_NAME for item in flowList">
+               
+                         </select>
+	                  </div>
+	                </div>
+                    <div class="form-group">
+	                  <label class="col-lg-2 control-label">是否自动：</label>
+	                  <div class="col-lg-5">
+	                        <div class="checkbox c-checkbox">
+	                           <label>
+	                              <input type="checkbox" name="auto" ng-model="auto" />
+	                              <span class="fa fa-check"></span>
+	                           </label>
+	                        </div>
+	                  </div>
+	                </div>
+	                <div class="form-group" ng-if="auto">
+	                  <label class="col-lg-2 control-label"><span class="text-danger">*</span> cron表达式：</label>
+	                  <div class="col-lg-5">
+	                     <input type="text" name="cron"  required="" validcron class="form-control" ng-model="formData.cron" />
+	                     <span ng-show="validateInput(form,'cron','required')" class="text-danger">cron表达式不能为空！</span>
+	                     <span ng-show="validateInput(form,'cron','cron')" class="text-danger">表达式格式错误，请重新输入！</span>
+	                  </div>
+	                  <div class="col-lg-5">
+	                  		<div class="notice-cont" style="posion:relative;" ng-mouseover="isNotice=true" ng-mouseout="isNotice=false">
+	                         <a href="javascript:;">查看cron参考</a>
+		                     <div class="notices mt20" ng-show="isNotice" style="position:absolute;top:0px; left:15px;">
+					               <h4>
+										<em class="fa fa-exclamation-circle"></em>
+										cron参考：
+									</h4>
+									<p>
+										0 0 10,14,16 * * ? 每天上午10点，下午2点，4点<br/>
+										0 0/30 9-17 * * ? 朝九晚五工作时间内每半小时<br/>
+										0 0 12 ? * WED 表示每个星期三中午12点 <br/>
+										0 0 12 * * ? 每天中午12点触发<br/>
+										0 15 10 * * ? 2005 2005年的每天上午10:15触发<br/>
+										0 * 14 * * ? 在每天下午2点到下午2:59期间的每1分钟触发
+									</p>	 
+					          </div>
+				          </div>
+	                  </div>
+	                </div>
+		        </div>
+		        <div class="title-line">
+		            <p>任务信息</p>
+		        </div>
+                <div class="mt20">
+                    <div class="mt20">
+                    <div class="form-group">
+	                  <label class="col-lg-2 control-label"><span class="text-danger">*</span> 发布班车：</label>
+	                  <div class="col-lg-5">
+	                     <select class="form-control" required ng-model="bus" ng-options="item as item.name for item in busList">
+	                     </select>
+	                  </div>
+	                </div>
+
+	                <div class="form-group">
+	                  <label class="col-lg-2 control-label">依赖任务：</label>
+	                  <div class="col-lg-5">
+	                     <select class="form-control" ng-model="relytask" ng-options="item as item.name for item in relyTaskList">
+	                     </select>
+	                  </div>
+	                </div>
+
+                	<div class="form-group">
+	                  <label class="col-lg-2 control-label"><span class="text-danger">*</span> 任务名称：</label>
+	                  <div class="col-lg-5">
+	                     <input type="text" class="form-control" required ng-model="taskName">
+	                  </div>
+	                </div>
+
+	                <div class="form-group">
+	                  <label class="col-lg-2 control-label">系统名称：</label>
+	                  <div class="col-lg-5">
+	                     <input type="text" class="form-control" ng-model="sysName">
+	                  </div>
+	                </div>
+
+	                <div class="form-group">
+	                  <label class="col-lg-2 control-label">模块名称：</label>
+	                  <div class="col-lg-5">
+	                     <input type="text" class="form-control" ng-model="moduleName">
+	                  </div>
+	                </div>
+
+	                <div class="form-group">
+	                  <label class="col-lg-2 control-label">功能描述：</label>
+	                  <div class="col-lg-5">
+	                      <textarea class="form-control" ng-model="des"></textarea>
+	                  </div>
+	                </div>
+
+	                <div class="form-group">
+	                  <label class="col-lg-2 control-label"><span class="text-danger">*</span> 任务时间：</label>
+	                  <div class="col-lg-5">
+	                     <input type="text" ruledate ng-model="taskTime"  class="form-control daterange" data-time-picker="true" data-time-picker-increment="1" data-time-picker-hour="false" data-format="YYYY-MM-DD HH:mm:ss" />
+	                  </div>
+	                </div>
+
+	                
+                </div>
+	        </div>
+	        <div class="panel-footer text-center">
+	        	<a href="javascript:;" class="btn" ng-disabled="!form.$valid" ng-class="{'btn-default':!form.$valid,'btn-info':form.$valid}" ng-click="updateTaskFn()">更新</a>
+	        	<a ui-sref="app.release_manage" class="btn btn-default">取消</a>
+	        </div>
+        </div>
+	</div>
+	</form>
+</body>
+</html>

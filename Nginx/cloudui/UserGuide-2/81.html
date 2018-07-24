@@ -1,0 +1,59 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<meta name="Generator" content="Montinz Word-2-CHM 1.1.7.0 Free">
+<title>8.3.2 蓝图过程设计器操作示例</title>
+<link href="document.css" type="text/css" rel="stylesheet" />
+<link href="images/montinz_style.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="jscript/montinz_jscript.js"></script>
+<script src="jscript/DD_belatedPNG.js"></script>
+<!--[if IE 6]>
+<script>
+DD_belatedPNG.fix('img,.ie6png');
+</script>
+<![endif]-->
+</head>
+
+<body lang=ZH-CN link=blue vlink=purple style='tab-interval:21.0pt;text-justify-trim: punctuation'>
+<div class="sys_PrevUpNext"><div style="width:40px;float:right"><a href="83.html"><img src="images/next.gif" style="border:0px" /></a></div><div style="width:40px;float:right"><a href="79.html"><img src="images/up.gif" style="border:0px" /></a></div><div style="width:40px;float:right"><a href="80.html"><img src="images/prev.gif" style="border:0px" /></a></div><div style="clear:both; height:0px; font-size:0px"></div></div>
+<div class=WordSection1 style='layout-grid:15.6pt'>
+
+<h3><a name="_Toc512504988"><!----numberstart----><span lang=EN-US style='font-size:15.0pt;line-height:150%;'>8.3.2<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span><!----numberend----><span style='line-height:150%;font-family:宋体;'>蓝图过程设计器操作示例</span></a></h3>
+
+<p class=MsoNormal style='text-indent:28.5pt'><span style='font-size:14.0pt; line-height:150%;font-family:宋体; '>下面以一个</span><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>Web</span><span style='font-size:14.0pt; line-height:150%;font-family:宋体; '>应用的典型场景为例来说明蓝图过程设计器的操作过程。该</span><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>web</span><span style='font-size:14.0pt; line-height:150%;font-family:宋体; '>应用共需要</span><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>Tomcat</span><span style='font-size: 14.0pt;line-height:150%;font-family:宋体; '>，</span><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>dangqun</span><span style='font-size: 14.0pt;line-height:150%;font-family:宋体; '>应用，</span><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>Mysql</span><span style='font-size:14.0pt; line-height:150%;font-family:宋体; '>及</span><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>dangqun</span><span style='font-size: 14.0pt;line-height:150%;font-family:宋体; '>应用初始化数据库脚本</span><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>4</span><span style='font-size:14.0pt; line-height:150%;font-family:宋体; '>个组件，其中应用和数据库分别部署在两个资源池中。</span></p>
+<p class=MsoListParagraph style='margin-left:18.0pt;text-indent:-18.0pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style='font-size:14.0pt;line-height:150%; font-family:宋体;'>从左侧工具栏拖动两个资源池到蓝图画板中，再拖入开始和结束节点：</span></p>
+<p class=MsoNormal><span lang=EN-US><img border=0 width=815 height=380 src="doc.files/image350.jpg" ></span></p>
+<p class=MsoListParagraph style='margin-left:18.0pt;text-indent:-18.0pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style='font-size:14.0pt;line-height:150%; font-family:宋体;'>从左侧工具栏资源环境中，点击深色的组件部分，拖动组件到对应资源池中。<b>注意：组件只能拖动到自己所在的资源池中，而不能拖动到其它资源池中。</b>例如示例中的</span><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>dangqun_war</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>组件属于</span><span lang=EN-US style='font-size:14.0pt;line-height: 150%;font-family:"Times New Roman","serif"; '>tomcat</span><span style='font-size:14.0pt;line-height:150%; font-family:宋体;'>资源池，因此只能拖动到</span><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>tomcat</span><span style='font-size: 14.0pt;line-height:150%;font-family:宋体; '>资源池中，而不能拖动到</span><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>mysql</span><span style='font-size:14.0pt; line-height:150%;font-family:宋体; '>资源池中。如图所示：</span></p>
+<p class=MsoNormal><span lang=EN-US><img border=0 width=815 height=379 src="doc.files/image352.jpg" ></span></p>
+<p class=MsoListParagraph style='margin-left:18.0pt;text-indent:-18.0pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>3.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style='font-size:14.0pt;line-height:150%; font-family:宋体;'>绘制连接线，方式与绘制组件过程相同：</span></p>
+<p class=MsoNormal><span lang=EN-US><img border=0 width=815 height=380 src="doc.files/image354.jpg" ></span></p>
+<p class=MsoListParagraph style='margin-left:18.0pt;text-indent:-18.0pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>4.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style='font-size:14.0pt;line-height:150%; font-family:宋体;'>双击每个组件，选择需要执行的组件过程：</span></p>
+<p class=MsoNormal><span lang=EN-US><img border=0 width=815 height=379 src="doc.files/image356.jpg" ></span></p>
+<p class=MsoListParagraph style='margin-left:18.0pt;text-indent:-18.0pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>5.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style='font-size:14.0pt;line-height:150%; font-family:宋体;'>双击资源环境选择执行方式，并发或者轮循，默认为并发：</span></p>
+<p class=MsoNormal><span lang=EN-US><img border=0 width=815 height=379 src="doc.files/image358.jpg" ></span></p>
+<p class=MsoListParagraph style='margin-left:18.0pt;text-indent:-18.0pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;font-family:"Times New Roman","serif"; '>6.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style='font-size:14.0pt;line-height:150%; font-family:宋体;'>过程绘制完成后，点击“添加过程”，输入过程名称并保存，蓝图过程即绘制成功：</span></p>
+<p class=MsoNormal><span lang=EN-US><img border=0 width=815 height=382 src="doc.files/image360.jpg" ></span></p>
+<p class=MsoListParagraph style='margin-left:21.0pt;text-indent:0cm;'><b><span style='font-size:14.0pt; line-height:150%;font-family:宋体;color:red'>蓝图过程绘制说明：</span></b></p>
+<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 style='margin-left:21.0pt;border-collapse:collapse;border:none;'> <tr> <td width=802 valign=top style='width:601.8pt;border:solid black 1.0pt; padding:0cm 5.4pt 0cm 5.4pt'>
+<p class=MsoListParagraph style='margin-left:42.8pt;text-indent:-21.8pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;'>1、</span><span style='font-size: 14.0pt;line-height:150%;font-family:宋体; '>鼠标左键单击</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>资源池</span><span style='font-size:14.0pt; line-height:150%;font-family:宋体;'>拖拽，可以拖拽出</span><span style='font-size:14.0pt; line-height:150%;font-family:宋体; '>资源池</span><span style='font-size:14.0pt;line-height: 150%;font-family:宋体; '>及</span><span style='font-size:14.0pt;line-height:150%; font-family:宋体;'>资源池</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>中的组件；</span></p>
+<p class=MsoListParagraph style='margin-left:42.8pt;text-indent:-21.8pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;'>2、</span><span style='font-size: 14.0pt;line-height:150%;font-family:宋体; '>鼠标左键单击</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>资源池</span><span style='font-size:14.0pt; line-height:150%;font-family:宋体;'>中深色的部分（组件名称标识的部分）进行拖拽，只是拖拽出了组件，不包含</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>资源池</span><span style='font-size:14.0pt; line-height:150%;font-family:宋体;'>；</span></p>
+<p class=MsoListParagraph style='margin-left:42.8pt;text-indent:-21.8pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;'>3、</span><span style='font-size: 14.0pt;line-height:150%;font-family:宋体; '>鼠标左键双击编辑</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>资源池</span><span style='font-size:14.0pt; line-height:150%;font-family:宋体;'>可以选择“轮循”或者“并发”模式；</span></p>
+<p class=MsoListParagraph style='margin-left:42.8pt;text-indent:-21.8pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;'>4、</span><span style='font-size: 14.0pt;line-height:150%;font-family:宋体; '>鼠标左键双击组件，可以选择组件的某个类型的某个过程；</span></p>
+<p class=MsoListParagraph style='margin-left:42.8pt;text-indent:-21.8pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;'>5、</span><span style='font-size: 14.0pt;line-height:150%;font-family:宋体; '>鼠标置于节点上，当光标变为手形时，左键点击拖拽可绘制出过程连接线；</span></p>
+<p class=MsoListParagraph style='margin-left:42.8pt;text-indent:-21.8pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;'>6、</span><span style='font-size: 14.0pt;line-height:150%;font-family:宋体; '>鼠标左键单击选中资源池、组件或连接线后，按</span><span lang=EN-US style='font-size:14.0pt;line-height:150%;'>Delete</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>键可删除该资源池、组件或连接线；</span></p>
+<p class=MsoListParagraph style='margin-left:42.8pt;text-indent:-21.8pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;'>7、</span><span style='font-size: 14.0pt;line-height:150%;font-family:宋体; '>过程必须以开始节点开始，以结束节点结束；</span></p>
+<p class=MsoListParagraph style='margin-left:42.8pt;text-indent:-21.8pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;'>8、</span><span style='font-size: 14.0pt;line-height:150%;font-family:宋体; '>过程中所有节点必须是相连的，不允许有孤立节点存在，且不能出现环形结构；</span></p>
+<p class=MsoListParagraph style='margin-left:42.8pt;text-indent:-21.8pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;'>9、</span><span style='font-size: 14.0pt;line-height:150%;font-family:宋体; '>不同</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>资源池</span><span style='font-size:14.0pt; line-height:150%;font-family:宋体;'>的组件不允许放在同一个</span><span style='font-size:14.0pt; line-height:150%;font-family:宋体; '>资源池</span><span style='font-size:14.0pt;line-height: 150%;font-family:宋体; '>内；</span></p>
+<p class=MsoListParagraph style='margin-left:49.9pt;text-indent:-28.9pt; '><span lang=EN-US style='font-size:14.0pt;line-height:150%;'>10、</span><span style='font-size: 14.0pt;line-height:150%;font-family:宋体; '>一个</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>环境</span><span style='font-size:14.0pt; line-height:150%;font-family:宋体;'>中的并发数最多不要超过</span><span lang=EN-US style='font-size:14.0pt;line-height:150%;'>1000</span><span style='font-size:14.0pt;line-height:150%;font-family:宋体;'>个；</span></p>
+</td> </tr> </table>
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+
+
+
+
+</div>
+<div class="sys_PrevUpNext"><div style="width:40px;float:right"><a href="83.html"><img src="images/next.gif" style="border:0px" /></a></div><div style="width:40px;float:right"><a href="79.html"><img src="images/up.gif" style="border:0px" /></a></div><div style="width:40px;float:right"><a href="80.html"><img src="images/prev.gif" style="border:0px" /></a></div><div style="clear:both; height:0px; font-size:0px"></div></div>
+</body>
+</html>
+<!--  Generator:Montinz Word-2-CHM 1.1.7.0 Free (word2chm.com)  -->

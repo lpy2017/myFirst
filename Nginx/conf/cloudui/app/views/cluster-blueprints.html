@@ -1,0 +1,54 @@
+<div class="cont-header clearfix">
+   <ol class="breadcrumb pull-left">
+      <li><a ui-sref="app.cluster_manage">环境列表</a>
+      </li>
+      <li class="active" >
+        <a href="" ng-click="openchangeCluster(clusterDetail.name)" class="btn-cd-icon">
+        	{{clusterDetail.name}}
+        	<span class="cd-ic_border_color_24px">
+                <span class="path1"></span><span class="path2"></span>
+            </span>
+        </a>
+      </li>
+   </ol>
+   <div class="pull-right"> 
+	   <div class="search-group">
+            <div class="input-group">
+                <div class="input-group-btn">
+                    <select class="form-control" ng-change="search()" ng-model="searchType" ng-options="item.value as item.text for item in searchTypeList">
+
+                    </select>
+                </div>
+                <input type="text" ng-keyup="search()" ng-model="searchval" class="form-control" />
+                <em class="icon-magnifier"></em>
+            </div>
+        </div>
+   </div>
+</div>
+ 
+	<table class="table table_title table-striped cd-table new_Tables">
+	    <thead>
+	    <tr sort>
+	        <th base="1" ng-click="fnSort('NAME')">蓝图模板</th>
+	        <th base="1" ng-click="fnSort('INSTANCE_NAME')">蓝图实例</th>
+	        <th base="1" ng-click="fnSort('INSTANCE_DESC')">蓝图实例描述</th>
+	    </tr>
+	    </thead>
+	    <tbody>
+	    <tr ng-if="blueprintInstances.length == 0">
+	        <td colspan="6">
+	            <p class="noresult"><em class="icon-info"></em>暂无数据</p>
+	        </td>
+	    </tr>
+	    <tr ng-repeat="item in blueprintInstances">
+			<td class="text_overflow" title="{{item.NAME}}">{{item.NAME}}</td>
+			<td class="text_overflow" title="{{item.INSTANCE_NAME}}">{{item.INSTANCE_NAME}}</td>
+			<td class="text_overflow" title="{{item.INSTANCE_DESC}}">{{item.INSTANCE_DESC}}</td>
+	    </tr>
+	    <tr ng-show="blueprintInstances.length > 0">
+	        <td colspan="6">
+	            <page page-count="totalPageNum" page-num="pageNum" on-page-change="blueprintInstanceFun()"></page>
+	        </td>
+	    </tr>
+	    </tbody>
+	</table>

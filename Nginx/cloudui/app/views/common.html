@@ -1,0 +1,50 @@
+<!-- header-->
+<header ng-if="sys!=='COP'" ng-include="'app/views/partials/top-navbar.html'" class="topnavbar-wrapper"></header>
+<!-- sidebar-->
+<aside ng-if="sys!=='COP'" ng-include="'app/views/partials/sidebar.html'" ng-controller="SidebarController" class="aside" ng-class="{'cop':sys=='cop'}"></aside>
+<!-- Main section-->
+<section ng-class="{'cop':sys=='COP'}">
+   <!-- Page content-->
+   <div ui-view="" autoscroll="false" ng-class="app.viewAnimation" class="content-wrapper"></div>
+</section>
+
+<!--帮助中心-->
+<section ng-if="sys=='CD'" class="_userHelp"  ng-controller="helpCenterCtrl" ng-mouseenter="centerToggle()" ng-mouseleave="centerToggle()">
+   <div class="userHelp">
+      <p>咨询<br>·</p>
+      <p>建议</p>
+   </div>
+   <div class="helpCenter" id="hpCenter">
+      <ul class="helpList">
+         <li class="clear">
+            <div class="helpIcon">
+               <img src="app/images/helpCenter/tel.png" alt="">
+            </div>
+            <div class="helpText">
+               <p>咨询热线</p>
+               <p ng-bind="app.technical_hotline"></p>
+            </div>
+         </li>
+         <li class="clear">
+            <div class="helpIcon">
+               <img src="app/images/helpCenter/man.png" alt="">
+            </div>
+            <div class="helpText">
+               <p>聆听·建议反馈</p>
+               <p>Sm@rtCD,有您的建议才能更好</p>
+            </div>
+         </li>
+         <li class="clear">
+            <div class="helpIcon">
+               <img src="app/images/helpCenter/book.png" alt="">
+            </div>
+            <div class="helpText">
+               <p><a class="hcHover" href="UserGuide/UserGuide.html" target="_Blank">用户手册</a></p>
+               <p>
+                  让您的使用更加便捷的上手系统
+               </p>
+            </div>
+         </li>
+      </ul>
+   </div>
+</section>

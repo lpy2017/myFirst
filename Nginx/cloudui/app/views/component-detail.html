@@ -1,0 +1,156 @@
+<div class="breadcont clearfix">
+   <ol class="breadcrumb pull-left">
+      <li><a ui-sref="app.component_manage">组件列表</a>
+      </li>
+      <li class="active">
+      	{{componentDetail.resourceName}}
+      </li>
+   </ol>
+</div>
+
+
+<div class="cont-body">
+<div class="panel">
+	<div class="panel-body">
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="appl pull-left">
+			    <div class="img-shadow">
+				    <img ng-src="app/images/component-icons/{{componentDetail.pic}}.png">
+				</div>
+                <p class="mt20">{{componentDetail.resourceName}}</p>
+			</div>
+			<div class="col-sm-10">
+				<div class="row">
+					<div class="col-sm-6">
+						<p>最近更新时间：{{componentDetail.updateTime}}</p>
+						<p>最新版本：{{componentDetail.versionName}}</p>
+						<p>版本数：{{componentDetail.versionNum}}</p>
+						<p>概述：{{componentDetail.resourceDesc}}</p>
+						<p>标签：{{componentDetail.labels}}<button class="btn btn-cd-default" ng-click="openUpdateLabel(componentDetail)"><em class="icon-tag"></em> 修改标签</button></p>
+						<p>批量：<button class="btn btn-cd-default" ng-disabled="releaseBatchDisabled" ng-click="releaseComponentVersionsByBatch()"><em class="fa fa-send-o "></em> 批量发布</button></p>
+					</div>
+					<div class="col-sm-6">
+						<p>发布流程：<button class="btn btn-cd-default" ng-click="bindReleaseComponentFlow()"><em class="fa fa-send"></em> 绑定发布流程</button></p>
+						<p>回退流程：<button class="btn btn-cd-default" ng-click="bindRollbackComponentFlow()"><em class="fa fa-backward"></em> 绑定回退流程</button></p>
+						<p>启动流程：<button class="btn btn-cd-default" ng-click="bindStartAppComponentFlow()"><em class="fa fa-play"></em> 绑定启动流程</button></p>
+						<p>停止流程：<button class="btn btn-cd-default" ng-click="bindStopAppComponentFlow()"><em class="fa fa-stop"></em> 绑定停止流程</button></p>
+					</div>
+				</div>
+				<!-- <div class="row">
+					<div class="col-sm-2">
+						<button class="btn btn-cd-default" ng-disabled="startAppDisabled" ng-click="startApp()"><em class="fa fa-play"></em>		应用启动 </a>
+					</div>
+						<div class="col-sm-2">
+				    	<button class="btn btn-cd-default" ng-disabled="stopAppDisabled" ng-click="stopApp()"><em class="fa fa-stop"></em>	应用停止	 </a>
+					</div>
+				    <div class="col-sm-2">
+                    	<button class="btn btn-cd-default" ng-disabled="releaseBatchDisabled" ng-click="releaseComponentVersionsByBatch()"><em class="fa fa-send-o "></em>	批量发布	</a>
+					</div> 
+				</div> -->
+			</div>
+		</div>
+	</div>
+	</div>
+</div>		
+</div>
+
+<div class="cont-body">
+	<div class="cont-header">
+		<div class="row">
+			  <div class="col-sm-9 btn-cd-icon-list">
+				  	<a ui-sref="app.component_version_add({componentId:componentDetail.resourceId,componentName:componentDetail.resourceName})" class="btn-cd-icon"><span class="cd-ic_adduser">
+		                <span class="path1"></span><span class="path2"></span><span class="path3"></span>
+		                </span>  添加版本
+				    </a>
+				    <a ui-sref="app.itsmPatchStatistics({componentId:componentDetail.resourceId})" class="btn-cd-icon"><span class="cd-ic_resource2_s"></span>  版本统计</a>
+                    <a herf="javascript:;" ng-click="mergeComponentVersions()" class="btn-cd-icon"><em class="fa fa-th"></em> 版本合并</a>
+			  </div>
+			  <div class="col-sm-3">
+			     <div class="custom-search">
+			  	     <input type="text" ng-keyup="search()" class="custom-search-form-control" placeholder="按版本名称搜索" ng-model="keyword" />
+			  	     <em class="icon-magnifier"></em>
+			  	 </div>
+			  </div>
+        </div>
+    </div>
+    <table class="table table_title table-striped cd-table new_Tables mt20">
+		  <thead>
+			   <tr sort>
+				  <th check-all="check-all" checkapp-id="checkappId" width="5%">
+					<div data-toggle="tooltip" data-title="Check All" class="checkbox c-checkbox">
+					   <label>
+						  <input type="checkbox" />
+						  <span class="fa fa-check"></span>
+					   </label>
+					</div>
+			      </th>
+			      <th base="1" ng-click="fnSort('versionNum')" width="8%">版本号</th>
+			      <th base="1" ng-click="fnSort('versionName')" width="30%">版本</th>
+			      <th base="1" ng-click="fnSort('status')" width="10%">当前状态</th>
+			      <th base="1" ng-click="fnSort('updateTime')" width="12%">注册时间</th>
+			      <th base="1" ng-click="fnSort('versionDesc')" width="30%">描述</th>
+			      <th ng-if="!((registryId==2)&&!user.result)"  width="5%">操作</th>
+			   </tr>
+		  </thead>
+		  <tbody>
+		       <tr ng-if="!resultoff">
+		         <td colspan="12">
+		           <p class="noresult"><em class="icon-info"></em> {{warninginfo}}</p>
+		         </td>
+		      </tr>
+			   <tr ng-repeat="item in componentVersionList.rows">
+				  <td>
+				   <div class="checkbox c-checkbox">
+					  <label> 
+						 <input type="checkbox" save-id="{{item.id}}" checkapp-id="checkappId" ng-checked="{{item.ischecked}}" />
+						 <span class="fa fa-check"></span>
+					  </label>
+				   </div>
+				  </td>
+			      <td>{{item.versionNum}}</td>
+			      <td>{{item.versionName}}</td>
+			      <td ng-bind="(statuses|filter:item.status)[0].key||'无'"></td>
+			      <td>{{item.updateTime}}</td>
+			      <td>{{item.versionDesc||'无'}}</td>
+			      <td ng-if="!((registryId==2)&&!user.result)">
+                       <div dropdown="dropdown" class="btn-group">
+			                <button dropdown-toggle="" class="btn btn-cd-default">操作 <em class="fa fa-caret-down"></em>
+			                </button>
+			                <ul role="menu" class="dropdown-menu btnlist-dropdown-menu dropdown-last">
+			                	<li>
+			                		<a ui-sref="app.component_version_update({versionId:item.id,componentName:componentDetail.resourceName})"><em class="fa fa-edit"></em> 更新版本</a>
+			                	</li>
+			                	<li>
+			                		<a ui-sref="app.component_version_clone({versionId:item.id,componentName:componentDetail.resourceName})"><em class="fa fa-copy"></em> 版本克隆</a>
+			                	</li>
+			                	<li>
+			                		<a ui-sref="app.component_version_template_mapping({componentName:componentDetail.resourceName,componentId:componentDetail.resourceId,versionName:item.versionName,versionId:item.id})"><em class="fa fa-gears"></em> 配置模板映射</a>
+			                	</li>
+			                	<li>
+			                		 <a href="javascript:;" ng-click="openUpdateCVStatus(item,$index)"><em class="fa fa-gear"></em> 设置状态</a>
+			                	</li>
+			                	<li>
+			                		<a href="javascript:;" ng-click="openAddDescription(item,$index)"><em class="fa fa-file-text-o"></em> 追加描述</a>
+			                	</li>
+			                	<li>
+			                		<button ng-disabled="item.disabled" ng-click="releaseComponentVersion(item)"><em class="fa fa-send"></em> 发布</a>
+			                	</li>
+			                	<li>
+			                		<button ng-disabled="item.disabled" ng-click="rollbackComponentVersion(item)"><em class="fa fa-backward"></em> 回退</a>
+			                	</li>
+			                	<li>
+			                		<a ng-click="delversion(item.id)"><em class="fa fa-trash"></em>  删除</a>
+			                	</li>
+			                </ul>
+		                </div>
+			      </td>
+			   </tr>
+			   <tr ng-show="resultoff">
+		           <td colspan="12">
+		              <page page-count="pageCount" page-num="pageNum" on-page-change="onPageChange()"></page>
+		           </td>
+		       </tr>
+	      </tbody>
+	</table> 
+</div>

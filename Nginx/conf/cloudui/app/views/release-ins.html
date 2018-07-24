@@ -1,0 +1,78 @@
+<div class="row clearfix cont-header">
+    <div class="col-sm-6">
+    	<a href="javascript:;" ng-click="releaseAddFn()"class="btn-cd-icon"><span class="cd-ic_adduser">
+                <span class="path1"></span><span class="path2"></span><span class="path3"></span>
+                </span> 添加发布</a>
+    </div>
+    <div class="col-sm-6">
+
+        <div class="search-group">
+            <div class="input-group">
+                <div class="input-group-btn">
+                    <select class="form-control" ng-model="searchType" ng-options="item.value as item.text for item in searchTypeList">
+
+                    </select>
+                </div>
+                <input type="text" ng-keyup="search()" ng-model="searchval" class="form-control" />
+                <em class="icon-magnifier"></em>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="cont-body">
+        <table class="table table_title mt20">
+		   <thead>
+		      <tr sort>
+		         <th base="1" ng-click="fnSort('releaseName')">名称</th>
+		         <th base="1" ng-click="fnSort('description')">描述</th>
+		         <th base="1" ng-click="fnSort('lifecycleName')">生命周期</th>
+		         <th base="1" ng-click="fnSort('appCount')">应用程序（个数）</th>
+		         <th base="1" ng-click="fnSort('updateTime')">更新时间</th>
+		         <th>操作</th>
+		      </tr>
+		   </thead>
+		   <tbody>
+		      <tr ng-if="!listoff">
+		         <td colspan="6">
+		           <p class="noresult"><em class="icon-default"></em> {{warninginfo}}</p>
+		         </td>
+		      </tr>
+		      <tr ng-repeat="item in releaseList">
+		         <td class="text_overflow" title="{{item.releaseName}}">{{item.releaseName}}</td>
+		         <td class="text_overflow" title="{{item.description}}">{{item.description}}</td>
+		         <td class="text_overflow" title="{{item.lifecycleName}}">{{item.lifecycleName}}</td>
+                 <td>{{item.appCount||'0'}}</td>
+		         <td>{{item.updateTime||'无'}}</td>
+		         <td>
+		             <div dropdown="dropdown" class="btn-group">
+		                <button dropdown-toggle="" class="btn btn-cd-default">操作 <em class="fa fa-caret-down"></em>
+		                </button>
+		                <ul role="menu" class="dropdown-menu btnlist-dropdown-menu" ng-class="{'dropdown-last':listIndex>4}">
+		                    <li> 
+                         		 <a ui-sref="app.release_ins_detail({id:item.id})">
+                           			 <em class="fa fa-file-text-o"></em> 详情
+                         		</a>
+                    		</li>
+                    		<li> 
+                         		 <a href="javascript:;" ng-click="updateRelease(item)">
+                           			 <em class="fa fa-edit"></em> 编辑
+                         		</a>
+                    		</li>
+                    		<li> 
+                         		 <a href="javascript:;" ng-click="deleteRelease(item.id)">
+                           			 <em class="fa fa-trash-o"></em> 删除
+                         		</a>
+                    		</li>
+                    		
+                </ul>
+		             </div>
+		         </td>
+		      </tr>
+		      <tr ng-show="listoff">
+		         <td colspan="6">
+		            <page page-count="pageCount" page-num="pageNum" on-page-change="onPageChange()"></page>
+		         </td>
+		      </tr>
+		   </tbody>
+   	 </table>
+</div>

@@ -1,0 +1,72 @@
+<div class="row clearfix cont-header">
+   <div class="col-sm-6">
+        <a ui-sref="app.quartz_create" class="btn-cd-icon"><span class="cd-ic_adduser">
+                <span class="path1"></span><span class="path2"></span><span class="path3"></span>
+                </span> 添加任务</a>
+   </div>
+   <div class="col-sm-6">
+      <div class="custom-search">
+        <input type="text" ng-keyup="search()" class="custom-search-form-control" placeholder="按任务名称搜索" ng-model="searchval" />
+        <em class="icon-magnifier"></em>
+      </div>
+   </div>
+</div>
+
+<div class="cont-body">
+     <table class="table table_title table-striped cd-table new_Tables mt20">
+       <thead>
+          <tr sort>
+             <th base="1" ng-click="fnSort('quartzName')">定时任务名称</th>
+             <th base="1" ng-click="fnSort('quartzCron')">表达式</th>
+             <th base="1" ng-click="fnSort('updateTime')">更新时间</th>
+             <th>操作</th>
+          </tr>
+       </thead>
+       <tbody>
+          <tr ng-if="!listoff">
+             <td colspan="4">
+               <p class="noresult"><em class="icon-info"></em> {{warninginfo}}</p>
+             </td>
+          </tr>
+          <tr ng-repeat="item in quartzList.rows" ng-init="listIndex=$index">
+             <td>{{item.quartzName}}</td>
+             <td>{{item.quartzCron}}</td>
+             <td>{{item.updateTime}}</td>
+             <td>
+                  <div dropdown="dropdown" class="btn-group">
+                     <button dropdown-toggle="" class="btn btn-cd-default">操作 <em class="fa fa-caret-down"></em>
+                     </button>
+                     <ul role="menu" class="dropdown-menu btnlist-dropdown-menu" ng-class="{'dropdown-last':listIndex>4}">
+                          <li>
+                            <a ui-sref="app.quartz_jobs({quartzName:item.quartzName,quartzId:item.quartzId})"><em class="fa fa-search"></em> 查看Jobs</a>
+                          </li>
+                          <li>
+                               <a ui-sref="app.quartz_update({quartzId:item.quartzId})"><em class="fa fa-edit"></em> 修改</a>
+                          </li>
+                          <li>
+                               <a ui-sref="app.quartz_info({quartzName:item.quartzName,quartzId:item.quartzId})"><em class="fa fa-plus"></em> 添加Job</a>
+                          </li>
+                          <li>
+                               <a href="javascript:;" ng-click="stopQuartzJob($index,item.quartzId)"><em class="fa fa-pause"></em> 暂停Jobs
+                                </a>
+                          </li>
+                          <li>
+                               <a href="javascript:;" ng-click="resumeQuartzJob($index,item.quartzId)"><em class="fa fa-play"></em> 恢复Jobs 
+                               </a>
+                          </li>
+                          <li>
+                              <a href="javascript:;" ng-click="delQuartz($index,item.quartzId)"><em class="fa fa-trash"></em> 删除
+                               </a>
+                          </li>
+                     </ul>
+                  </div>
+             </td>
+          </tr>
+          <tr ng-show="listoff">
+             <td colspan="4">
+                <page page-count="pageCount" page-num="pageNum" on-page-change="onPageChange()"></page>
+             </td>
+          </tr>
+       </tbody>
+    </table>
+</div>

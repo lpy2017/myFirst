@@ -1,0 +1,64 @@
+<div class="dialog-header">
+ <h4>创建阶段环境</h4>
+</div>
+<div class="dialog-body">
+ <form name="form" class="form-horizontal"> 
+ 	<div class="form-group">
+     <label class="col-lg-3 control-label text-right"><span class="text-danger">*</span> 名称</label>
+     <div class="col-lg-8">
+          <input name="name" type="text" readonly ng-model="name" class="form-control"> 
+     </div>
+    </div>
+    <div class="form-group">
+     <label class="col-lg-3 control-label text-right"><span class="text-danger">*</span> 蓝图模板</label>
+     <div class="col-lg-8">
+         <select class="form-control" ng-model="blueprint" ng-options="item as item.NAME for item in blueprintList"></select>
+     </div>
+     <!-- <div class="col-lg-4">
+         <button class="btn btn-cd-default">新增</button>
+         <button class="btn btn-cd-default">更新</button>
+     </div> -->
+    </div>
+    <div class="form-group">
+     <label class="col-lg-3 control-label text-right"><span class="text-danger">*</span> 过程</label>
+     <div class="col-lg-8">
+         <select class="form-control" ng-model="flow" ng-options="item.cdFlowId as item.flowName for item in flowList"></select>
+     </div>
+    </div>
+    
+    <div class="form-group">
+     <label class="col-lg-3 control-label text-right"><span class="text-danger">*</span> 资源配置</label>
+     <div class="col-lg-8"> 
+          <div class="resource" ng-repeat="item in resourceList">
+              <div class="alert alert-info" style="margin-bottom:10px;" ng-click="item.toogle=!item.toogle">{{item.nodeDisplay}}
+                    <em class="fa fa-sort-up pull-right" style="margin:5px 5px 0 20px" ng-class="{'fa-sort-down':!item.toogle,'fa-sort-up':item.toogle}"></em>
+                   <a href="javascript:;" ng-click="relationEnvConfigFn(item)" class="btn btn-cd-default pull-right">
+                         <em class="fa fa-cog"></em> 环境配置
+                    </a>
+              </div>
+              <div ng-show="item.toogle">
+                  <div ng-if="item.cluster.name">
+                      环境：{{item.cluster.name}}
+                  </div>
+                  <div ng-if="item.nodesList">
+                      
+                      <dl class="clearfix">
+                          <dt class="pull-left">节点：</dt>
+                          <dd class="pull-left">
+                              <div ng-repeat="nodeItem in item.nodesList">{{nodeItem.ip}}</div>
+                          </dd>
+                      </dl>
+
+                  </div>
+              </div>
+          </div>
+     </div>
+    </div>
+    
+ </form>
+</div>
+<div class="dialog-footer">
+   <a class="btn btn-default btn-close" ng-click="closeThisDialog(0)"><em class="fa fa-close"></em> 取 消</a>
+   <button class="btn btn-primary" ng-click="saveEnvFn()"><em class="fa fa-check"></em> 确定</button>
+</div>
+ 

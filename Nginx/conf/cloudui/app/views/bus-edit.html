@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>修改班车</title>
+</head>
+<body>
+    <div class="breadcont clearfix">
+	   <ol class="breadcrumb pull-left">
+	      <li><a ui-sref="app.bus_manage">班车列表</a>
+	      </li>
+	      <li class="active">
+	      	 修改班车
+	      </li>
+	   </ol>
+	</div>
+    <form class="form-horizontal" novalidate="" name="form">
+	<div class="cont-body">
+		<div class="panel">
+		    <div class="panel-body">
+                
+                      <fieldset>
+				           <div class="form-group">
+				              <label class="col-sm-2 control-label"><span class="text-danger">*</span>发布班车名称</label>
+				              <div class="col-sm-6">
+				                 <input type="text" name="busName" required="" class="form-control" ng-pattern="/^([a-zA-Z0-9]*)$/" ng-model="busName" />
+				                 <span class="text-danger" ng-show="validateInput(form,'busName','required')">请输入班车名称！</span>
+				                 <span class="text-danger" ng-show="validateInput(form,'busName','pattern')">班车名称不符合规则！</span>
+				              </div>
+				              <div class="col-sm-4">
+				              	 <div><small>名字可以包含英文、数字</small></div>
+				              </div>
+				           </div>
+				       </fieldset>
+
+				       <fieldset>
+				           <div class="form-group">
+				              <label class="col-sm-2 control-label"><span class="text-danger">*</span> 班车时间</label>
+				              <div class="col-sm-6">
+				                  <input type="text" ruledate ng-model="busTime"  class="form-control daterange" data-time-picker="true" data-time-picker-increment="1" data-time-picker-hour="false" data-format="YYYY-MM-DD HH:mm:ss" />
+				              </div>
+				           </div>
+				       </fieldset>
+                
+	        </div>
+	        <div class="panel-footer text-center">
+	        	<button class="btn btn-info" ng-click="updateBusFn()">更新</button>
+	        	<a ui-sref="app.bus_manage" class="btn btn-default">取消</a>
+	        </div>
+        </div>
+        </form>
+	</div>
+	</form>
+</body>
+</html>
